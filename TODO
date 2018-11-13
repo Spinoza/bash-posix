@@ -1,0 +1,38 @@
+42sh[]
+|
+|
+|----v0.3[]
+|-------- Manual[]
+|---------- NAME[]
+|---------- SYNOPSIS[]
+|---------- DESCRIPTION[]
+|---------- AUTHORS[]
+|
+|--------Option Parser[]
+|---------- -c[]
+|---------- -+0 []
+|---------- --norc[]
+|---------- --ast-print[]
+|---------- --version[]
+|
+|--------Shell Parser[]
+|---------- Basic Lexer[]
+|---------- Basic Grammar[]
+|---------- AST creation
+|
+|--------AST Printer[]
+|
+|--------Test suite[]
+|---------- Using Cmake / autotools[]
+|---------- Unitary test for each feature[]
+|---------- Respects the rules for testing[]
+|---------- Advanced features : colors, output file[]
+|
+|--------Execution[]
+|---------- Simple Commands[]
+|-------------- Prefix []
+|-------------- Redirection []
+|-------------- Variable Assignment []
+|---------- if Commands []
+|---------- while and until Commands []
+|---------- for commands []
