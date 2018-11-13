@@ -11,15 +11,18 @@ struct queue *init_queue(void)
     }
 
     q->head = NULL;
+    q->tail = NULL;
     q->size = 0;
+    return q;
 }
 
 struct queue *enqueue(struct queue *q, void *elem)
 {
-    struct nQ *node = malloc(sizeof(struct nQ));
-    if (!q || !node)
+    if (!q)
         return q;
-
+    struct nQ *node = malloc(sizeof(struct nQ));
+    if(!node)
+        return q;
     node->next = NULL;
     node->elem = elem;
 
@@ -27,11 +30,13 @@ struct queue *enqueue(struct queue *q, void *elem)
     {
         q->size ++;
         q->head = node;
+        q->tail = node;
         return q;
     }
 
     q->size++;
-    q->head->next = node;
+    q->tail->next = node;
+    q->tail = node
     return q;
 }
 

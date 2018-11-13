@@ -1,5 +1,6 @@
 #ifndef QUEUE_H
 #define QUEUE_H
+#include <stdlib.h>
 
 struct nQ
 {
@@ -11,6 +12,7 @@ struct queue
 {
     size_t size;
     struct nQ *head;
+    struct nQ *tail;
 };
 
 struct queue *init_queue(void);
