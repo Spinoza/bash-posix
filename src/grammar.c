@@ -3,6 +3,7 @@
 #include <err.h>
 #include "includes/queue.h"
 #include "includes/token.h"
+#include <string.h>
 
 static struct queue *g_command(struct queue *tokens, struct queue *grammar)
 {
@@ -93,6 +94,10 @@ static struct queue *g_list(struct queue *tokens, struct queue *grammar)
     {
         if(tokens->head == NULL)
         {
+            return NULL;
+        }
+        else if(tokens->head->type == ENDOF)
+        {
             return grammar;
         }
         else if((tokens->head->elem->type == SEMICOLON)||
@@ -100,6 +105,10 @@ static struct queue *g_list(struct queue *tokens, struct queue *grammar)
         {
              grammar=enqueue(grammar, dequeue(tokens));
              if(tokens->head == NULL)
+             {
+                 return NULL;
+             }
+             else if(tokens->head->type == ENDOF)
              {
                  return grammar;
              }
