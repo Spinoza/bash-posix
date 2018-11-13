@@ -6,7 +6,7 @@
 
 static struct queue *g_command(struct queue *tokens, struct queue *grammar)
 {
-    return push(grammar, pop(tokens));
+    return enqueue(grammar, dequeue(tokens));
 }
 
 static struct queue *g_pipeline(struct queue *tokens, struct queue *grammar)
@@ -14,7 +14,7 @@ static struct queue *g_pipeline(struct queue *tokens, struct queue *grammar)
     struct token *tok = grammar->head->elem;
     if (!strcmp("!", tok->name))
     {
-        grammar = push(grammar, pop(tokens));
+        grammar = enqueue(grammar, dequeue(tokens));
     }
 
     if (!g_command(tokens, grammar))
@@ -27,11 +27,11 @@ static struct queue *g_pipeline(struct queue *tokens, struct queue *grammar)
         struct token *tok = tokens->head->elem;
         if (tok->type == PIPE)
         {
-            grammar = push(grammar, pop(tokens));
+            grammar = enqueue(grammar, dequeue(tokens));
             struct token *tok = tokens->head->elem;
             while (!strcmp(tok->name, '\n'))
             {
-                free(pop(tokens));
+                grammar = enqueue(grammar, dequeue(tokens));
                 if(!tokens->head)
                     return NULL;
                 tok = tokens->head->elem;
@@ -40,7 +40,6 @@ static struct queue *g_pipeline(struct queue *tokens, struct queue *grammar)
             if (!grammar)
                 return NULL;
         }
-
         else
         {
             break;
@@ -61,11 +60,11 @@ static struct queue *g_andor(struct queue *tokens, struct queue *grammar)
         struct token *tok = tokens->head->elem;
         if (tok->type == LOGICAL_AND || tok->type == LOGICAL_OR)
         {
-            grammar = push(grammar, pop(tokens));
+            grammar = enqueue(grammar, dequeue(tokens));
             struct token *tok = tokens->head->elem;
             while (!strcmp(tok->name, '\n'))
             {
-                grammar = push(grammar, pop(tokens));
+                grammar = enqueue(grammar, dequeue(tokens));
                 if (!tokens->head)
                     return NULL;
                 tok = tokens->head->elem;
@@ -99,7 +98,7 @@ static struct queue *g_list(struct queue *tokens, struct queue *grammar)
         else if((tokens->head->elem->type == SEMICOLON)||
            (tokens->head->elem->type == AND))
         {
-             grammar=push(grammar,pop(tokens));
+             grammar=enqueue(grammar, dequeue(tokens));
              if(tokens->head == NULL)
              {
                  return grammar;
@@ -127,7 +126,7 @@ struct queue *grammar_check (struct queue *tokens)
         struct token *tok = tokens->head->elem;
         if(tok->type == ENDOF)
         {
-            grammar = push(grammar, pop(tokens);
+            grammar = enqueue(grammar, dequeue(tokens);
             break;
         }
 
