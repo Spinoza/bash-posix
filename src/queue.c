@@ -36,7 +36,7 @@ struct queue *enqueue(struct queue *q, void *elem)
 
     q->size++;
     q->tail->next = node;
-    q->tail = node
+    q->tail = node;
     return q;
 }
 
@@ -47,10 +47,12 @@ void *dequeue(struct queue *q)
 
     struct nQ *node = q->head;
     q->head = q->head->next;
-
+    q->size--;
     void *elem = node->elem;
-    free(node);
+    if(node->elem->type == WORD || node->elem->type == ASSIGNMENT_W)
+        free(node->elem->name);
 
+    free(node);
     return elem;
 }
 
@@ -60,11 +62,12 @@ void empty_queue(struct queue *q)
     {
         struct nQ *node = q->head;
         q->head = q->head->next;
+        if(node->elem->type == WORD || node->elem->type == ASSIGNMENT_W)
+            free(node->elem->name);
         free(node->elem);
         free(node);
         q->size--;
     }
-
     q->head = NULL;
     return;
 }

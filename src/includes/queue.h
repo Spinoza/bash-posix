@@ -2,9 +2,11 @@
 #define QUEUE_H
 #include <stdlib.h>
 
+#include "token.h"
+
 struct nQ
 {
-    void *elem;
+    struct token *elem;
     struct nQ *next;
 };
 
