@@ -12,9 +12,11 @@ enum type
     WHILE,
     FOR,
     UNTIL,
+    CASE,
     DO,
     DONE,
     WORD,
+    ASSIGNMENT_W,
     ENDOF
 };
 
