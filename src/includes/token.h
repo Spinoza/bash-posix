@@ -17,7 +17,10 @@ enum type
     DONE = 11,
     WORD = 12,
     ASSIGNMENT_W = 13,
-    ENDOF = 14
+    ENDOF = 14,
+    PIPE = 15,
+    LOGICAL_OR = 16,
+    AND = 17
 };
 
 struct token
