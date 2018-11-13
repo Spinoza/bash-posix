@@ -15,8 +15,8 @@ int main(void)
     w2->type = WORD;
     w2->name = "word2";
     struct token *semi = malloc(sizeof(struct token));
-    semi->type = SEMICOLON;
-    semi->name = "semicolon";
+    semi->type = WORD;
+    semi->name = "word5";
     struct token *w3 = malloc(sizeof(struct token));
     w3->type = WORD;
     w3->name = "word3";
@@ -44,7 +44,7 @@ int main(void)
     struct nQ *node = grammar->head;
     while(node)
     {
-        printf("%s \n", node->name);
+        printf("%s \n", node->elem->name);
         node = node->next;
     }
 }

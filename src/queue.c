@@ -49,8 +49,8 @@ void *dequeue(struct queue *q)
     q->head = q->head->next;
     q->size--;
     void *elem = node->elem;
-    if(node->elem->type == WORD || node->elem->type == ASSIGNMENT_W)
-        free(node->elem->name);
+    /*if(node->elem->type == WORD || node->elem->type == ASSIGNMENT_W)
+        free(node->elem->name);*/
 
     free(node);
     return elem;

@@ -12,7 +12,7 @@ static struct queue *g_command(struct queue *tokens, struct queue *grammar)
 
 static struct queue *g_pipeline(struct queue *tokens, struct queue *grammar)
 {
-    struct token *tok = grammar->head->elem;
+    struct token *tok = tokens->head->elem;
     if (!strcmp("!", tok->name))
     {
         grammar = enqueue(grammar, dequeue(tokens));
@@ -30,7 +30,7 @@ static struct queue *g_pipeline(struct queue *tokens, struct queue *grammar)
         {
             grammar = enqueue(grammar, dequeue(tokens));
             struct token *tok = tokens->head->elem;
-            while (!strcmp(tok->name, '\n'))
+            while (!strcmp(tok->name, "\n"))
             {
                 grammar = enqueue(grammar, dequeue(tokens));
                 if(!tokens->head)
@@ -63,7 +63,7 @@ static struct queue *g_andor(struct queue *tokens, struct queue *grammar)
         {
             grammar = enqueue(grammar, dequeue(tokens));
             struct token *tok = tokens->head->elem;
-            while (!strcmp(tok->name, '\n'))
+            while (!strcmp(tok->name, "\n"))
             {
                 grammar = enqueue(grammar, dequeue(tokens));
                 if (!tokens->head)
@@ -96,7 +96,7 @@ static struct queue *g_list(struct queue *tokens, struct queue *grammar)
         {
             return NULL;
         }
-        else if(tokens->head->type == ENDOF)
+        else if(tokens->head->elem->type == ENDOF)
         {
             return grammar;
         }
@@ -108,11 +108,11 @@ static struct queue *g_list(struct queue *tokens, struct queue *grammar)
              {
                  return NULL;
              }
-             else if(tokens->head->type == ENDOF)
+             else if(tokens->head->elem->type == ENDOF)
              {
                  return grammar;
              }
-             else if(g_andor(tokens, grammar))
+             else if(!g_andor(tokens, grammar))
              {
                  return NULL;
              }
@@ -128,24 +128,27 @@ static struct queue *g_list(struct queue *tokens, struct queue *grammar)
 struct queue *grammar_check (struct queue *tokens)
 {
     struct queue *grammar = init_queue();
-    int isEOF = 0;
+    int is_EOF = 0;
 
     while(tokens->size > 0)
     {
         struct token *tok = tokens->head->elem;
         if(tok->type == ENDOF)
         {
-            grammar = enqueue(grammar, dequeue(tokens);
+            is_EOF = 1;
+            grammar = enqueue(grammar, dequeue(tokens));
             break;
         }
 
         else
         {
-            grammar = list(tokens, grammar);
+            grammar = g_list(tokens, grammar);
         }
     }
 
     free_queue(tokens);
+    if(!is_EOF)
+        return NULL;
     return grammar;
 }
 

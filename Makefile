@@ -1,11 +1,9 @@
 CC= gcc
-CFLAGS= -Werror -Wextra -Wall -std=c99 -pedantic -g -I src/include/
+CFLAGS= -Werror -Wextra -Wall -std=c99 -pedantic -g -I 'src/includes'
 
-LIB=libsh.a
-OBJS_LIB=grammar.o queue.o stack.o
+VPATH= src
+OBJS_LIB=main.o grammar.o queue.o stack.o
 
-LDFLAGS= -L.
-LDLIB= -lsh
 
-all: $(LIB)($(OBJS_LIB))
-     $(CC) $(CFLAGS) main.o -o main $(LDFLAGS) $(LDLIB)
+all: $(OBJS_LIB)
+	$(CC) $(CFLAGS) -o main $(OBJS_LIB)
