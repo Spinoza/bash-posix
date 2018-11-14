@@ -15,7 +15,8 @@ struct token *token_init(void)
     return new;
 }
 void read_string(struct token *new, char *string, char **list,
-        struct queue *queue);
+        struct linked_list *l_list);
+
 char **init_list(void)
 {
     char **list = malloc(sizeof(char *) * 12);
@@ -71,56 +72,56 @@ int check_list(struct token *new, char *string, char **list)
     return 0;
 }
 
-void split_semicolon(struct token *new, char *string, struct queue *queue,
-        int index_sc)
+void split_semicolon(struct token *new, char *string,
+        struct linked_list *l_list, int index_sc)
 {
     new->name = malloc(sizeof(char) * index_sc);
     new->name = memcpy(new->name, string, index_sc);
     new->name[index_sc-1] = '\0';
     struct token *semicolon = token_init();
     semicolon->type = SEMICOLON;
-    enqueue(queue,semicolon);
+    add(l_list,new);
     return;
 }
 
 void read_string(struct token *new, char *string, char **list,
-        struct queue *queue)
+        struct linked_list *l_list)
 {
     if(!string || !strcmp(string,""))
     {
         free(new);
         return;
     }
-    enqueue(queue,new);
+    add(l_list,new);
     if(check_list(new,string,list))
         return;
     new->type = check_word(string);
     int index_sc = check_semicolon(string);
     if(index_sc)
     {
-        split_semicolon(new,string,queue,index_sc);
+        split_semicolon(new,string,l_list,index_sc);
         struct token *next = token_init();
-        read_string(next, string + index_sc + 1,list,queue);
+        read_string(next, string + index_sc + 1,list,l_list);
     }
     int string_len = strlen(string) + 1;
     new->name = malloc(sizeof(char) * string_len);
     memcpy(new->name, string, string_len);
 }
 
-struct queue *lexer (char *input[], int argc)
+struct linked_list *lexer (char *input[], int argc)
 {
     char **list = init_list();
-    struct queue *queue = init_queue();
+    struct linked_list *l_list = init_link();
     for (int i = 0; i < argc; i++)
     {
         struct token *new = token_init();
-        read_string(new, input[i], list, queue);
+        read_string(new, input[i], list, l_list);
     }
     struct token *eof = malloc(sizeof(struct token));
     eof->type = ENDOF;
-    enqueue(queue, eof);
+    add(l_list,eof);
     free(list);
-    return queue;
+    return l_list;
 }
 void print_enum(enum type type)
 {
@@ -182,17 +183,15 @@ void print_enum(enum type type)
                 break;
     }
 }
-void print_queue(struct queue *queue, size_t size)
+void print_list(struct linked_list *l_list)
 {
-    printf("printing new queue queue size : %ld\n",queue->size);
-    for (size_t i = 0; i < size; i++)
+    printf("printing new list");
+    struct nL *head = l_list->head;
+    for (; head; head = head->next)
     {
-        struct token *tok = dequeue(queue);
-        print_enum(tok->type);
+        print_enum(head->elem->type);
         printf("\n");
-        free(tok);
     }
-    free_queue(queue);
 }
 
 int main(void)
@@ -225,8 +224,8 @@ int main(void)
     input[i++] = do_s;
     input[i++] = word;
     input[i++] = done_s;
-    struct queue *queue = lexer(input, 11);
-    print_queue(queue,12);
+    struct linked_list *l_list = lexer(input, 11);
+    print_list(l_list,12);
 */
     char **input = malloc(sizeof(char *) *11);
     char *assign_w = "PAD=2;";
@@ -238,7 +237,7 @@ int main(void)
     input[i++] = new_line;
     input[i++] = assign_w;
     input[i++] = new_line;
-    struct queue * queue = lexer(input, i);
-    print_queue(queue,11);
+    struct linked_list *l_list = lexer(input, i);
+    print_list(l_list);
     free(input);
 }

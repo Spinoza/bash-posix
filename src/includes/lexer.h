@@ -1,7 +1,7 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-#include "queue.h"
+#include "linked_list.h"
 
-struct queue *lexer(char *input[],int argc);
+struct linked_list *lexer(char *input[],int argc);
 #endif /* ! LEXER_H */
