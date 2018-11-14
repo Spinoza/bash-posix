@@ -4,12 +4,18 @@
 
 static int is_conform(struct nL *tok)
 {
-    char *args[7] = { ">", "<", ">>", ">&", "<&", ">|", "<>"};
+    char *args[10] = { ">", "<", ">>", ">&", "<&", ">|", "<>", "!", "{", "}"};
 
     for (int i = 0; i < 7; i++)
     {
         if (strcmp(args[i], tok->elem->name) == 0)
             return 1;
+    }
+
+    for (int j = 7; j < 10; j++)
+    {
+        if (strcmp(args[j], tok->elem->name) == 0)
+            return 2;
     }
 
     return 0;
@@ -58,6 +64,10 @@ static struct nL *g_redirection(struct nL *tok)
 
 static struct nL *g_element(struct nL *tok)
 {
+    int conf = is_conform(tok);
+    if (conf == 1 || conf == 2)
+        return NULL;
+
     if (tok->elem->type == WORD)
         return tok;
 
