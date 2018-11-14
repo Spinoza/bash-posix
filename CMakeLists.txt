@@ -16,6 +16,8 @@ target_link_libraries(lexer PRIVATE linked_list)
 add_library(grammar_check ${CMAKE_SOURCE_DIR}/src/grammar_check.c)
 target_link_libraries(grammar_check PUBLIC lexer)
 
+add_executable(options ${CMAKE_SOURCE_DIR}/src/options.c)
+
 add_executable(lexer_main ${CMAKE_SOURCE_DIR}/src/tests/lexer_main.c)
 target_link_libraries(lexer_main lexer)
 

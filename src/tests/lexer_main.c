@@ -65,6 +65,12 @@ void print_enum(enum type type)
         case 17:
                 printf("&");
                 break;
+        case 18:
+                printf("IONUMBER");
+                break;
+        case 19:
+                printf("HEREDOC");
+                break;
     }
 }
 void print_list(struct linked_list *l_list)
@@ -74,8 +80,9 @@ void print_list(struct linked_list *l_list)
     for (; head; head = head->next)
     {
         print_enum(head->elem->type);
-        printf(" ");
+        printf(" -> ");
     }
+    printf("\n");
 }
 
 int main(int argc, char *argv[])
@@ -87,4 +94,5 @@ int main(int argc, char *argv[])
     }
     struct linked_list *l_list = lexer(argv,argc);
     print_list(l_list);
+    free_list(l_list);
 }

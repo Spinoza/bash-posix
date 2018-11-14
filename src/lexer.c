@@ -19,7 +19,7 @@ static void read_string(struct token *new, char *string, char **list,
 
 static char **init_list(void)
 {
-    char **list = malloc(sizeof(char *) * 18);
+    char **list = malloc(sizeof(char *) * 20);
     *list = "if";
     *(list + 1) ="then";
     *(list + 2) = "else";
@@ -38,6 +38,9 @@ static char **init_list(void)
     *(list + 15) = "|";
     *(list + 16) = "||";
     *(list + 17) = "&";
+    *(list + 18) = "IONUMBER"; //Need to be implemented
+    *(list + 19) = "HEREDOC"; //Need to be implemented
+
     return list;
 }
 int check_semicolon(char *string)

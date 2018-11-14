@@ -20,7 +20,7 @@ class YamlItem(pytest.Item):
         self.spec = spec
 
     def runtest(self):
-        process = subprocess.Popen(["lexer_main"], stdout=subprocess.PIPE,\
+        process = subprocess.Popen(["bash"], stdout=subprocess.PIPE,\
                 stderr=subprocess.PIPE,\
                 stdin=subprocess.PIPE)
 
@@ -29,15 +29,16 @@ class YamlItem(pytest.Item):
         if "stdout" in self.expected:
             if self.expected["stdout"] != out:
                 raise YamlException("stdout", self.expected["stdout"], out)
-        elif out:
+        elif out: #check if no out should be returned but my program returned one
             raise YamlException("stdout", b"(empty)", out)
-        if err:
-            self.expected['stderr'] = err
-        self.expected['rvalue'] = process.returncode
-        for name, value in sorted(self.spec.items()):
-            # some custom test execution (dumb example follows)
-            if name != value:
-                raise YamlException(self, name, value)
+
+        if "stderr" in self.expected:
+            if self.expected["stderr"] != err:
+                raise YamlException("stderr", self.expected["stderr"], err)
+        elif err: #check if no out should be returned but my program returned one
+            raise YamlException("stderr", b"(empty)", err)
+        if self.expected['rvalue'] != process.returncode:
+            raise YamlException("rvalue", self.expected["rvalue"], rvalue)
 
     def repr_failure(self, excinfo):
         """ called when self.runtest() raises an exception. """
