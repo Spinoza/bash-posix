@@ -30,6 +30,7 @@ struct nL *g_pipeline(struct nL *tok)
         tok = tok->next;
         if (!tok)
             return NULL;
+        if (tok->elem->type == PIPE)
         {
             tok = tok->next;
             if (!tok)

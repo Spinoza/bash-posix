@@ -1,5 +1,5 @@
 #include "linked_list.h"
-#include "grammar.h"
+#include "grammar_check.h"
 
 struct nL *g_ruleif(struct nL *tok)
 {

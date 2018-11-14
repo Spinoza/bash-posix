@@ -20,7 +20,7 @@ struct nL *g_command(struct nL *tok);
 struct nL *g_pipeline(struct nL *tok);
 int grammar_check (struct linked_list *tokens);
 struct nL  *g_list(struct nL *tok);
-struct nL *g_andor(struct nL *tok)
+struct nL *g_andor(struct nL *tok);
 
 
 #endif /* GRAMMAR_H */
