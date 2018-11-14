@@ -6,6 +6,102 @@
 #include "token.h"
 #include "grammar_check.h"
 
+static struct nL *g_funcdec(struct nL *tok)
+{
+    if (tok->type != WORD)
+        return NULL;
+
+    if (!strcmp(tok->name, "function"))
+    {
+        tok = tok->next;
+        if (!tok)
+            return NULL;
+    }
+
+    if (tok->type != WORD)
+        return NULL;
+
+    tok = tok->next;
+    if (!tok)
+        return NULL;
+    if (strcmp(tok->name, "("))
+        return NULL;
+    tok = tok->next;
+    if (!tok)
+        return NULL;
+    if (strcmp(tok->name, ")"))
+        return NULL;
+    tok = tok->next;
+    if (!tok)
+        return NULL;
+
+    while (tok->type == ENDOF)
+    {
+        tok = tok->next;
+        if (!tok)
+            return NULL;
+    }
+
+    tok = shell_command(tok);
+    return tok;
+}
+
+static struct nL *g_simplecommand(struct nL *tok)
+{
+    struct nL *save = g_prefix(tok);
+
+    if (!save)
+    {
+        save = g_element(tok);
+        if (!save)
+        {
+            return NULL;
+        }
+
+        while (save)
+        {
+            tok = save;
+            save = save->next;
+            if (!save)
+                return NULL;
+            save = g_element(save);
+        }
+        return tok;
+    }
+
+    else
+    {
+        while (save)
+        {
+            tok = save;
+            save = save->next;
+            if (!save)
+                return NULL;
+            save = g_prefix(save);
+        }
+
+        save = tok->next;
+        if (!save)
+            return NULL;
+        save = g_element(save);
+        if (!save)
+        {
+            return tok;
+        }
+
+        while (save)
+        {
+            tok = save;
+            save = save->next;
+            if (!save)
+                return NULL;
+            save = g_element(save);
+        }
+        return tok;
+    }
+
+}
+
 static struct nL *g_command(struct nL *tok)
 {
     return tok;
