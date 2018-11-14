@@ -185,7 +185,7 @@ void print_enum(enum type type)
 }
 void print_list(struct linked_list *l_list)
 {
-    printf("printing new list");
+    printf("printing new list\n");
     struct nL *head = l_list->head;
     for (; head; head = head->next)
     {
