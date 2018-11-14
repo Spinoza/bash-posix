@@ -1,3 +1,4 @@
+#include <string.h>
 #include "linked_list.h"
 #include "grammar_check.h"
 
@@ -45,7 +46,7 @@ struct nL *g_ruleif(struct nL *tok)
     tok = tok->next;
     if(!tok)
         return NULL;
-    struct *save = g_elseclose(tok);
+    struct nL *save = g_elseclause(tok);
     if(save)
     {
         tok = save->next;
@@ -96,14 +97,14 @@ struct nL *g_rulecase(struct nL *tok)
             return NULL;
     }
 
-    struct token *save = g_caseclause(tok);
-    tok = save ? save : tok;
+    struct nL *save = g_caseclause(tok);
+    tok = (save ? save : tok);
 
     tok = tok->next;
     if (!tok)
         return NULL;
 
-    return tok->type == ESAC ? tok : NULL;
+    return tok->elem->type == ESAC ? tok : NULL;
 }
 
 
