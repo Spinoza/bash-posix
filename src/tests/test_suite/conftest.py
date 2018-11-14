@@ -6,7 +6,6 @@ def pytest_collect_file(parent, path):
     if path.ext == ".yml" and path.basename.startswith("test"):
         return YamlFile(path, parent)
 
-
 class YamlFile(pytest.File):
     def collect(self):
         import yaml  # we need a yaml parser, e.g. PyYAML
@@ -15,22 +14,23 @@ class YamlFile(pytest.File):
         for name, spec in sorted(raw.items()):
             yield YamlItem(name, self, spec)
 
-
 class YamlItem(pytest.Item):
     def __init__(self, name, parent, spec):
         super(YamlItem, self).__init__(name, parent)
         self.spec = spec
 
     def runtest(self):
-        process = subprocess.Popen(["lexer_main"]),
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE,
-                                    stdin=subprocess.PIPE)
+        process = subprocess.Popen(["lexer_main"], stdout=subprocess.PIPE,\
+                stderr=subprocess.PIPE,\
+                stdin=subprocess.PIPE)
 
-        out,err = process.communicate(input=self.command)
+        out, err = process.communicate(input=self.command)
         process.kill()
-        if out:
-            self.expected['stdout'] = out
+        if "stdout" in self.expected:
+            if self.expected["stdout"] != out:
+                raise YamlException("stdout", self.expected["stdout"], out)
+        elif out:
+            raise YamlException("stdout", b"(empty)", out)
         if err:
             self.expected['stderr'] = err
         self.expected['rvalue'] = process.returncode
@@ -49,3 +49,12 @@ class YamlItem(pytest.Item):
                     "   no further details known at this point.",
                 ]
             )
+
+class OutputDiffItem(YamlItem):
+    def __init__(self, name, parent, spec):
+        super().__init__(name,parent,spec)
+        for item in self.exptected:
+            if item == "rvalue":
+                self.expected["rvalue"] = int(self.expected["rvalue"])
+                continue
+            self.expected[item] = str.encode(self.expected[item])
