@@ -4,7 +4,8 @@
 
 static int is_conform(struct nL *tok)
 {
-    char *args[10] = { ">", "<", ">>", ">&", "<&", ">|", "<>", "!", "{", "}"};
+    char *args[13] = { ">", "<", ">>", ">&", "<&", ">|", "<>", "!", "{",
+        "}", ";;", ")", "("};
 
     for (int i = 0; i < 7; i++)
     {
@@ -12,7 +13,7 @@ static int is_conform(struct nL *tok)
             return 1;
     }
 
-    for (int j = 7; j < 10; j++)
+    for (int j = 7; j < 13; j++)
     {
         if (strcmp(args[j], tok->elem->name) == 0)
             return 2;
@@ -180,7 +181,71 @@ struct nL *g_simplecommand(struct nL *tok)
 }
 struct nL *g_compoundlist(struct nL *tok)
 {
-    return tok;
+    while (tok->elem->type == ENDOF)
+    {
+        tok = tok->next;
+        if (!tok)
+            return NULL;
+    }
+
+    tok = g_andor(tok);
+    if (!tok)
+        return NULL;
+
+    struct token *save = tok;
+    tok = tok->next;
+    if (!tok->next)
+        return NULL;
+
+    int count = 0;
+    enum type t = tok->elem->type;
+    while (t == SEMICOLON || t == AND || t == ENDOF)
+    {
+        if (count > 0)
+            save = tok;
+        tok = tok->next;
+        if (!tok)
+            return NULL;
+
+        while (tok->elem->type == ENDOF)
+        {
+            tok = tok->next;
+            if (!tok)
+                return NULL;
+        }
+
+        tok = g_andor(tok);
+        if (!tok)
+        {
+            tok = save;
+            break;
+        }
+        count++;
+    }
+
+    save = tok;
+    tok = tok->next;
+    if (!tok)
+        return NULL;
+
+    t = tok->elem->type;
+    if (t == SEMICOLON || t == AND || t == ENDOF)
+    {
+        save = tok;
+        tok = tok->next;
+        if (!tok)
+            return NULL;
+
+        while (tok->elem->type == ENDOF)
+        {
+            save = tok;
+            tok = tok->next;
+            if (!tok)
+                return NULL;
+        }
+    }
+
+    return save;
 }
 
 struct nL *g_shellcommand(struct nL *tok)

@@ -22,5 +22,8 @@ int grammar_check (struct linked_list *tokens);
 struct nL  *g_list(struct nL *tok);
 struct nL *g_andor(struct nL *tok);
 
-
+struct nL *g_elseclause(struct nL *tok);
+struct nL *g_caseclause(struct nL *tok);
+struct nL *g_dogroup(struct nL *tok);
+struct nL *g_caseitem(struct nL *tok);
 #endif /* GRAMMAR_H */
