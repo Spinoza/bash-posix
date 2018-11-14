@@ -57,13 +57,13 @@ void print_enum(enum type type)
                 printf("ENDOF");
                 break;
         case 15:
-                printf("PIPE");
+                printf("|");
                 break;
         case 16:
-                printf("LOGICAL_OR");
+                printf("||");
                 break;
         case 17:
-                printf("AND");
+                printf("&");
                 break;
     }
 }
@@ -74,7 +74,7 @@ void print_list(struct linked_list *l_list)
     for (; head; head = head->next)
     {
         print_enum(head->elem->type);
-        printf("\n");
+        printf(" ");
     }
 }
 

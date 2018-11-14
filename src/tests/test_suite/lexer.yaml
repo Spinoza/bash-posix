@@ -1,0 +1,58 @@
+word:
+        type: "output diff"
+        command: "word"
+        expected:
+                stdout: "WORD\n"
+                rvalue: 0
+
+assignment_w:
+        type: "output diff"
+        command: "word=1"
+        expected:
+                stdout: "ASSIGMENT_W\n"
+                rvalue: 0
+
+if_word_then_word:
+        type: "output diff"
+        command: "if word1 then cond fi"
+        expected:
+                stdout: "IF WORD THEN WORD FI"
+                rvalue: 0
+
+if_word_and_word_then:
+        type: "output diff"
+        command: "if word1 && word2 then word3 else word4 fi"
+        expected:
+                stdout: "IF WORD && WORD THEN WORD ELSE WORD FI\n"
+                rvalue: 0
+
+do_while:
+        type: "output diff"
+        command: "do word1 word2 p=1 while cond"
+        expected:
+                stdout: "WORD\n"
+                rvalue: 0
+while_loop:
+        type: "output diff"
+        command: "while true; do foo; sleep 2; done"
+        expected:
+                stdout: "WHILE WORD ; DO WORD ; WORD WORD; DONE\n"
+                rvalue: 0
+pipe_test:
+        type: "output diff"
+        command: "cat | echo hello"
+        expected:
+                stdout: "WORD | WORD WORD\n"
+                rvalue: 0
+logical_and_and:
+        type: "output diff"
+        command: "hello && & bye"
+        expected:
+                stdout: "WORD && & WORD\n"
+                rvalue: 0
+pipe_and_logical_or:
+        type: "output diff"
+        command: "echo hello || bye | cat"
+        expected:
+                stdout: "WORD WORD || WORD | WORD\n"
+                rvalue: 0

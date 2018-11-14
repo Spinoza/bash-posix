@@ -35,8 +35,8 @@ static char **init_list(void)
     *(list + 12) = "";
     *(list + 13) = "";
     *(list + 14) = "ENDOF";
-    *(list + 15) = "PIPE";
-    *(list + 16) = "LOGICAL_OR";
+    *(list + 15) = "|";
+    *(list + 16) = "||";
     *(list + 17) = "&";
     return list;
 }
