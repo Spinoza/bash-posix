@@ -2,11 +2,12 @@
 #define VECTOR_H
 
 #include <stddef.h>
+#include <unistd.h>
 
 struct vector
 {
-    size_t size;
-    size_t capacity;
+    ssize_t size;
+    ssize_t capacity;
     void **arr;
 };
 

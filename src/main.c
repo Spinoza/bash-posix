@@ -15,7 +15,7 @@ int main(void)
     w2->type = WORD;
     w2->name = "word2";
     struct token *semi = malloc(sizeof(struct token));
-    semi->type = AND;
+    semi->type = WORD;
     semi->name = "word5";
     struct token *w3 = malloc(sizeof(struct token));
     w3->type = WORD;
