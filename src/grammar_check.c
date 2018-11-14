@@ -8,34 +8,34 @@
 
 static struct nL *g_funcdec(struct nL *tok)
 {
-    if (tok->type != WORD)
+    if (tok->elem->type != WORD)
         return NULL;
 
-    if (!strcmp(tok->name, "function"))
+    if (!strcmp(tok->elem->name, "function"))
     {
         tok = tok->next;
         if (!tok)
             return NULL;
     }
 
-    if (tok->type != WORD)
+    if (tok->elem->type != WORD)
         return NULL;
 
     tok = tok->next;
     if (!tok)
         return NULL;
-    if (strcmp(tok->name, "("))
+    if (strcmp(tok->elem->name, "("))
         return NULL;
     tok = tok->next;
     if (!tok)
         return NULL;
-    if (strcmp(tok->name, ")"))
+    if (strcmp(tok->elem->name, ")"))
         return NULL;
     tok = tok->next;
     if (!tok)
         return NULL;
 
-    while (tok->type == ENDOF)
+    while (tok->elem->type == ENDOF)
     {
         tok = tok->next;
         if (!tok)
