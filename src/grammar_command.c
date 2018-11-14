@@ -197,12 +197,9 @@ struct nL *g_compoundlist(struct nL *tok)
     if (!tok->next)
         return NULL;
 
-    int count = 0;
     enum type t = tok->elem->type;
     while (t == SEMICOLON || t == AND || t == ENDOF)
     {
-        if (count > 0)
-            save = tok;
         tok = tok->next;
         if (!tok)
             return NULL;
@@ -220,7 +217,10 @@ struct nL *g_compoundlist(struct nL *tok)
             tok = save;
             break;
         }
-        count++;
+        save = tok;
+        tok = tok->next;
+        if (!tok)
+            return NULL;
     }
 
     save = tok;

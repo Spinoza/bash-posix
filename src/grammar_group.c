@@ -81,11 +81,8 @@ struct nL *g_caseclause(struct nL *tok)
     tok = tok->next;
     if(!tok)
         return NULL;
-    int count = 0;
     while (tok->elem->type == WORD && (!strcmp(";;", tok->elem->name)))
     {
-        if (count != 0)
-            save = tok;
         tok = tok->next;
         if (!tok)
             return NULL;
@@ -104,7 +101,10 @@ struct nL *g_caseclause(struct nL *tok)
             break;
         }
 
-        count++;
+        save = tok;
+        tok = tok->next;
+        if (!tok)
+            return NULL;
     }
 
     save = tok;
@@ -131,4 +131,82 @@ struct nL *g_caseclause(struct nL *tok)
     return save;
 }
 
-struct nL *g_caseitem(struct nL *tok);
+static int is_conform(struct nL *tok)
+{
+    char *args[13] = { ">", "<", ">>", ">&", "<&", ">|", "<>"
+                , "!", "{", "}", ";;", "(", ")"};
+
+    for (int i = 0; i < 7; i++)
+    {
+        if (strcmp(args[i], tok->elem->name) == 0)
+            return 1;
+    }
+
+    for (int j = 7; j < 13; j++)
+    {
+        if (strcmp(args[j], tok->elem->name) == 0)
+            return 2;
+    }
+
+    return 0;
+}
+
+struct nL *g_caseitem(struct nL *tok)
+{
+    if (tok->elem->type == WORD || !(strcmp(tok->elem->name, "(")))
+    {
+        tok = tok->next;
+        if (!tok)
+            return NULL;
+    }
+
+    if (tok->elem->type == WORD)
+        return NULL;
+
+    struct token *save = tok;
+    tok = tok->next;
+    if (!tok)
+        return NULL;
+
+    while (tok->elem->type == PIPE)
+    {
+        tok = tok->next;
+        if (!tok)
+            return tok;
+
+        int conf = is_conform(tok);
+        if (tok->elem->type != WORD || conf != 0)
+        {
+            tok = save;
+            break;
+        }
+        save = tok;
+        tok = tok->next;
+        if (!tok)
+            return NULL;
+    }
+
+    save = tok;
+    tok = tok->next;
+    if (!tok)
+        return NULL;
+
+    if (strcmp(tok->elem->name, ")"))
+        return NULL;
+
+    save = tok;
+    tok = tok->next;
+    if (!tok)
+        return NULL;
+
+    while (tok->elem->type == ENDOF && !strcmp(tok->elem->name, "\n"))
+    {
+        save = tok;
+        tok = tok->next;
+        if (!tok)
+            return NULL;
+    }
+
+    struct token *save2 = g_compoundlist(tok);
+    return (save2 ? save2 : save);
+}
