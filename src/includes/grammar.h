@@ -1,10 +1,10 @@
 #ifndef GRAMMAR_H
 #define GRAMMAR_H
 
-#include "vector.h"
-#include "queue.h"
 
-int grammar_check(struct vector *tokens);
+#include "linked_list.h"
+
+int grammar_check(struct linked_list *tokens);
 
 
 #endif /* GRAMMAR_H */

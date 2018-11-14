@@ -21,7 +21,7 @@ static struct nL *g_pipeline(struct nL *tok)
     {
         return NULL;
     }
-    tok = g_command(tok)
+    tok = g_command(tok);
     if(!tok)
     {
         return NULL;
@@ -58,7 +58,7 @@ static struct nL *g_pipeline(struct nL *tok)
 
 static struct nL *g_andor(struct nL *tok)
 {
-    tok = g_pipeline(tok)
+    tok = g_pipeline(tok);
     if(!tok)
     {
         return NULL;
@@ -93,7 +93,7 @@ static struct nL *g_andor(struct nL *tok)
 }
 
 
-static struct nL  *g_list(struct nL *token)
+static struct nL  *g_list(struct nL *tok)
 {
     tok = g_andor(tok);
     if(!tok)
@@ -127,7 +127,7 @@ static struct nL  *g_list(struct nL *token)
             tok = g_andor(tok);
             if(!tok)
             {
-                return return NULL;
+                return NULL;
             }
         }
         else
