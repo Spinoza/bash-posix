@@ -4,6 +4,7 @@
 #include <string.h>
 #include "linked_list.h"
 #include "token.h"
+#include "grammar_check.h"
 
 static struct nL *g_command(struct nL *tok)
 {

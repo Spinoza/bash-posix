@@ -1,4 +1,4 @@
-#include "grammar.h"
+#include "grammar_check.h"
 #include "stdio.h"
 
 int main(void)

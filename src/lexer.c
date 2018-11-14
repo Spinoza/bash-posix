@@ -4,22 +4,22 @@
 #include <stdio.h>
 #include <string.h>
 
-#define LIST_LENGTH 11
+#define LIST_LENGTH 18
 
 
-struct token *token_init(void)
+static struct token *token_init(void)
 {
     struct token *new = malloc(sizeof(struct token));
     new->type = -1;
     new->name = NULL;
     return new;
 }
-void read_string(struct token *new, char *string, char **list,
+static void read_string(struct token *new, char *string, char **list,
         struct linked_list *l_list);
 
-char **init_list(void)
+static char **init_list(void)
 {
-    char **list = malloc(sizeof(char *) * 12);
+    char **list = malloc(sizeof(char *) * 18);
     *list = "if";
     *(list + 1) ="then";
     *(list + 2) = "else";
@@ -32,6 +32,12 @@ char **init_list(void)
     *(list + 9) = "case";
     *(list + 10) = "do";
     *(list + 11) = "done";
+    *(list + 12) = "";
+    *(list + 13) = "";
+    *(list + 14) = "ENDOF";
+    *(list + 15) = "PIPE";
+    *(list + 16) = "LOGICAL_OR";
+    *(list + 17) = "&";
     return list;
 }
 int check_semicolon(char *string)
@@ -112,7 +118,7 @@ struct linked_list *lexer (char *input[], int argc)
 {
     char **list = init_list();
     struct linked_list *l_list = init_link();
-    for (int i = 0; i < argc; i++)
+    for (int i = 1; i < argc; i++)
     {
         struct token *new = token_init();
         read_string(new, input[i], list, l_list);
@@ -122,122 +128,4 @@ struct linked_list *lexer (char *input[], int argc)
     add(l_list,eof);
     free(list);
     return l_list;
-}
-void print_enum(enum type type)
-{
-    switch (type)
-    {
-        case 0:
-                printf("IF");
-                break;
-        case 1:
-                printf("THEN");
-                break;
-        case 2:
-                printf("ELSE");
-                break;
-        case 3:
-                printf("FI");
-                break;
-        case 4:
-                printf("&&");
-                break;
-        case 5:
-                printf(";");
-                break;
-        case 6:
-                printf("WHILE");
-                break;
-        case 7:
-                printf("FOR");
-                break;
-        case 8:
-                printf("UNTIL");
-                break;
-        case 9:
-                printf("CASE");
-                break;
-        case 10:
-                printf("DO");
-                break;
-        case 11:
-                printf("DONE");
-                break;
-        case 12:
-                printf("WORD");
-                break;
-        case 13:
-                printf("ASSIGNMENT_W");
-                break;
-        case 14:
-                printf("ENDOF");
-                break;
-        case 15:
-                printf("PIPE");
-                break;
-        case 16:
-                printf("LOGICAL_OR");
-                break;
-        case 17:
-                printf("AND");
-                break;
-    }
-}
-void print_list(struct linked_list *l_list)
-{
-    printf("printing new list\n");
-    struct nL *head = l_list->head;
-    for (; head; head = head->next)
-    {
-        print_enum(head->elem->type);
-        printf("\n");
-    }
-}
-
-int main(void)
-{/*
-    char *if_s = "if";
-    char *else_s = "else";
-    char *then_s = "then";
-    char *semi = ";";
-    char *word = "word";
-    //char *assign_w = "pad=2";
-    char *command = "cd";
-    char *cond = "1";
-    char *while_s = "while";
-    char *do_s = "do";
-    char *done_s = "done";
-    //char *until = "until";
-    //char *for_s = "for";
-    char **input = malloc(sizeof(char *) * 11);
-    int i = 0;
-    input[i++] = word;
-    input[i++] = if_s;
-    input[i++] = word;
-    input[i++] = then_s;
-    input[i++] = word;
-    input[i++] = else_s;
-    input[i++] = command;
-    input[i++] = semi;
-    input[i++] = while_s;
-    input[i++] = cond;
-    input[i++] = do_s;
-    input[i++] = word;
-    input[i++] = done_s;
-    struct linked_list *l_list = lexer(input, 11);
-    print_list(l_list,12);
-*/
-    char **input = malloc(sizeof(char *) *11);
-    char *assign_w = "PAD=2;";
-    char *new_line = "\n";
-    int i = 0;
-    input[i++] = assign_w;
-    input[i++] = assign_w;
-    input[i++] = assign_w;
-    input[i++] = new_line;
-    input[i++] = assign_w;
-    input[i++] = new_line;
-    struct linked_list *l_list = lexer(input, i);
-    print_list(l_list);
-    free(input);
 }
