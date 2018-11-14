@@ -5,167 +5,150 @@
 #include "linked_list.h"
 #include "token.h"
 
-static int g_command(struct vector *tokens, ssize_t index)
+static struct nL *g_command(struct nL *tok)
 {
-    tokens = tokens;
-    return index;
+    return tok;
 }
 
-static int g_pipeline(struct vector *tokens, ssize_t index)
+static struct nL *g_pipeline(struct nL *tok)
 {
-    struct token *tok = tokens->arr[index];
-    if (!strcmp("!", tok->name))
+    if (!strcmp("!", tok->elem->name))
     {
-        index++;
+        tok = tok->next;
     }
 
-    if (index > tokens->size)
+    if (!tok)
     {
-        return -1;
+        return NULL;
     }
-    tok = tokens->arr[index];
-
-    if ((index = g_command(tokens, index)) == -1)
+    tok = g_command(tok)
+    if(!tok)
     {
-        return -1;
+        return NULL;
     }
-
-    while (index < tokens->size)
+    struct nL *save;
+    while (1)
     {
-        index++;
-        if (index >= tokens->size)
-            return -1;
+        save = tok;
+        tok = tok->next;
+        if (!tok)
+            return NULL;
 
-        tok = tokens->arr[index];
-        if (tok->type == PIPE)
+        if (tok->elem->type == PIPE)
         {
-            index++;
-            if (index >= tokens->size)
-                return -1;
-            tok = tokens->arr[index];
-            while (tok->type == ENDOF)
+            tok = tok->next;
+            if (!tok)
+                return NULL;
+            while (tok->elem->type == ENDOF)
             {
-                index++;
-                if(index >= tokens->size)
-                    return -1;
-                tok = tokens->arr[index];
+                tok = tok->next;
+                if(!tok)
+                    return NULL;
             }
-            index = g_command(tokens, index);
-            if (index == -1)
-                return -1;
+            tok = g_command(tok);
+            if (!tok)
+                return NULL;
         }
         else
         {
-            index--;
-            break;
+            return save;
         }
     }
-    return index;
 }
 
-static int g_andor(struct vector *tokens, ssize_t index)
+static struct nL *g_andor(struct nL *tok)
 {
-    if ((index = g_pipeline(tokens, index)) == -1)
+    tok = g_pipeline(tok)
+    if(!tok)
     {
-        return -1;
+        return NULL;
     }
-
-    while (index < tokens->size)
+    struct  nL *save;
+    while (1)
     {
-        index++;
-        if (index >= tokens->size)
-            return -1;
-
-        struct token *tok = tokens->arr[index];
-        if (tok->type == LOGICAL_AND || tok->type == LOGICAL_OR)
+        save = tok;
+        tok = tok->next;
+        if (!tok)
+            return NULL;
+        if (tok->elem->type == LOGICAL_AND || tok->elem->type == LOGICAL_OR)
         {
-            index++;
-            if (index >= tokens->size)
-                return -1;
-            tok = tokens->arr[index];
-            while (tok->type == ENDOF)
+            tok = tok->next;
+            if (!tok)
+                return NULL;
+            while (tok->elem->type == ENDOF)
             {
-                index++;
-                if (index >= tokens->size)
-                    return -1;
-                tok = tokens->arr[index];
+                tok = tok->next;
+                if (!tok)
+                    return NULL;
             }
-            index = g_pipeline(tokens, index);
-            if (index == -1)
-                return -1;
+            tok = g_pipeline(tok);
+            if (!tok)
+                return NULL;
         }
         else
         {
-            index--;
-            break;
+            return save;
         }
     }
-
-    return index;
 }
 
 
-static int g_list(struct vector *tokens, ssize_t index)
+static struct nL  *g_list(struct nL *token)
 {
-    index = g_andor(tokens, index);
-    if(index == -1)
+    tok = g_andor(tok);
+    if(!tok)
     {
-        return -1;
+        return NULL;
     }
     while (1)
     {
-        index++;
-        if (index >= tokens->size)
+        tok = tok->next;
+        if (!tok)
         {
-            return -1;
+            return NULL;
         }
-        struct token *tok = tokens->arr[index];
-        if (tok->type == ENDOF)
+        if (tok->elem->type == ENDOF)
         {
-            return index;
+            return tok;
         }
-        else if ((tok->type == SEMICOLON)||
-           (tok->type == AND))
+        else if ((tok->elem->type == SEMICOLON)||
+           (tok->elem->type == AND))
         {
-            index++;
-            if (index >= tokens->size)
+            tok = tok->next;
+            if (!tok)
             {
-                return -1;
+                return NULL;
+            }
+            if (tok->elem->type == ENDOF)
+            {
+                return tok;
             }
 
-            tok = tokens->arr[index];
-            if (tok->type == ENDOF)
+            tok = g_andor(tok);
+            if(!tok)
             {
-                return index;
-            }
-
-            if ((index = g_andor(tokens, index)) == -1)
-            {
-                return -1;
+                return return NULL;
             }
         }
         else
         {
-            return -1;
+            return NULL;
         }
 
     }
 }
 
-int grammar_check (struct vector *tokens)
+int grammar_check (struct linked_list *tokens)
 {
-    ssize_t ind = 0;
-
-    struct token *tok = tokens->arr[ind];
-    if (tok->type == ENDOF)
+    struct nL *tok = tokens->head;
+    if (tok->elem->type == ENDOF)
         return 1;
 
-    ind = g_list(tokens, ind);
+     tok = g_list(tok);
 
-    if (ind == -1)
-        return -1;
-    tok = tokens->arr[ind];
-    if (tok->type == ENDOF)
+    if (!tok)
+        return 0;
+    if (tok->elem->type == ENDOF)
         return 1;
 
     return 0;
