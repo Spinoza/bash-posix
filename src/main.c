@@ -3,7 +3,7 @@
 
 int main(void)
 {
-    struct vector *v= vector_create();
+    struct linked_list *l= init_link();
 
     struct token *w1 = malloc(sizeof(struct token));
     w1->type = WORD;
@@ -15,7 +15,7 @@ int main(void)
     w2->type = WORD;
     w2->name = "word2";
     struct token *semi = malloc(sizeof(struct token));
-    semi->type = WORD;
+    semi->type = AND;
     semi->name = "word5";
     struct token *w3 = malloc(sizeof(struct token));
     w3->type = WORD;
@@ -30,14 +30,14 @@ int main(void)
     eo->type = ENDOF;
     eo->name = "eof";
 
-    vector_append(v, w1);
-    vector_append(v, lAN);
-    vector_append(v, w2);
-    vector_append(v, semi);
-    vector_append(v, w3);
-    vector_append(v, lOR);
-    vector_append(v, w4);
-    vector_append(v, eo);
+    add(l, w1);
+    add(l, lAN);
+    add(l, w2);
+    add(l, semi);
+    add(l, w3);
+    add(l, lOR);
+    add(l, w4);
+    add(l, eo);
 
-    printf("%d\n", grammar_check(v));
+    printf("%d\n", grammar_check(l));
 }

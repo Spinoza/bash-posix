@@ -2,9 +2,8 @@
 #include <stdio.h>
 #include <err.h>
 #include <string.h>
-#include "queue.h"
+#include "linked_list.h"
 #include "token.h"
-#include "vector.h"
 
 static int g_command(struct vector *tokens, ssize_t index)
 {
