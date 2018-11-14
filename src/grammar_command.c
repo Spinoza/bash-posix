@@ -192,7 +192,7 @@ struct nL *g_compoundlist(struct nL *tok)
     if (!tok)
         return NULL;
 
-    struct token *save = tok;
+    struct nL *save = tok;
     tok = tok->next;
     if (!tok->next)
         return NULL;

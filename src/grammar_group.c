@@ -40,7 +40,7 @@ struct nL *g_elseclause(struct nL *tok)
         if (!tok)
             return NULL;
 
-        struct token *save = g_elseclause(tok);
+        struct nL *save = g_elseclause(tok);
         return save ? save : tok;
 
     }
@@ -77,7 +77,7 @@ struct nL *g_caseclause(struct nL *tok)
     if (!tok)
         return NULL;
 
-    struct token *save = tok;
+    struct nL *save = tok;
     tok = tok->next;
     if(!tok)
         return NULL;
@@ -163,7 +163,7 @@ struct nL *g_caseitem(struct nL *tok)
     if (tok->elem->type == WORD)
         return NULL;
 
-    struct token *save = tok;
+    struct nL *save = tok;
     tok = tok->next;
     if (!tok)
         return NULL;
@@ -207,6 +207,6 @@ struct nL *g_caseitem(struct nL *tok)
             return NULL;
     }
 
-    struct token *save2 = g_compoundlist(tok);
+    struct nL *save2 = g_compoundlist(tok);
     return (save2 ? save2 : save);
 }
