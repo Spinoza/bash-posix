@@ -20,7 +20,9 @@ enum type
     ENDOF = 14,
     PIPE = 15,
     LOGICAL_OR = 16,
-    AND = 17
+    AND = 17,
+    IONUMBER,
+    HEREDOC
 };
 
 struct token

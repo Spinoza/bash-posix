@@ -2,26 +2,75 @@
 #include "linked_list.h"
 #include "grammar_check.h"
 
+static int is_conform(struct nL *tok)
+{
+    char *args[7] = { ">", "<", ">>", ">&", "<&", ">|", "<>"};
+
+    for (int i = 0; i < 7; i++)
+    {
+        if (strcmp(args[i], tok->elem->name) == 0)
+            return 1;
+    }
+
+    return 0;
+}
+
 static struct nL *g_redirection(struct nL *tok)
 {
-/*
-    struct nL *new = tok;
-    if(new->elem->type == IONUMBER)
-        new = new->next;
-*/
-    return tok;
+    if (tok->elem->type != IONUMBER)
+        return NULL;
+
+    tok = tok->next ? tok->next : NULL;
+
+    if (tok && is_conform(tok) == 1)
+    {
+        tok = tok->next;
+        if (!tok)
+            return NULL;
+        if (tok->elem->type == WORD)
+            return tok;
+        return NULL;
+    }
+
+    if (tok && !strcmp(tok->elem->name, "<<-"))
+    {
+        tok = tok->next;
+        if (!tok)
+            return NULL;
+        if (tok->elem->type == HEREDOC)
+            return tok;
+        return NULL;
+    }
+
+    if (tok && !strcmp(tok->elem->name, "<<"))
+    {
+        tok = tok->next;
+        if (!tok)
+            return NULL;
+        if (tok->elem->type == HEREDOC)
+            return tok;
+        return NULL;
+    }
+
+    return NULL;
 }
 
 
 static struct nL *g_element(struct nL *tok)
 {
-    return tok;
+    if (tok->elem->type == WORD)
+        return tok;
+
+    return g_redirection(tok);
 }
 
 
 static struct nL *g_prefix(struct nL *tok)
 {
-    return tok;
+    if (tok->elem->type == ASSIGNMENT_W)
+        return tok;
+
+    return g_redirection(tok);
 }
 
 struct nL *g_funcdec(struct nL *tok)
