@@ -1,155 +1,175 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <err.h>
-#include "includes/queue.h"
-#include "includes/token.h"
 #include <string.h>
+#include "queue.h"
+#include "token.h"
+#include "vector.h"
 
-static struct queue *g_command(struct queue *tokens, struct queue *grammar)
+static int g_command(struct vector *tokens, int index)
 {
-    return enqueue(grammar, dequeue(tokens));
+    tokens = tokens;
+    return index;
 }
 
-static struct queue *g_pipeline(struct queue *tokens, struct queue *grammar)
+static int g_pipeline(struct vector *tokens, size_t index)
 {
-    struct token *tok = tokens->head->elem;
+    struct token *tok = tokens->arr[index];
     if (!strcmp("!", tok->name))
     {
-        grammar = enqueue(grammar, dequeue(tokens));
+        index++;
     }
 
-    if (!g_command(tokens, grammar))
+    if (index > tokens->size)
     {
-        return NULL;
+        return 0;
+    }
+    tok = tokens->arr[index];
+
+    if ((index = g_command(tokens, index)) == 0)
+    {
+        return 0;
     }
 
-    while (tokens->size > 0 && grammar)
+    while (index < tokens->size)
     {
-        struct token *tok = tokens->head->elem;
+        index++;
+        if (index >= tokens->size)
+            return 0;
+
+        tok = tokens->arr[index];
         if (tok->type == PIPE)
         {
-            grammar = enqueue(grammar, dequeue(tokens));
-            struct token *tok = tokens->head->elem;
-            while (!strcmp(tok->name, "\n"))
+            index++;
+            if (index >= tokens->size)
+                return 0;
+            tok = tokens->arr[index];
+            while (tok->type == ENDOF)
             {
-                grammar = enqueue(grammar, dequeue(tokens));
-                if(!tokens->head)
-                    return NULL;
-                tok = tokens->head->elem;
+                index++;
+                if(index >= tokens->size)
+                    return 0;
+                tok = tokens->arr[index];
             }
-            grammar = g_command(tokens, grammar);
-            if (!grammar)
-                return NULL;
+            index = g_command(tokens, index);
+            if (!index)
+                return 0;
         }
         else
         {
+            index --;
             break;
         }
     }
-    return grammar;
+    return index;
 }
 
-static struct queue *g_andor(struct queue *tokens, struct queue *grammar)
+static int g_andor(struct vector *tokens, size_t index)
 {
-    if (!g_pipeline(tokens, grammar))
+    if ((index = g_pipeline(tokens, index)) == 0)
     {
-        return NULL;
+        return 0;
     }
 
-    while (tokens->size > 0 && grammar)
+    while (index < tokens->size)
     {
-        struct token *tok = tokens->head->elem;
+        index++;
+        if (index >= tokens->size)
+            return 0;
+
+        struct token *tok = tokens->arr[index];
         if (tok->type == LOGICAL_AND || tok->type == LOGICAL_OR)
         {
-            grammar = enqueue(grammar, dequeue(tokens));
-            struct token *tok = tokens->head->elem;
-            while (!strcmp(tok->name, "\n"))
+            index++;
+            if (index >= tokens->size)
+                return 0;
+            tok = tokens->arr[index];
+            while (tok->type == ENDOF)
             {
-                grammar = enqueue(grammar, dequeue(tokens));
-                if (!tokens->head)
-                    return NULL;
-                tok = tokens->head->elem;
+                index++;
+                if (index >= tokens->size)
+                    return 0;
+                tok = tokens->arr[index];
             }
-            grammar = g_pipeline(tokens, grammar);
-            if (!grammar)
-                return NULL;
+            index = g_pipeline(tokens, index);
+            if (index == 0)
+                return 0;
         }
         else
         {
+            index--;
             break;
         }
     }
 
-    return grammar;
+    return index;
 }
 
 
-static struct queue *g_list(struct queue *tokens, struct queue *grammar)
+static int g_list(struct vector *tokens, size_t index)
 {
-    if(g_andor(tokens, grammar) == NULL)
+    index = g_andor(tokens, index);
+    if(index == 0)
     {
-        return NULL;
+        return 0;
     }
-    while(1)
+    while (1)
     {
-        if(tokens->head == NULL)
+        index++;
+        if (index >= tokens->size)
         {
-            return NULL;
+            return 0;
         }
-        else if(tokens->head->elem->type == ENDOF)
+        struct token *tok = tokens->arr[index];
+        if (tok->type == ENDOF)
         {
-            return grammar;
+            return index;
         }
-        else if((tokens->head->elem->type == SEMICOLON)||
-           (tokens->head->elem->type == AND))
+        else if ((tok->type == SEMICOLON)||
+           (tok->type == AND))
         {
-             grammar=enqueue(grammar, dequeue(tokens));
-             if(tokens->head == NULL)
-             {
-                 return NULL;
-             }
-             else if(tokens->head->elem->type == ENDOF)
-             {
-                 return grammar;
-             }
-             else if(!g_andor(tokens, grammar))
-             {
-                 return NULL;
-             }
+            index++;
+            if (index >= tokens->size)
+            {
+                return 0;
+            }
+
+            tok = tokens->arr[index];
+            if (tok->type == ENDOF)
+            {
+                return index;
+            }
+
+            if ((index = g_andor(tokens, index)) == 0)
+            {
+                return 0;
+            }
         }
         else
         {
-            return NULL;
+            return 0;
         }
 
     }
 }
 
-struct queue *grammar_check (struct queue *tokens)
+int grammar_check (struct vector *tokens)
 {
-    struct queue *grammar = init_queue();
-    int is_EOF = 0;
+    size_t ind = 0;
 
-    while(tokens->size > 0)
-    {
-        struct token *tok = tokens->head->elem;
-        if(tok->type == ENDOF)
-        {
-            is_EOF = 1;
-            grammar = enqueue(grammar, dequeue(tokens));
-            break;
-        }
+    struct token *tok = tokens->arr[ind];
+    if (tok->type == ENDOF)
+        return 1;
 
-        else
-        {
-            grammar = g_list(tokens, grammar);
-        }
-    }
+    ind = g_list(tokens, ind);
 
-    free_queue(tokens);
-    if(!is_EOF)
-        return NULL;
-    return grammar;
+    if (!ind)
+        return 0;
+    tok = tokens->arr[ind];
+    if (tok->type == ENDOF)
+        return 1;
+
+    return 0;
 }
 
 
