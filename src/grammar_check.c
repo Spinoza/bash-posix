@@ -102,9 +102,146 @@ static struct nL *g_simplecommand(struct nL *tok)
 
 }
 
-static struct nL *g_command(struct nL *tok)
+static struct nL *g_ruleif(struct nL *tok)
 {
     return tok;
+}
+
+
+static struct nL *g_rulecase(struct nL *tok)
+{
+    return tok;
+}
+
+
+static struct nL *g_ruleuntil(struct nL *tok)
+{
+    return tok;
+}
+
+
+static struct nL *g_rulewhile(struct nL *tok)
+{
+    return tok;
+}
+
+
+static struct nL *g_rulefor(struct nL *tok)
+{
+    return tok;
+}
+
+
+static struct nL *g_compoundlist(struct nL *tok)
+{
+    return tok;
+}
+
+
+static struct nL *g_element(struct nL *tok)
+{
+    return tok;
+}
+
+
+static struct nL *g_prefix(struct nL *tok)
+{
+    return tok;
+}
+
+
+static struct nL *g_redirection(struct nL *tok)
+{
+/*
+    struct nL *new = tok;
+    if(new->elem->type == IONUMBER)
+        new = new->next;
+*/
+    return tok;
+}
+
+static struct nL *g_shellcommand(struct nL *tok)
+{
+    struct nL *new = tok;
+    if(!strcmp(new->elem->name, "{"))
+    {
+        new =new->next;
+        if(!new)
+            return NULL;
+        new = g_compoundlist(new);
+        if(new)
+        {
+            new = new->next;
+            if(!new)
+                return NULL;
+            if(!strcmp("}", new->elem->name))
+                return new;
+        }
+    }
+
+    new = tok;
+    if(!strcmp(new->elem->name, "("))
+    {
+        new =new->next;
+        if(!new)
+            return NULL;
+        new = g_compoundlist(new);
+        if(new)
+        {
+            new = new->next;
+            if(!new)
+                return NULL;
+            if(!strcmp(")", new->elem->name))
+                return new;
+        }
+    }
+
+    new = g_rulefor(tok);
+    if(new)
+        return new;
+
+    new = g_rulewhile(tok);
+    if(new)
+        return new;
+
+    new = g_ruleuntil(tok);
+    if(new)
+        return new;
+
+    new = g_rulecase(tok);
+    if(new)
+        return new;
+
+    return g_ruleif(tok);
+
+}
+
+static struct nL *g_command(struct nL *tok)
+{
+    struct nL *new = g_simplecommand(tok);
+    if(new)
+        return new;
+    new = g_shellcommand(tok);
+    if(new)
+    {
+        while(1)
+        {
+            tok = new;
+            new = g_redirection(new->next);
+            if(!new)
+                return tok;
+        }
+    }
+    new = g_funcdec(tok);
+    if(!new)
+        return NULL;
+    while(1)
+    {
+        tok = new;
+        new = g_redirection(new->next);
+        if(!new)
+            return tok;
+    }
 }
 
 static struct nL *g_pipeline(struct nL *tok)
