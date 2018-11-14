@@ -22,7 +22,10 @@ enum type
     LOGICAL_OR = 16,
     AND = 17,
     IONUMBER,
-    HEREDOC
+    HEREDOC,
+    IN,
+    ESAC,
+    ELIF
 };
 
 struct token

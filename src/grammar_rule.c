@@ -23,7 +23,38 @@ static int is_conform(struct nL *tok)
 
 struct nL *g_ruleif(struct nL *tok)
 {
-    return tok;
+    if(tok->elem->type != IF)
+        return NULL;
+    tok = tok->next;
+    if(!tok)
+        return NULL;
+    tok = g_compoundlist(tok);
+    if(!tok)
+        return NULL;
+    tok = tok->next;
+    if(!tok)
+        return NULL;
+    if(tok->elem->type != THEN)
+        return NULL;
+    tok = tok->next;
+    if(!tok)
+        return NULL;
+    tok = g_compoundlist(tok);
+    if(!tok)
+        return NULL;
+    tok = tok->next;
+    if(!tok)
+        return NULL;
+    struct *save = g_elseclose(tok);
+    if(save)
+    {
+        tok = save->next;
+        if(!tok)
+            return NULL;
+    }
+    if(tok->elem->type == ESAC)
+        return tok;
+    return NULL;
 }
 
 
@@ -119,7 +150,67 @@ struct nL *g_rulewhile(struct nL *tok)
 
 struct nL *g_rulefor(struct nL *tok)
 {
-    return tok;
+    if(tok->elem->type != FOR)
+        return NULL;
+    tok = tok->next;
+    if(!tok)
+        return NULL;
+    if((tok->elem->type != WORD)||(is_conform(tok)!= 0))
+        return NULL;
+    tok = tok->next;
+    if(!tok)
+        return NULL;
+
+    if(tok->elem->type == SEMICOLON)
+    {
+        tok = tok->next;
+        if(!tok)
+            return NULL;
+    }
+    else
+    {
+        struct nL *save = tok;
+        while(tok->elem->type == ENDOF)
+        {
+            tok = tok->next;
+            if(!tok)
+                return NULL;
+        }
+        if(tok->elem->type == IN)
+        {
+            tok = tok->next;
+            if(!tok)
+                return NULL;
+            while((tok->elem->type == WORD)&&(is_conform(tok) == 0))
+            {
+                tok = tok->next;
+                if(!tok)
+                    return NULL;
+            }
+            if((tok->elem->type == SEMICOLON)||(tok->elem->type == ENDOF))
+            {
+                tok = tok->next;
+                if (!tok)
+                    return NULL;
+            }
+            else
+            {
+                tok = save;
+            }
+        }
+        else
+        {
+            tok = save;
+        }
+    }
+
+    while(tok->elem->type == ENDOF)
+    {
+        tok = tok->next;
+        if(!tok)
+            return NULL;
+    }
+    return g_dogroup(tok);
 }
 
 
