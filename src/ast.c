@@ -48,6 +48,8 @@ static enum ntype node_getype(enum type type)
             return IN;
         case 20:
             return ELIF;
+        case 23:
+            return CONDITION;
         default:
             return INSTRUCT;
     }

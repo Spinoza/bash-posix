@@ -25,7 +25,8 @@ enum type
     ESAC = 19,
     ELIF = 20,
     HEREDOC = 21,
-    IONUMBER = 22
+    IONUMBER = 22,
+    CONDITION = 23
 };
 
 struct token
