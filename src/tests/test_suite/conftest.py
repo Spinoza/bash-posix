@@ -23,7 +23,7 @@ class YamlItem(pytest.Item):
     def runtest(self):
         tmp = self.command.decode().split()
         args = []
-        args.append("./../../../build/lexer_main")
+        args.append("../../../../build/lexer_main")
         for string in tmp:
             args.append(string)
         process = subprocess.Popen(args,\

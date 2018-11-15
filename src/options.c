@@ -28,7 +28,7 @@ int set_commands(struct option *options, char *string)
         options->minus_O = TRUE;
         return 1;
     }
-    if(!strcmp(string,"norc"))
+    if(!strcmp(string,"--norc"))
     {
         options->norc = TRUE;
         return 1;
@@ -67,6 +67,7 @@ int options_parser(int argc, char *argv[], struct option *options)
     }
     return 0;
 }
+
 void print_options(struct option *options)
 {
     printf("c %d\n",options->c);
@@ -76,6 +77,7 @@ void print_options(struct option *options)
     printf("ast_print %d\n",options->ast_print);
     printf("version %d\n",options->version);
 }
+
 int main(int argc, char *argv[])
 {
     struct option *options = option_init();
