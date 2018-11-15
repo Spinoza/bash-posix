@@ -6,7 +6,6 @@
 
 #define LIST_LENGTH 18
 
-
 static struct token *token_init(void)
 {
     struct token *new = malloc(sizeof(struct token));
@@ -47,7 +46,7 @@ int check_semicolon(char *string)
 {
     for (int i = 0; *(string + i); i++)
     {
-        if(*(string + i) == ';')
+        if (*(string + i) == ';')
             return i;
     }
     return 0;
@@ -56,7 +55,7 @@ enum type check_word(char *string)
 {
     for (int i = 1; *(string + i); i++)
     {
-        if(*(string + i) == '=')
+        if (*(string + i) == '=')
             return ASSIGNMENT_W;
     }
     return WORD;
@@ -73,7 +72,7 @@ int check_list(struct token *new, char *string, char **list)
             return 1;
         }
     }
-    if(!strcmp(string, "\n"))
+    if (!strcmp(string, "\n"))
     {
         new->type = ENDOF;
         return 1;
@@ -96,17 +95,17 @@ void split_semicolon(struct token *new, char *string,
 void read_string(struct token *new, char *string, char **list,
         struct linked_list *l_list)
 {
-    if(!string || !strcmp(string,""))
+    if (!string || !strcmp(string,""))
     {
         free(new);
         return;
     }
     add(l_list,new);
-    if(check_list(new,string,list))
+    if (check_list(new,string,list))
         return;
     new->type = check_word(string);
     int index_sc = check_semicolon(string);
-    if(index_sc)
+    if (index_sc)
     {
         split_semicolon(new,string,l_list,index_sc);
         struct token *next = token_init();
@@ -131,4 +130,76 @@ struct linked_list *lexer (char *input[], int argc)
     add(l_list,eof);
     free(list);
     return l_list;
+}
+<<<<<<< HEAD
+=======
+void print_enum(enum type type)
+{
+    switch (type)
+    {
+        case 0:
+                printf("IF");
+                break;
+        case 1:
+                printf("THEN");
+                break;
+        case 2:
+                printf("ELSE");
+                break;
+        case 3:
+                printf("FI");
+                break;
+        case 4:
+                printf("&&");
+                break;
+        case 5:
+                printf(";");
+                break;
+        case 6:
+                printf("WHILE");
+                break;
+        case 7:
+                printf("FOR");
+                break;
+        case 8:
+                printf("UNTIL");
+                break;
+        case 9:
+                printf("CASE");
+                break;
+        case 10:
+                printf("DO");
+                break;
+        case 11:
+                printf("DONE");
+                break;
+        case 12:
+                printf("WORD");
+                break;
+        case 13:
+                printf("ASSIGNMENT_W");
+                break;
+        case 14:
+                printf("ENDOF");
+                break;
+        case 15:
+                printf("PIPE");
+                break;
+        case 16:
+                printf("LOGICAL_OR");
+                break;
+        case 17:
+                printf("AND");
+                break;
+    }
+}
+void print_list(struct linked_list *l_list)
+{
+    printf("printing new list");
+    struct nL *head = l_list->head;
+    for (; head; head = head->next)
+    {
+        print_enum(head->elem->type);
+        printf("\n");
+    }
 }
