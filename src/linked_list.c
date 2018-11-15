@@ -21,7 +21,7 @@ struct linked_list *add(struct linked_list *l, struct token *elem)
     if (!l)
         return l;
     struct nL *node = malloc(sizeof(struct nL));
-    if(!node)
+    if (!node)
         return l;
 
     node->next = NULL;
@@ -57,7 +57,7 @@ void free_list(struct linked_list *l)
     {
         struct nL *copy = node;
         node = node->next;
-        if(copy->elem->type == WORD || copy->elem->type == ASSIGNMENT_W)
+        if (copy->elem->type == WORD || copy->elem->type == ASSIGNMENT_W)
             free(copy->elem->name);
         free(copy->elem);
         free(copy);
