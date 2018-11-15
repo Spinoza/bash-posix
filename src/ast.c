@@ -104,7 +104,18 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
     {
         return tok;
     }
-    if (r->type == A_IF || r->type == A_ELIF)
+
+    if (r->type == A_ELIF)
+    {
+        struct node *new = init_node("condition", 23);
+        add_node(r, new);
+        tok = build_aux(new, tok);
+        new = init_node("then", THEN);
+        add_node(r, new);
+        tok = build_aux(new, tok->next);
+        return tok;
+    }
+    if (r->type == A_IF)
     {
         struct node *new = init_node("condition", 23);
         add_node(r, new);
@@ -139,8 +150,13 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
     if((r->type == A_BODY)||(r->type == A_EBODY)||(r->type == A_ELIF))
     {
         while((tok->elem->type != ELIF)&&(tok->elem->type != ELSE)&&
-              (tok->elem->type != DONE)&&(tok->elem->type != FI) && tok->elem->type != SEMICOLON)
+              (tok->elem->type != DONE)&&(tok->elem->type != FI))
         {
+            if (tok->elem->type == SEMICOLON)
+            {
+                tok = tok->next;
+                continue;
+            }
             struct node *new = init_node(tok->elem->name, tok->elem->type);
             add_node(r, new);
             tok = build_aux(new, tok->next);

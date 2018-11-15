@@ -218,12 +218,8 @@ struct nL *g_compoundlist(struct nL *tok)
             break;
         }
         save = tok;
-        tok = tok->next;
-        if (!tok)
-            return NULL;
+        t = tok->elem->type;
     }
-
-    save = tok;
     tok = tok->next;
     if (!tok)
         return NULL;

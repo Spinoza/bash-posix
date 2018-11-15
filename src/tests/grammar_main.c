@@ -81,6 +81,9 @@ int main(void)
    struct token *eo13 = malloc(sizeof(struct token));
     eo13->type = FI;
     eo13->name = "fi";
+   struct token *eo15 = malloc(sizeof(struct token));
+    eo15->type = DONE;
+    eo15->name = "done";
    struct token *eo14 = malloc(sizeof(struct token));
     eo14->type = ENDOF;
     eo14->name = "eof";
@@ -118,6 +121,7 @@ int main(void)
  add(l, eo11);
  add(l, eo12);
  add(l, eo13);
+ add(l, eo15);
  add(l, eo14);
 
     struct nL *head = l->head;
@@ -131,6 +135,6 @@ int main(void)
     printf("%d\n", grammar_check(l));
     struct node *ast = build_ast(l);
     print_ast(ast);
-    printf("AST has been printed ! well done everyone !");
+    printf("AST has been printed ! well done everyone !\n");
     return 1;
 }
