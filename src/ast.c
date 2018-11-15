@@ -86,24 +86,46 @@ static struct node* init_node(char *instr, enum type type)
 
 static nL *build_aux(struct node *r, struct nL *tok)
 {
-    if(r->type == ROOT)
+    if (r->type == ROOT)
     {
         struct node *new = init_node(tok->elem->name, tok->elem->type);
         add_node(r, new);
         tok = build_aux(new, tok->next);
     }
-    if(r->type == IF)
+    if (r->type == IF)
     {
         struct node *new = init_node("condition", 23);
         add_node(r, new);
         tok = build_aux(new, tok);
         new = init_node("then", THEN);
         add_node(r, new);
-        tok = build_aux(then, tok->next);
+        tok = build_aux(new, tok->next);
         while(tok->elem->type == ELIF)
         {
             new = init_node("elif", ELIF);
         }
+    }
+
+    if (r->type == WHILE || r->type == UNTIL)
+    {
+        struct node *new = init_node("condition", 23);
+        add_node(r, new);
+        tok = build_aux(new, tok);
+        new = init_node("do", DO);
+        add_node(r,new);
+        tok = build_aux(new, tok->next);
+        return tok->next;
+    }
+
+    if (r->type == FOR)
+    {
+        struct node *new = init_node("condition", 23);
+        add_node(r, new);
+        tok = build_aux(new, tok);
+        new = init_node("do", DO);
+        add_node(r, new);
+        tok = build_aux(new, tok->next);
+        return tok->next;
     }
 }
 
