@@ -1,0 +1,52 @@
+basic_word:
+        type: "output diff"
+        command: "word"
+        expected:
+                stdout:
+                rvalue: 1
+
+if_case:
+        type: "output diff"
+        command: "if word; then word; else word; fi"
+        expected:
+                stdout:
+                rvalue: 1
+
+until_case:
+        type: "output diff"
+        command: "until word && word do word done"
+        expected:
+                stdout:
+                rvalue: 1
+
+while_case:
+        type: "output diff"
+        command: "while word do word; word; word; done"
+        expected:
+                stdout:
+                rvalue: 1
+
+complex_case:
+        type: "output diff"
+        command: "while bonsoir || bonnenuit; do thx; if matin; then butwtf; elif jour; then butearly; else verymuch; fi done"
+        expected:
+                stdout:
+                rvalue: 1
+syntax_error:
+        type: "output diff"
+        command: "while do do foo foo; sleep 2; done"
+        expected:
+                stdout:
+                rvalue: 0
+pipe_test:
+        type: "output diff"
+        command: "cat | echo hello"
+        expected:
+                stdout:
+                rvalue: 1
+function_case:
+        type: "output diff"
+        command: "function arr() { yarrr }"
+        expected:
+                stdout:
+                rvalue: 1
