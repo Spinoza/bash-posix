@@ -2,6 +2,13 @@
 #include "linked_list.h"
 #include "grammar_check.h"
 
+/*!
+ * \file grammar_rule.c
+ * \author YDE SO
+ * \version 0.1
+*/
+
+
 static int is_conform(struct nL *tok)
 {
     char *args[13] = { ">", "<", ">>", ">&", "<&", ">|", "<>"
