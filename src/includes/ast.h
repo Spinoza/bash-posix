@@ -13,7 +13,10 @@ enum ntype
     CASE,
     CONDITION,
     INSTRUCT,
-    ROOT
+    ROOT,
+    FOR,
+    IN,
+    ELIF
 }
 
 struct node
@@ -21,7 +24,8 @@ struct node
     size_t nbchild;
     char *instr;
     enum ntype type;
-    struct nT *children;
+    struct node *children;
+    struct node *next;
 };
 
 struct node* build_ast(struct linked_list *tokens);

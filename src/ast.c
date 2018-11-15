@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "lexer.h"
 #include "linked_list.h"
+#include "token.h"
 
 static struct node* add_node(struct node* p, struct node *c)
 {
@@ -18,14 +19,39 @@ static struct node* add_node(struct node* p, struct node *c)
     }
 
     ch->next = c;
+    p->nbchild++;
     return p;
 }
 
-static struct node* setup_node(struct node *n, char *instr, enum ntype type)
+static enum ntype node_getype(enum type type)
 {
-    n->instr = instr;
-    n->ntype = type;
-    return n;
+
+    switch (type)
+    {
+        case 0:
+            return IF;
+        case 1:
+            return BODY;
+        case 2:
+            return EBODY;
+        case 6:
+            return WHILE;
+        case 7:
+            return FOR;
+        case 8:
+            return UNTIL;
+        case 9:
+            return CASE;
+        case 10:
+            return BODY;
+        case 18:
+            return IN;
+        case 20:
+            return ELIF;
+        default:
+            return INSTRUCT;
+    }
+
 }
 
 static void free_node(struct node *n)
@@ -41,15 +67,15 @@ static void free_node(struct node *n)
     free(n);
 }
 
-static struct node* init_node(void)
+static struct node* init_node(char *instr, enum type type)
 {
     struct node* node = malloc (sizeof(struct node));
     if (!node)
         return NULL;
 
     node->nbchild = 0;
-    node->instr = NULL;
-    node->type = ROOT;
+    node->instr = instr;
+    node->type = node_getype(type);
     node->children = NULL;
     node->next = NULL;
 
