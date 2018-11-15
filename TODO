@@ -17,7 +17,7 @@
 |
 |--------Shell Parser[]
 |---------- Basic Lexer []
-|---------- Basic Grammar []
+|---------- Basic Grammar [X]
 |---------- AST creation []
 |
 |--------AST Printer[]

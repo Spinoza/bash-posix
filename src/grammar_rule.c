@@ -53,7 +53,7 @@ struct nL *g_ruleif(struct nL *tok)
         if(!tok)
             return NULL;
     }
-    if(tok->elem->type == ESAC)
+    if(tok->elem->type == FI)
         return tok;
     return NULL;
 }
