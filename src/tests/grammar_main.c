@@ -60,7 +60,7 @@ int main(void)
     add(l, eo2);
 
     struct nL *head = l->head;
-    while(head)
+    while (head)
     {
         printf("%s\n", head->elem->name);
         head = head->next;
