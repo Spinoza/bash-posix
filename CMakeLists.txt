@@ -24,11 +24,9 @@ target_link_libraries(lexer_main lexer)
 add_executable(grammar_main ${CMAKE_SOURCE_DIR}/src/tests/grammar_main.c)
 target_link_libraries(grammar_main grammar_check)
 
-## TO FIX LATER WHEN TESTSUITE IS DONE
-#[[add_custom_target(check_lexer
-    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_suite.py \
+add_custom_target(check_lexer
+    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_suite.py
     ${CMAKE_SOURCE_DIR}/build/lexer_main
-
     COMMENT "Running tests on lexer, building token linked_list"
     DEPENDS lexer_main
-)]]
+)
