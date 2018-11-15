@@ -1,15 +1,29 @@
 #include "ast.h"
 
-
-struct assignement
+struct assignment
 {
     char *name;
     char *value;
 }
 
+enum operators
+{
+    FALSE = 0,
+    INFERIOR = 2,
+    SUPERIOR,
+    INFERIOR_EQ,
+    SUPERIOR_EQ,
+    EQUAL,
+    DIFFERENT,
+    S_EQUAL,
+    S_N_EQUAL
+};
 struct tab_a
 {
-    int nb;
-    struct assignement **assignement;
-    //to implement with hashmap
+    size_t nb;
+    size_t capacity;
+    struct assignment **assignment;
+    //to implemen0t with hashmap
 }
+
+int execution_ast(struct node *n);

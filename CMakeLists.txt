@@ -13,12 +13,18 @@ add_library(linked_list ${CMAKE_SOURCE_DIR}/src/linked_list.c)
 add_library(lexer ${CMAKE_SOURCE_DIR}/src/lexer.c)
 target_link_libraries(lexer PRIVATE linked_list)
 
-add_library(grammar ${CMAKE_SOURCE_DIR}/src/grammar_check.c
-    ${CMAKE_SOURCE_DIR}/src/grammar_command.c
-    ${CMAKE_SOURCE_DIR}/src/grammar_rule.c
-    ${CMAKE_SOURCE_DIR}/src/grammar_group.c
-    )
+add_library(execution ${CMAKE_SOURCE_DIR}/src/execution_ast.c)
+
+add_library(grammar_check ${CMAKE_SOURCE_DIR}/src/grammar_check.c)
+target_link_libraries(grammar_check PUBLIC lexer)
+
+add_library(ast ${CMAKE_SOURCE_DIR}/src/ast.c)
+
 add_executable(options ${CMAKE_SOURCE_DIR}/src/options.c)
+
+add_executable(exec_main ${CMAKE_SOURCE_DIR}/src/tests/exec_main.c)
+target_link_libraries(exec_main execution)
+target_link_libraries(exec_main ast)
 
 add_executable(lexer_main ${CMAKE_SOURCE_DIR}/src/tests/lexer_main.c)
 target_link_libraries(lexer_main lexer)
