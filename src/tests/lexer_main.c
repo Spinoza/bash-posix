@@ -80,6 +80,9 @@ void print_enum(enum type type)
         case 22:
                 printf("IONUMBER");
                 break;
+        case 23:
+                printf("CONDITION");
+                break;
     }
 }
 void print_list(struct linked_list *l_list)

@@ -1,5 +1,8 @@
 #include "ast.h"
 
+
+//if while until for
+
 int if_execution(struct node *n)
 {
     if (execution(n->children[0]))
@@ -12,14 +15,14 @@ int execution(struct node *n)
 {
     if (n->type == IF)
         return if_execution(n);
-    if (n->type == WHILE)
+    if (n->type == WHILE || n->type == FOR)
     {
         if (execution(n->children[0]))
             return execution(n->children[1]);
         else
             return 0;
     }
-    if (n->type == )
+
 }
 
 
