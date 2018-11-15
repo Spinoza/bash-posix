@@ -18,9 +18,9 @@
 |--------Shell Parser[]
 |---------- Basic Lexer [X]
 |---------- Basic Grammar [X]
-|---------- AST creation []
+|---------- AST creation [X]
 |
-|--------AST Printer[]
+|--------AST Printer[X]
 |
 |--------Test suite []
 |---------- Using Cmake / autotools []
