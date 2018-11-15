@@ -9,7 +9,8 @@ OBJ=linked_list.o src/lexer.o src/tests/lexer_main.o
 all: $(OBJS_LIB)
 	$(CC) $(CFLAGS) -o main $(OBJS_LIB)
 
-test:   $(OBJ)
+test: $(OBJ)
+	$(CC) $(CFLAGS) -o main $(OBJ)
 
 .PHONY: test all clean
 

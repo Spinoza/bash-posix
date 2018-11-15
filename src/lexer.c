@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define LIST_LENGTH 18
+#define LIST_LENGTH 21
 
 static struct token *token_init(void)
 {
@@ -168,7 +168,6 @@ void read_string(struct token *new, char *string, char **list,
         split_redirection(new,string,l_list,index);
         struct token *n = token_init();
         read_string(n, string + index, list, l_list);
-        return;//not tryly working
     }
     int index_sc = check_semicolon(string);
     if (index_sc)

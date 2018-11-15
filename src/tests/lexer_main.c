@@ -66,19 +66,19 @@ void print_enum(enum type type)
                 printf("&");
                 break;
         case 18:
-                printf("IONUMBER");
-                break;
-        case 19:
-                printf("HEREDOC");
-                break;
-        case 20:
                 printf("IN");
                 break;
-        case 21:
+        case 19:
                 printf("ESAC");
                 break;
-        case 22:
+        case 20:
                 printf("ELIF");
+                break;
+        case 21:
+                printf("HEREDOC");
+                break;
+        case 22:
+                printf("IONUMBER");
                 break;
     }
 }
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 {
     if (argc < 2)
     {
-        printf("Usage: lexer : takes at least one argument");
+        printf("Usage: lexer : takes at least one argument\n");
         return 1;
     }
     struct linked_list *l_list = lexer(argv,argc);
