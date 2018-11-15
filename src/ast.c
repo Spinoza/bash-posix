@@ -82,4 +82,32 @@ static struct node* init_node(char *instr, enum type type)
     return node;
 }
 
-struct node* build_ast(struct linked_list *tokens);
+static nL *build_aux(struct node *r, struct nL *tok)
+{
+    if(r->type == ROOT)
+    {
+        struct node *new = init_node(tok->elem->name, tok->elem->type);
+        add_node(r, new);
+        tok = build_aux(new, tok->next);
+    }
+    if(r->type == IF)
+    {
+        struct node *new = init_node("condition", 23);
+        add_node(r, new);
+        tok = build_aux(new, tok);
+        new = init_node("then", THEN);
+        add_node(r, new);
+        tok = build_aux(then, tok->next);
+        while(tok->elem->type == ELIF)
+        {
+            new = init_node("elif", ELIF);
+        }
+    }
+}
+
+struct node* build_ast(struct linked_list *tokens)
+{
+    struct node *tree = init_node();
+    build_aux(tree, tokens->head);
+    return tree;
+}
