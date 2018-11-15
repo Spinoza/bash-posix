@@ -37,11 +37,11 @@ static char **init_list(void)
     *(list + 15) = "|";
     *(list + 16) = "||";
     *(list + 17) = "&";
-    *(list + 18) = "IONUMBER";
-    *(list + 19) = "HEREDOC";
-    *(list + 20) = "IN";
-    *(list + 21) = "ESAC";
-    *(list + 22) = "ELIF";
+    *(list + 18) = "IONUMBER";//to implement
+    *(list + 19) = "HEREDOC";//to implement
+    *(list + 20) = "in";
+    *(list + 21) = "esac";
+    *(list + 22) = "elif";
 
     return list;
 }
