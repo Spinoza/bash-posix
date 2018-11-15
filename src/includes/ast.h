@@ -21,7 +21,7 @@ struct node
     size_t nbchild;
     char *instr;
     enum ntype type;
-    struct node *children;
+    struct nT *children;
 };
 
 struct node* build_ast(struct linked_list *tokens);
