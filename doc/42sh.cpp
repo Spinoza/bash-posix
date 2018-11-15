@@ -17,7 +17,9 @@
 //!	The compilation process is as follows : mkdir build at root, cd build, cmake .. make\n
 //!	The program is then launched as follows : ./42sh [-/+option] [input line]\n
 //! @section description DESCRIPTION
-//!
+//!	The 42sh project is a command language interpreter base on the sh(1p) interperter.        Thus it follows its behaviour: the standard input, a command line script or a file        , is read and executed. But before execution, it check that the commands are expre        ssed in the conform LL grammar. It is composed with [FIXME]2 functions:\n
+//!     The lexer() function splits an input line from a file, the terminal, or a string,         into tokens.\n
+//!     The grammar_check() function checks if a list of token is conform to the LL grammar.\n
 //! @section options OPTIONS
 //!
 //! 	The 42sh program can be called with several options, all conforming to the standar	  d options of the shell language.\n
