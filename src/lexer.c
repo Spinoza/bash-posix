@@ -18,7 +18,7 @@ static void read_string(struct token *new, char *string, char **list,
 
 static char **init_list(void)
 {
-    char **list = malloc(sizeof(char *) * 20);
+    char **list = malloc(sizeof(char *) * 23);
     *list = "if";
     *(list + 1) ="then";
     *(list + 2) = "else";
@@ -37,8 +37,11 @@ static char **init_list(void)
     *(list + 15) = "|";
     *(list + 16) = "||";
     *(list + 17) = "&";
-    *(list + 18) = "IONUMBER"; //Need to be implemented
-    *(list + 19) = "HEREDOC"; //Need to be implemented
+    *(list + 18) = "IONUMBER";
+    *(list + 19) = "HEREDOC";
+    *(list + 20) = "IN";
+    *(list + 21) = "ESAC";
+    *(list + 22) = "ELIF";
 
     return list;
 }
@@ -130,76 +133,4 @@ struct linked_list *lexer (char *input[], int argc)
     add(l_list,eof);
     free(list);
     return l_list;
-}
-<<<<<<< HEAD
-=======
-void print_enum(enum type type)
-{
-    switch (type)
-    {
-        case 0:
-                printf("IF");
-                break;
-        case 1:
-                printf("THEN");
-                break;
-        case 2:
-                printf("ELSE");
-                break;
-        case 3:
-                printf("FI");
-                break;
-        case 4:
-                printf("&&");
-                break;
-        case 5:
-                printf(";");
-                break;
-        case 6:
-                printf("WHILE");
-                break;
-        case 7:
-                printf("FOR");
-                break;
-        case 8:
-                printf("UNTIL");
-                break;
-        case 9:
-                printf("CASE");
-                break;
-        case 10:
-                printf("DO");
-                break;
-        case 11:
-                printf("DONE");
-                break;
-        case 12:
-                printf("WORD");
-                break;
-        case 13:
-                printf("ASSIGNMENT_W");
-                break;
-        case 14:
-                printf("ENDOF");
-                break;
-        case 15:
-                printf("PIPE");
-                break;
-        case 16:
-                printf("LOGICAL_OR");
-                break;
-        case 17:
-                printf("AND");
-                break;
-    }
-}
-void print_list(struct linked_list *l_list)
-{
-    printf("printing new list");
-    struct nL *head = l_list->head;
-    for (; head; head = head->next)
-    {
-        print_enum(head->elem->type);
-        printf("\n");
-    }
 }

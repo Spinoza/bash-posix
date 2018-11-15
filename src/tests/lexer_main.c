@@ -71,6 +71,15 @@ void print_enum(enum type type)
         case 19:
                 printf("HEREDOC");
                 break;
+        case 20:
+                printf("IN");
+                break;
+        case 21:
+                printf("ESAC");
+                break;
+        case 22:
+                printf("ELIF");
+                break;
     }
 }
 void print_list(struct linked_list *l_list)
@@ -87,7 +96,7 @@ void print_list(struct linked_list *l_list)
 
 int main(int argc, char *argv[])
 {
-    if(argc < 2)
+    if (argc < 2)
     {
         printf("Usage: lexer : takes at least one argument");
         return 1;

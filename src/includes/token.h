@@ -21,11 +21,11 @@ enum type
     PIPE = 15,
     LOGICAL_OR = 16,
     AND = 17,
-    IONUMBER,
-    HEREDOC,
-    IN,
-    ESAC,
-    ELIF
+    IONUMBER = 18,
+    HEREDOC = 19,
+    IN = 20,
+    ESAC = 21,
+    ELIF = 22
 };
 
 struct token
