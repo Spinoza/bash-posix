@@ -18,7 +18,7 @@ static void read_string(struct token *new, char *string, char **list,
 
 static char **init_list(void)
 {
-    char **list = malloc(sizeof(char *) * 23);
+    char **list = malloc(sizeof(char *) * 21);
     *list = "if";
     *(list + 1) ="then";
     *(list + 2) = "else";
@@ -37,11 +37,9 @@ static char **init_list(void)
     *(list + 15) = "|";
     *(list + 16) = "||";
     *(list + 17) = "&";
-    *(list + 18) = "IONUMBER";//to implement
-    *(list + 19) = "HEREDOC";//to implement
-    *(list + 20) = "in";
-    *(list + 21) = "esac";
-    *(list + 22) = "elif";
+    *(list + 18) = "in";
+    *(list + 19) = "esac";
+    *(list + 20) = "elif";
 
     return list;
 }
@@ -60,6 +58,39 @@ enum type check_word(char *string)
     {
         if (*(string + i) == '=')
             return ASSIGNMENT_W;
+    }
+    return WORD;
+}
+
+int isanumber(char a)
+{
+    if (a >= 0 && a <= 9)
+        return 1;
+    return 0;
+}
+
+int isaredirection(char a)
+{
+    if (a == '<' || a == '>')
+        return 1;
+    return 0;
+}
+
+enum type check_ionumber(char *string)
+{
+    int b = 0;
+    for (int i = 0; *(string + i); i++)
+    {
+        if (isanumber(*(string + i)))
+            b++;
+        else
+        {
+            if (b)
+            {
+                if (isaredirection(*(string + i)))
+                    return IONUMBER;
+            }
+        }
     }
     return WORD;
 }
@@ -107,6 +138,8 @@ void read_string(struct token *new, char *string, char **list,
     if (check_list(new,string,list))
         return;
     new->type = check_word(string);
+    if (new->type == WORD)
+        new->type = check_ionumber(string);
     int index_sc = check_semicolon(string);
     if (index_sc)
     {
