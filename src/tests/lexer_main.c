@@ -83,6 +83,9 @@ void print_enum(enum type type)
         case 23:
                 printf("CONDITION");
                 break;
+        case 24:
+                printf("ROOT");
+                break;
     }
 }
 void print_list(struct linked_list *l_list)

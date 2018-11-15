@@ -1,7 +1,6 @@
 import pytest
 import subprocess
 import yaml
-
 def pytest_collect_file(parent, path):
     if path.ext == ".yml" and path.basename.startswith("test"):
         return YamlFile(path, parent)
@@ -23,7 +22,8 @@ class YamlItem(pytest.Item):
     def runtest(self):
         tmp = self.command.decode().split()
         args = []
-        args.append("../../../../build/lexer_main")
+        print("hello")
+        args.append("./test_suite/lexer_main")
         for string in tmp:
             args.append(string)
         process = subprocess.Popen(args,\
