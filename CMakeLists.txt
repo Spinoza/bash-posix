@@ -24,9 +24,18 @@ target_link_libraries(lexer_main lexer)
 add_executable(grammar_main ${CMAKE_SOURCE_DIR}/src/tests/grammar_main.c)
 target_link_libraries(grammar_main grammar_check)
 
+add_custom_target(set_env
+    COMMAND pip install -r ${CMAKE_SOURCE_DIR}/src/tests/test_suite/requirements.txt
+    COMMAND python -m venv env
+    )
+
+execute_process(
+    COMMAND source ${CMAKE_SOURCE_DIR}/build/env/bin/activate
+    )
+
 add_custom_target(check_lexer
-    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_suite.py
-    ${CMAKE_SOURCE_DIR}/build/lexer_main
+    COMMAND pytest ${CMAKE_SOURCE_DIR}/src/tests/test_suite/.
     COMMENT "Running tests on lexer, building token linked_list"
     DEPENDS lexer_main
+    COMMAND deactivate
 )

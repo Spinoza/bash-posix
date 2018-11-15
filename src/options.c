@@ -7,66 +7,44 @@
 struct option *option_init(void)
 {
     struct option *new = malloc(sizeof(struct option));
-    new->i = FALSE;
     new->minus_O = FALSE;
     new->plus_O = FALSE;
-    new->l = FALSE;
-    new->r = FALSE;
-    new->s = FALSE;
-    new->D = FALSE;
+    new->c = FALSE;
     new->norc = FALSE;
     new->ast_print = FALSE;
     new->version = FALSE;
     return new;
 }
 
-int set_command(char *string, struct option *options)
+int set_commands(struct option *options, char *string)
 {
-    if(!strcmp(string, "i"))
+    if(!strcmp(string,"-c"))
     {
-        options->i = TRUE;
+        options->c = TRUE;
         return 1;
     }
-    if(!strcmp(string, "l"))
+    if(!strcmp(string,"-O"))
     {
-        options->l = TRUE;
+        options->minus_O = TRUE;
         return 1;
     }
-    if(!strcmp(string, "r"))
+    if(!strcmp(string,"norc"))
     {
-        options->r = TRUE;
+        options->norc = TRUE;
         return 1;
     }
-    if(!strcmp(string, "s"))
+    if(!strcmp(string,"--ast-print"))
     {
-        options->s = TRUE;
+        options->ast_print = TRUE;
         return 1;
     }
-    if(!strcmp(string, "D"))
+    if(!strcmp(string,"--version"))
     {
-        options->D = TRUE;
+        options->version = TRUE;
         return 1;
     }
     return 0;
 }
-
-int option_command(char *argv[], struct option *options, int i)
-{
-    if(!argv[i + 1]) //because -c needs to be followed by a command
-    {
-        fprintf(stderr,"42sh : -c option must be followed by a valid command.\n"
-                "Usage : -c [i,l,r,s,D].\n");
-        return 2;
-    }
-    if(!set_command(argv[i + 1],options))
-    {
-        fprintf(stderr,"42sh : wrong command.\n\
-                Usage : -c [i,l,r,s,D].\n");
-        return 127;
-    }
-    return 0;
-}
-
 //Parses the options, return values are the ones from bash
 int options_parser(int argc, char *argv[], struct option *options)
 {
@@ -74,28 +52,13 @@ int options_parser(int argc, char *argv[], struct option *options)
     {
         if(argv[i][0] == '-')
         {
-            if(!strcmp(argv[i],"-c"))
-            {
-                int res = option_command(argv,options, i);
-                i++;
-                if(res != 0)
-                    return res;
-            }
-            else if(!strcmp(argv[i],"-O"))
-                options->minus_O = TRUE;
-            else if(!strcmp(argv[i],"--norc"))
-                options->norc = TRUE;
-            else if(!strcmp(argv[i],"--ast-print"))
-                options->ast_print = TRUE;
-            else if(!strcmp(argv[i],"--version"))
-                options->version = TRUE;
-
+            if(set_commands(options,argv[i]))
+                continue;
             else // Invalid option
             {
                 fprintf(stderr, "42sh : %s: invalid option.\n",argv[i]);
                 return 2;
             }
-            continue;
         }
         if(!strcmp(argv[i],"+O"))
             options->plus_O = TRUE;
@@ -106,11 +69,7 @@ int options_parser(int argc, char *argv[], struct option *options)
 }
 void print_options(struct option *options)
 {
-    printf("i %d\n",options->i);
-    printf("l %d\n",options->l);
-    printf("r %d\n",options->r);
-    printf("s %d\n",options->s);
-    printf("D %d\n",options->D);
+    printf("c %d\n",options->c);
     printf("minus_O %d\n",options->minus_O);
     printf("plus_O %d\n",options->plus_O);
     printf("norc %d\n",options->norc);
