@@ -88,9 +88,17 @@ static nL *build_aux(struct node *r, struct nL *tok)
 {
     if (r->type == ROOT)
     {
-        struct node *new = init_node(tok->elem->name, tok->elem->type);
-        add_node(r, new);
-        tok = build_aux(new, tok->next);
+        while(tok->elem->type != ENDOF)
+        {
+            struct node *new = init_node(tok->elem->name, tok->elem->type);
+            add_node(r, new);
+            tok = build_aux(new, tok->next);
+        }
+        return tok;
+    }
+    if(r->type == INSTRUCT)
+    {
+        return tok;
     }
     if (r->type == IF)
     {
@@ -103,6 +111,35 @@ static nL *build_aux(struct node *r, struct nL *tok)
         while(tok->elem->type == ELIF)
         {
             new = init_node("elif", ELIF);
+            add_node(r, new);
+            tok = build_aux(new, tok->next);
+        }
+        new = init_node("else", ELSE);
+        add_node(r, new);
+        tok = build_aux(new, tok->next);
+        return tok->next;
+    }
+    if(r->type == CONDITION)
+    {
+        while((tok->elem->type != SEMICLON)&&(tok->elem->type != THEN)&&
+              (tok->elem->type != DO))
+        {
+            struct node *new = init_node(tok->elem->name, tok->elem->type);
+            add_node(r, new);
+            tok = tok->next;
+        }
+        if(tok->elem->type == SEMICOLON)
+            return tok->next;
+        return tok;
+    }
+    if((r->type == BODY)||(r->type == EBODY)||(r->type == ELIF))
+    {
+        while((tok->elem->type != ELIF)&&(tok->elem->type != ELSE)&&
+              (tok->elem->type == DONE)&&(tok->elem->type != FI))
+        {
+            struct node *new = init_node(tok->elem->name, tok->elem->type);
+            add_node(r, new);
+            tok = build_aux(new, tok->next);
         }
     }
 
@@ -135,3 +172,40 @@ struct node* build_ast(struct linked_list *tokens)
     build_aux(tree, tokens->head);
     return tree;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
