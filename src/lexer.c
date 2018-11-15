@@ -131,6 +131,7 @@ int check_list(struct token *new, char *string, char **list)
     if (!strcmp(string, "\n"))
     {
         new->type = ENDOF;
+        new->name = "\n";
         return 1;
     }
     return 0;
@@ -192,6 +193,7 @@ struct linked_list *lexer (char *input[], int argc)
     }
     struct token *eof = malloc(sizeof(struct token));
     eof->type = ENDOF;
+    eof->name = "ENDOF";
     add(l_list,eof);
     free(list);
     return l_list;

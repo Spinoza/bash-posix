@@ -1,6 +1,7 @@
 import pytest
 import subprocess
 import yaml
+
 def pytest_collect_file(parent, path):
     if path.ext == ".yml" and path.basename.startswith("test"):
         return YamlFile(path, parent)
@@ -22,8 +23,7 @@ class YamlItem(pytest.Item):
     def runtest(self):
         tmp = self.command.decode().split()
         args = []
-        print("hello")
-        args.append("./test_suite/lexer_main")
+        args.append("./grammar_main")
         for string in tmp:
             args.append(string)
         process = subprocess.Popen(args,\
@@ -31,23 +31,11 @@ class YamlItem(pytest.Item):
                 stderr=subprocess.PIPE,\
                 stdin=subprocess.PIPE)
 
-        out, err = process.communicate(input=self.command)
+        process.communicate(input=self.command)
+        r = process.returncode
         process.kill()
-        if "stdout" in self.expected:
-            if self.expected["stdout"] != out:
-                raise YamlException("stdout", self.expected['stdout'],out, self.command, self.name)
-        elif out: #check if no out should be returned but my program returned one
-                raise YamlException("stdout", b'(empty)',out, self.command, self.name)
-                #print("stdout got :[ %s ] \nexpected nothing" % (out))
-
-        if "stderr" in self.expected:
-            if self.expected["stderr"] != err:
-                raise YamlException("stderr", self.expected['stderr'],out,self.command, self.name)
-        elif err: #check if no err should be returned but my program returned err
-                raise YamlException("stderr", b'(empty)', out, self.command, self.name)
-
-        if self.expected['rvalue'] != process.returncode:
-                raise YamlException('stderr', b'(empty)', out, self.command, self.name)
+        if self.expected['rvalue'] != r:
+                raise YamlException("rvalue", self.expected['rvalue'], r, self.command, self.name)
 
     def repr_failure(self, excinfo):
         "called when runtest raises an exception"
@@ -67,11 +55,7 @@ class OutputDiffItem(YamlItem):
     def __init__(self, name, parent, spec):
         super().__init__(name,parent,spec)
         self.name = name
-        for item in self.expected:
-            if item == "rvalue":
-                self.expected["rvalue"] = int(self.expected["rvalue"])
-                continue
-            self.expected[item] = str.encode(self.expected[item])
+        self.expected["rvalue"] = int(self.expected["rvalue"])
 
 class YamlException(Exception):
     """ custom exception for error reporting. """

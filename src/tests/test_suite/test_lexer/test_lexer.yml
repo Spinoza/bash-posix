@@ -1,4 +1,4 @@
-1_easy_word:
+easy_word:
         type: "output diff"
         command: "word"
         expected:
@@ -27,6 +27,15 @@ if_word_and_word_then:
                          WORD -> FI -> ENDOF -> \n"
                 rvalue: 0
 
+complex_case:
+        type: "output diff"
+        command: "while bonsoir || bonnenuit; do thx; if matin; then butwtf; elif jour; then butearly; else verymuch; fi done"
+        expected:
+                stdout: "WHILE -> WORD -> || -> WORD -> ; -> DO -> WORD -> \
+                        ; -> IF -> WORD -> ; -> THEN -> WORD -> ; -> ELIF -> WORD \
+                        -> ; -> THEN -> WORD -> ; -> ELSE -> WORD -> ; -> FI -> DONE \
+                        -> ENDOF -> \n"
+                rvalue: 1
 do_while:
         type: "output diff"
         command: "do word1 word2 p=1 while cond"
