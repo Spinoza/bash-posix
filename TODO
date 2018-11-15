@@ -3,10 +3,10 @@
 |
 |----v0.3[]
 |-------- Manual []
-|---------- NAME []
+|---------- NAME [X]
 |---------- SYNOPSIS []
 |---------- DESCRIPTION []
-|---------- AUTHORS []
+|---------- AUTHORS [X]
 |
 |--------Option Parser[]
 |---------- -c []
@@ -16,7 +16,7 @@
 |---------- --version []
 |
 |--------Shell Parser[]
-|---------- Basic Lexer []
+|---------- Basic Lexer [X]
 |---------- Basic Grammar [X]
 |---------- AST creation []
 |
