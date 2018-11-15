@@ -95,6 +95,28 @@ enum type check_ionumber(char *string)
     return WORD;
 }
 
+int pos_redirection(char *string)
+{
+    for (int i = 0; *(string + i); i++)
+    {
+        if (isaredirection(*(string + i)))
+            return i;
+    }
+    return 0;
+}
+
+void split_redirection(struct token *new, char *string,
+        struct linked_list *l_list, int index)
+{
+    new->name = malloc(sizeof(char) * index);
+    new->name = memcpy(new->name, string, index);
+    new->name[index-1] = '\0';
+    struct token *redirection = token_init();
+    redirection->type = IONUMBER;
+    add(l_list,new);
+    return;
+}
+
 int check_list(struct token *new, char *string, char **list)
 {
     for (int i = 0; i < LIST_LENGTH; i++)
@@ -140,6 +162,14 @@ void read_string(struct token *new, char *string, char **list,
     new->type = check_word(string);
     if (new->type == WORD)
         new->type = check_ionumber(string);
+    if (new->type == IONUMBER)
+    {
+        int index = pos_redirection(string);
+        split_redirection(new,string,l_list,index);
+        struct token *n = token_init();
+        read_string(n, string + index, list, l_list);
+        return;//not tryly working
+    }
     int index_sc = check_semicolon(string);
     if (index_sc)
     {
