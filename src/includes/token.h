@@ -26,7 +26,8 @@ enum type
     ELIF = 20,
     HEREDOC = 21,
     IONUMBER = 22,
-    CONDITION = 23
+    CONDITION = 23,
+    ROOT = 24
 };
 
 struct token

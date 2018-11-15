@@ -1,5 +1,6 @@
 #include "grammar_check.h"
 #include "stdio.h"
+#include "ast.h"
 
 int main(void)
 {
@@ -68,4 +69,8 @@ int main(void)
 
 
     printf("%d\n", grammar_check(l));
+    struct node *ast = build_ast(l);
+    print_ast(ast);
+    printf("AST has been printed ! well done everyone !");
+    return 1;
 }

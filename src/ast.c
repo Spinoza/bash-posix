@@ -4,6 +4,7 @@
 #include "lexer.h"
 #include "linked_list.h"
 #include "token.h"
+#include "ast.h"
 
 static struct node* add_node(struct node* p, struct node *c)
 {
@@ -29,34 +30,36 @@ static enum ntype node_getype(enum type type)
     switch (type)
     {
         case 0:
-            return IF;
+            return A_IF;
         case 1:
-            return BODY;
+            return A_BODY;
         case 2:
-            return EBODY;
+            return A_EBODY;
         case 6:
-            return WHILE;
+            return A_WHILE;
         case 7:
-            return FOR;
+            return A_FOR;
         case 8:
-            return UNTIL;
+            return A_UNTIL;
         case 9:
-            return CASE;
+            return A_CASE;
         case 10:
-            return BODY;
+            return A_BODY;
         case 18:
-            return IN;
+            return A_IN;
         case 20:
-            return ELIF;
+            return A_ELIF;
         case 23:
-            return CONDITION;
+            return A_CONDITION;
+        case 24:
+            return A_ROOT;
         default:
-            return INSTRUCT;
+            return A_INSTRUCT;
     }
 
 }
 
-static void free_node(struct node *n)
+/*static void free_node(struct node *n)
 {
     if (!n)
         return;
@@ -64,10 +67,10 @@ static void free_node(struct node *n)
     if (n->instr)
         free(n->instr);
 
-    free_node(node->children);
-    free_node(node->next);
+    free_node(n->children);
+    free_node(n->next);
     free(n);
-}
+}*/
 
 static struct node* init_node(char *instr, enum type type)
 {
@@ -77,6 +80,7 @@ static struct node* init_node(char *instr, enum type type)
 
     node->nbchild = 0;
     node->instr = instr;
+    node->tokentype = type;
     node->type = node_getype(type);
     node->children = NULL;
     node->next = NULL;
@@ -84,9 +88,9 @@ static struct node* init_node(char *instr, enum type type)
     return node;
 }
 
-static nL *build_aux(struct node *r, struct nL *tok)
+static struct nL *build_aux(struct node *r, struct nL *tok)
 {
-    if (r->type == ROOT)
+    if (r->type == A_ROOT)
     {
         while(tok->elem->type != ENDOF)
         {
@@ -96,11 +100,11 @@ static nL *build_aux(struct node *r, struct nL *tok)
         }
         return tok;
     }
-    if(r->type == INSTRUCT)
+    if(r->type == A_INSTRUCT)
     {
         return tok;
     }
-    if (r->type == IF)
+    if (r->type == A_IF || r->type == A_ELIF)
     {
         struct node *new = init_node("condition", 23);
         add_node(r, new);
@@ -119,9 +123,9 @@ static nL *build_aux(struct node *r, struct nL *tok)
         tok = build_aux(new, tok->next);
         return tok->next;
     }
-    if(r->type == CONDITION)
+    if(r->type == A_CONDITION)
     {
-        while((tok->elem->type != SEMICLON)&&(tok->elem->type != THEN)&&
+        while((tok->elem->type != SEMICOLON)&&(tok->elem->type != THEN)&&
               (tok->elem->type != DO))
         {
             struct node *new = init_node(tok->elem->name, tok->elem->type);
@@ -132,18 +136,21 @@ static nL *build_aux(struct node *r, struct nL *tok)
             return tok->next;
         return tok;
     }
-    if((r->type == BODY)||(r->type == EBODY)||(r->type == ELIF))
+    if((r->type == A_BODY)||(r->type == A_EBODY)||(r->type == A_ELIF))
     {
         while((tok->elem->type != ELIF)&&(tok->elem->type != ELSE)&&
-              (tok->elem->type == DONE)&&(tok->elem->type != FI))
+              (tok->elem->type != DONE)&&(tok->elem->type != FI) && tok->elem->type != SEMICOLON)
         {
             struct node *new = init_node(tok->elem->name, tok->elem->type);
             add_node(r, new);
             tok = build_aux(new, tok->next);
         }
+        if (tok->elem->type == SEMICOLON)
+            return tok->next;
+        return tok;
     }
 
-    if (r->type == WHILE || r->type == UNTIL)
+    if (r->type == A_WHILE || r->type == A_UNTIL)
     {
         struct node *new = init_node("condition", 23);
         add_node(r, new);
@@ -154,7 +161,7 @@ static nL *build_aux(struct node *r, struct nL *tok)
         return tok->next;
     }
 
-    if (r->type == FOR)
+    if (r->type == A_FOR)
     {
         struct node *new = init_node("condition", 23);
         add_node(r, new);
@@ -164,11 +171,12 @@ static nL *build_aux(struct node *r, struct nL *tok)
         tok = build_aux(new, tok->next);
         return tok->next;
     }
+    return NULL;
 }
 
 struct node* build_ast(struct linked_list *tokens)
 {
-    struct node *tree = init_node();
-    build_aux(tree, tokens->head);
-    return tree;
+    struct node *tree = init_node("root", ROOT);
+    struct nL *res = build_aux(tree, tokens->head);
+    return res ? tree : NULL;
 }
