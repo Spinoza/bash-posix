@@ -12,6 +12,10 @@
 //!	struct linked_list *lexer(char *input[], int argc);\n
 //!	int grammar_check(struct linked_list *tokens);
 //!
+//!
+//!	The program 42sh remains a project and, as thus, needs to be compiled before being used.\n
+//!	The compilation process is as follows : mkdir build at root, cd build, cmake .. make\n
+//!	The program is then launched as follows : ./42sh [-/+option] [input line]\n
 //! @section description DESCRIPTION
 //!
 //! @section options OPTIONS
@@ -21,7 +25,9 @@
 //!	The currently supported functions are:\n
 //!	--norc		This option deactivates the shell resource reader, telling it not to load any resource file.\n
 //!	--ast-print	This option activates the ast-printer. The later shall print the AST resulting of the parsing and lexing of the input string.\n
-//!	-c		Followed by an argument string. Sets the special parameter 0 to the first 
+//!	-c		Followed by an argument string. Sets the special parameter 0 to the first parameter after command line. Then, sets all positionnal parameters and executes the command given in argument. No command shall be read from standard input.\n
+//!	-/+o		Sets or unsets the option given as parameter. Calling -o [option] shall set the option for the bash and calling +o [option] shall unset it.
+//!	--version	Prints the actual version of the 42sh program. 
 //!
 //! @section returnval RETURN VALUES
 //!
