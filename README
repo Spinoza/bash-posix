@@ -1,7 +1,39 @@
 This is the repository for the 42sh project. This file shall contain anything related to our implementation of 42sh.
 
-go into directory -> call cmake [PATH] with PATH the path to the CMakeLists.txt file -> call make.
-to launch tests : call make check.
+USAGE:
+
+In order to be able to use 42sh, do as follows :
+	- mkdir build
+	- cd into build directory
+	- call cmake .. to start building. (../ being the path to the CMakeLists.txt file)
+	- call make 42sh to build the 42sh binary.
+
+Then, once the binary is created, the 42sh can be used with :
+
+	./42sh [options] [arguments]
+
+
+LAUNCHING TESTS
+
+In order to launch the test suite, go into the build directory created during the USAGE part and call :
+
+	make check
+
+As up to now, the test suite launches tests that are : lexer/parser testing, grammar testing, ast build testin and 42sh testing.
+
+
+FEATURES:
+
+To this point, our 42sh should be compliant with the 0.3 version asked.
+Thus, it can handle :
+
+	- execution of simple commands
+	- "if" statements
+	- "while" and "until" statements
+	- "for" statements
+
+Moreover, even if it is not fully usable yet, its parser is able to check for the grammar-compliance of any sequence of token given as an input.
+
 
 AUTHORS:
 
