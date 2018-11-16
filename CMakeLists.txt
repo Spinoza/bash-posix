@@ -47,6 +47,14 @@ target_link_libraries(grammar_main ast)
 target_link_libraries(grammar_main grammar)
 target_link_libraries(grammar_main lexer)
 
+add_executable(42sh ${CMAKE_SOURCE_DIR}/src/42sh.c)
+target_link_libraries(42sh execution)
+target_link_libraries(42sh ast)
+target_link_libraries(42sh grammar_check)
+target_link_libraries(42sh lexer)
+target_link_libraries(42sh linked_list)
+target_link_libraries(42sh options)
+
 add_custom_target(set_env
     COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/set_env.sh
     )
@@ -61,3 +69,7 @@ add_custom_target(check_grammar
     COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/grammar.sh
     DEPENDS lexer_main
 )
+add_custom_target(check
+    COMMAND make check_lexer
+    COMMAND make check_grammar
+    )
