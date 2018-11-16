@@ -24,12 +24,10 @@ static int is_conform(struct nL *tok)
 
 static struct nL *g_redirection(struct nL *tok)
 {
-    if (tok->elem->type != IONUMBER)
-        return NULL;
+    if (tok->elem->type == IONUMBER)
+        tok = tok->next ? tok->next : NULL;
 
-    tok = tok->next ? tok->next : NULL;
-
-    if (tok && is_conform(tok) == 1)
+    if (tok && tok->elem->type == REDIRECTION && is_conform(tok) == 1)
     {
         tok = tok->next;
         if (!tok)

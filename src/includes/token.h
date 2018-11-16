@@ -27,7 +27,8 @@ enum type
     HEREDOC = 21,
     IONUMBER = 22,
     CONDITION = 23,
-    ROOT = 24
+    ROOT = 24,
+    REDIRECTION = 25
 };
 
 struct token
