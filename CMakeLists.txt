@@ -72,7 +72,7 @@ add_custom_target(check_ast
 )
 add_custom_target(check_42sh
     COMMENT "Running tests on 42sh, checking whole project\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/42sh.sh > result.txt
+    COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/42sh.sh &> result.txt
     DEPENDS 42sh
 )
 add_custom_target(check
