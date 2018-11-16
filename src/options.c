@@ -91,17 +91,17 @@ static int set_commands(struct option *options, char *argv[], int i, int argc)
     if(!strcmp(argv[i],"--norc"))
     {
         options->norc = TRUE;
-        return i + 1;
+        return i;
     }
     if(!strcmp(argv[i],"--ast-print"))
     {
         options->ast_print = TRUE;
-        return i + 1;
+        return i;
     }
     if(!strcmp(argv[i],"--version"))
     {
         options->version = TRUE;
-        return i + 1;
+        return i;
     }
 
     if(!strcmp(argv[i],"+O"))
