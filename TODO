@@ -2,10 +2,10 @@
 |
 |
 |----v0.3[]
-|-------- Manual []
+|-------- Manual [X]
 |---------- NAME [X]
-|---------- SYNOPSIS []
-|---------- DESCRIPTION []
+|---------- SYNOPSIS [X]
+|---------- DESCRIPTION [X]
 |---------- AUTHORS [X]
 |
 |--------Option Parser[X]
