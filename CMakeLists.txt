@@ -75,7 +75,7 @@ add_custom_target(check_42sh
     COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/42sh.sh &> result.txt
     DEPENDS 42sh
 )
-add_custom_target(check
+add_custom_target(check_unit
     COMMAND make check_lexer
     COMMAND make check_grammar
     COMMAND make check_ast

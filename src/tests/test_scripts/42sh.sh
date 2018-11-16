@@ -21,12 +21,15 @@ echo -e "\ncommand : ls -la && pwd:\n"
 
 echo -e "\ncommand : if pwd; then ls; else echo willneverprint fi\n"
 ./42sh "if" "pwd;" "then" "ls;" "else" "echo" "willneverprint;" "fi"
-echo -e "\ncommand : while false; do echo willneverprint; done\n"
-./42sh "while" "false;" "do" "echo" "willneverprint;"
+
+echo -e "\ncommand: while bonsoir || bonnenuit; do thx; if matin; then butwtf; elif jour; then butearly; else verymuch; fi done"
+./42sh "while" "bonsoir" "||" "bonnenuit;" "do" "thx;" "if" "matin;" "then" "butwtf;" "elif" "jour;" "then" "butearly;" "else" "verymuch;" "fi" "done"
+
 echo -e "\ncommand : while false; do echo neverprint; done; pwd;\n"
 ./42sh "while" "false;" "do" "echo" "neverprint;" "done;" "pwd;"
 
 echo -e "\ncommand : until true; do pwd; done;\n"
 ./42sh "until" "true;" "do" "pwd;" "done"
+
 echo -e "\ncommand : until true; do word=2; done; pwd;\n"
 ./42sh "until" "pwd;" "do" "word=2;" "done" "pwd;"
