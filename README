@@ -19,8 +19,13 @@ In order to launch the test suite, go into the build directory created during th
 
 	make check
 
-As up to now, the test suite launches tests that are : lexer/parser testing, grammar testing, ast build testin and 42sh testing.
+As up to now, the test suite launches tests that are : lexer/parser testing, grammar testing, ast build testin and 42sh testing. The results of testing 42sh will be printed in a file named "results.txt"
 
+Individual tests can also be done by calling :
+
+        make check_[TEST]
+
+Where [TEST] is either lexer,grammar,ast or 42sh.
 
 FEATURES:
 
