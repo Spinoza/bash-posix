@@ -6,7 +6,7 @@
 void print_aux(FILE *f, struct node *ast, int i)
 {
     struct node *as = ast->children;
-    while(as)
+    while (as)
     {
         fprintf(f, "    %s_%i -- %s_%i\n", ast->instr, i-1, as->instr, i);
         print_aux(f, as, i+1);

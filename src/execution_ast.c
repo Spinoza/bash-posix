@@ -139,12 +139,10 @@ int if_cond(struct node *cond)
         char **command_call = to_execute(iter, oper_node);
         res = exec_command(command_call);0
         free(command_call);
-        if (oper_node == NULL)
+        if (oper_node == NULL || oper_node->tokentype == SEMICOLON)
             break;
         char *oper = oper_node->instr;
         if ((!strcmp(oper,"&&") && !res) || (!strcmp(oper,"||") && res))
-            break;
-        if (oper_node->tokentype == SEMICOLON)
             break;
         iter = oper_node->next;
     }

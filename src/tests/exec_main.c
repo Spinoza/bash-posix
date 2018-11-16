@@ -106,5 +106,6 @@ int main(int argc, char *argv[])
         return 1;
     }*/
     struct node *root = build_ast(tokens);
+    print_ast(root);
     return execution_ast(root);
 }
