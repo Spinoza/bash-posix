@@ -179,6 +179,26 @@ struct node *if_execution(struct node *n, int *res)
     }
 }
 
+struct node *for_execution(struct node *n, int *res)
+{
+    struct node *cond = n->children->children;
+    for ( ; cond; cond = cond->next)
+    {
+        if (cond->type == A_IN)
+            break;
+    }
+    if (cond)
+    {
+        cond = cond->next;
+        struct node *do_node = n->children->next->children;
+        for ( ; cond && cond->tokentype != SEMICOLON; cond = cond->next)
+        {
+            *res = traversal_ast(do_node, res);
+        }
+    }
+    return (n->next);
+}
+
 int traversal_ast(struct node *n, int *res)
 {
     if (!n)
@@ -186,13 +206,9 @@ int traversal_ast(struct node *n, int *res)
     if ((n->type != A_BODY && n->type != A_ROOT))
     {
         if (n->type == A_INSTRUCT)
-        {
             return traversal_ast(instr_execution(n, res), res);
-        }
         if (n->type == A_IF)
-        {
             return traversal_ast(if_execution(n, res), res);
-        }
         if (n->type == A_WHILE)
         {
             while (if_cond(n) == 0)
@@ -204,10 +220,7 @@ int traversal_ast(struct node *n, int *res)
                 *res = traversal_ast(n->children->next, res);
         }
         if (n->type == A_FOR)
-        {
-            while (if_cond(n) == 0)
-                *res = if_cond(n);
-        }
+            *res = traversal_ast(for_execution(n, res), res);
         return traversal_ast(n->next,res);
     }
     return traversal_ast(n->children,res);
