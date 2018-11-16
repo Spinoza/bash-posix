@@ -50,8 +50,12 @@ add_custom_target(set_env
     )
 
 add_custom_target(check_lexer
-    COMMENT "Running tests on lexer, building token linked_list"
-    COMMAND ${CMAKE_SOURCE_DIR}/build/activate.sh
+    COMMENT "Running tests on lexer, building token linked_list\n"
+    COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/lexer.sh
     DEPENDS lexer_main
-    COMMAND deactivate
+)
+add_custom_target(check_grammar
+    COMMENT "Running tests on grammar,checking the token list\n"
+    COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/grammar.sh
+    DEPENDS lexer_main
 )

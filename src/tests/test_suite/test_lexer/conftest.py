@@ -33,7 +33,6 @@ class YamlItem(pytest.Item):
 
         out, err = process.communicate(input=self.command)
         r = process.returncode
-        print(r)
         process.kill()
         if "stdout" in self.expected:
             if self.expected["stdout"] != out:
@@ -58,8 +57,10 @@ class YamlItem(pytest.Item):
             return "\n".join(
                     [
                         "test : %s failed, called with [ %s ]\n"
-                        "%s : expected : [ %s ]\nstdout : got : [ %s ]"\
-                                %(instance.name,instance.command,\
+                        "%s : expected : [ %s ]\n%s : got : [ %s ]"\
+                                %(instance.name,\
+                                instance.command,\
+                                instance.expected_type,\
                                 instance.expected_type,\
                                 instance.expected_value,\
                                 instance.output_value)

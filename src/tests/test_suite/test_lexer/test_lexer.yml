@@ -35,7 +35,7 @@ complex_case:
                         ; -> IF -> WORD -> ; -> THEN -> WORD -> ; -> ELIF -> WORD \
                         -> ; -> THEN -> WORD -> ; -> ELSE -> WORD -> ; -> FI -> DONE \
                         -> ENDOF -> \n"
-                rvalue: 1
+                rvalue: 0
 do_while:
         type: "output diff"
         command: "do word1 word2 p=1 while cond"
