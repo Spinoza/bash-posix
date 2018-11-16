@@ -149,49 +149,44 @@ int if_cond(struct node *cond)
     return res;
 }
 
-int traversal_ast(struct node *n)
+int traversal_ast(struct node *n, int res)
 {
     if (!n)
-        return 0;
+        return res;
     if ((n->type != A_BODY && n->type != A_ROOT))
     {
-        int res = 0;
         if (n->type == A_INSTRUCT)
         {
             /*if redirection*/
             struct node *oper_node = get_oper_node(n);
             char *oper = (oper_node ? oper_node->instr : "");
             char **command_call = to_execute(n, oper_node);
-            int rvalue = exec_command(command_call);
+            res = exec_command(command_call);
             free(command_call);
-            if ((!strcmp(oper,"&&") && !rvalue)
-                || (!strcmp(oper,"||") && rvalue))
-                return traversal_ast(oper_node->next);
+            if ((!strcmp(oper,"&&") && !res)
+                || (!strcmp(oper,"||") && res))
+                return traversal_ast(oper_node->next,res);
             if (!strcmp(oper, ";") && oper_node->next)
-                return traversal_ast(oper_node->next);
-            return rvalue;
+                return traversal_ast(oper_node->next,res);
+            return res;
         }
         if (n->type == A_IF)
         {
             res = if_cond(n);
             if (res == 0)
-                return traversal_ast(n->children->next);
+                return traversal_ast(n->children->next,res);
             else //if res != 0, the exec returned an error
             {
                 if (n->children->next->next)
-                    return traversal_ast(n->children->next->next);
+                    return traversal_ast(n->children->next->next,res);
                 else
                     return res;
             }
         }
         if (n->type == A_WHILE)
         {
-            res = if_cond(n);
-            if (res == 0)
-            {
-                while (if_cond(n) == 0)
-                    res = traversal_ast(n->children->next);
-            }
+            while (if_cond(n) == 0)
+                res = traversal_ast(n->children->next,res);
             return res;//return value ?
         }
         /*if (n->type == A_FOR)
@@ -200,8 +195,7 @@ int traversal_ast(struct node *n)
 
         }*/
     }
-    struct node *iter = n->children;
-    return traversal_ast(iter);
+    return traversal_ast(n->children,res);
 }
 
 int execution_ast(struct node *n)
@@ -211,5 +205,5 @@ int execution_ast(struct node *n)
       struct assignment **assignment = malloc(sizeof(struct assignment *)
      * capacity);
      tab->assignment = assignment;*/
-    return traversal_ast(n);//call with tab;
+    return traversal_ast(n,1);//call with tab;
 }
