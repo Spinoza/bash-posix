@@ -129,9 +129,12 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
             add_node(r, new);
             tok = build_aux(new, tok->next);
         }
-        new = init_node("else", ELSE);
-        add_node(r, new);
-        tok = build_aux(new, tok->next);
+        if(tok->elem->type == ELSE)
+        {
+            new = init_node("else", ELSE);
+            add_node(r, new);
+            tok = build_aux(new, tok->next);
+        }
         return tok->next;
     }
     if (r->type == A_CONDITION)
