@@ -188,12 +188,10 @@ int traversal_ast(struct node *n, int res)
             while (if_cond(n) == 0)
                 res = traversal_ast(n->children->next,res);
         }
-        /*if (n->type == A_FOR)
+        if (n->type == A_FOR)
         {
             res = if_cond(n);
-
-        }*/
-        return traversal_ast(n->next, res);
+        }
     }
     return traversal_ast(n->children,res);
 }
