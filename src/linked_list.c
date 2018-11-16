@@ -48,7 +48,6 @@ struct linked_list *add(struct linked_list *l, struct token *elem)
 
 void free_list(struct linked_list *l)
 {
-    //FIXME : find a way to handle tokens freeing.
     if (!l)
         return;
 
@@ -57,7 +56,8 @@ void free_list(struct linked_list *l)
     {
         struct nL *copy = node;
         node = node->next;
-        if (copy->elem->type == WORD || copy->elem->type == ASSIGNMENT_W)
+        if (copy->elem->type == WORD || copy->elem->type == ASSIGNMENT_W
+                || copy->elem->type == IONUMBER)
             free(copy->elem->name);
         free(copy->elem);
         free(copy);

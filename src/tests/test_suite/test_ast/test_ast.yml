@@ -12,7 +12,7 @@ assignment_w:
         command: "word=1"
         expected:
                 stdout: "graph ast
-{ 
+{
     root_0 -- PWD=4_1
 }"
 
@@ -82,29 +82,55 @@ complex_case:
     else_5 -- ;_6
     root_0 -- done_1
 }"
-do_while:
-        type: "output diff"
-        command: "do word1 word2 p=1 while cond"
-        expected:
-                stdout: "DO -> WORD -> WORD -> ASSIGNMENT_W -> WHILE -> WORD -> \
-                         ENDOF -> \n"
+
 while_loop:
         type: "output diff"
         command: "while true; do foo; sleep 2; done"
         expected:
-                stdout: "WHILE -> WORD -> SEMICOLON -> DO -> WORD -> SEMICOLON -> WORD -> WORD -> SEMICOLON -> DONE -> ENDOF -> \n"
-pipe_test:
+                stdout: "graph ast
+{ 
+    root_0 -- while_1
+    while_1 -- condition_2
+    condition_2 -- true_3
+    condition_2 -- semicolon_3
+    while_1 -- do_2
+    do_2 -- foo_3
+    do_2 -- semicolon_3
+    do_2 -- sleep_3
+    do_2 -- 2_3
+    do_2 -- ;_3
+}"
+
+for_test:
         type: "output diff"
-        command: "cat | echo hello"
+        command: "for a in b; do word; echo ab; done"
         expected:
-                stdout: "WORD -> PIPE -> WORD -> WORD -> ENDOF -> \n"
-logical_and_and:
-        type: "output diff"
-        command: "hello && & bye"
-        expected:
-                stdout: "WORD -> LOGICAL_AND -> AMPERSAND -> WORD -> ENDOF -> \n"
+                stdout: "graph ast
+{ 
+    root_0 -- for_1
+    for_1 -- condition_2
+    condition_2 -- a_3
+    condition_2 -- in_3
+    condition_2 -- b_3
+    condition_2 -- semicolon_3
+    for_1 -- do_2
+    do_2 -- word_3
+    do_2 -- semicolon_3
+    do_2 -- echo_3
+    do_2 -- ab_3
+    do_2 -- semicolon_3
+}"
+
 pipe_and_logical_or:
         type: "output diff"
         command: "echo hello || bye | cat"
         expected:
-                stdout: "WORD -> WORD -> LOGICAL_OR -> WORD -> PIPE -> WORD -> ENDOF -> \n"
+                stdout: "graph ast
+{ 
+    root_0 -- echo_1
+    root_0 -- hello_1
+    root_0 -- logical_or_1
+    root_0 -- bye_1
+    root_0 -- pipe_1
+    root_0 -- cat_1
+}"
