@@ -29,9 +29,9 @@ int main(int argc, char *argv[])
     if (options->ast_print == TRUE)
         print_ast(ast);
 
-    execution_ast(ast);
+    int res = execution_ast(ast);
     free(options);
     free_list(tokens);
     free_node(ast);
-    return 0;
+    return res;
 }

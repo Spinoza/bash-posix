@@ -2,7 +2,7 @@ easy_word:
         type: "bash diff"
         command: "word"
         expected:
-       
+
 assignment_w:
         type: "bash diff"
         command: "word=1"
