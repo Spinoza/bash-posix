@@ -157,7 +157,10 @@ int traversal_ast(struct node *n, int res)
     {
         if (n->type == A_INSTRUCT)
         {
-            /*if redirection*/
+            /*if (isredirection(n->instr))
+            {
+                redirection();
+            }*/
             struct node *oper_node = get_oper_node(n);
             char *oper = (oper_node ? oper_node->instr : "");
             char **command_call = to_execute(n, oper_node);
@@ -190,8 +193,10 @@ int traversal_ast(struct node *n, int res)
         }
         if (n->type == A_FOR)
         {
-            res = if_cond(n);
+            while (if_cond(n) == 0)
+                res = if_cond(n);
         }
+        return
     }
     return traversal_ast(n->children,res);
 }
