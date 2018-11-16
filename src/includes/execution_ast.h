@@ -27,3 +27,4 @@ struct tab_a
 };
 
 int execution_ast(struct node *n);
+int traversal_ast(struct node *n, int *res);
