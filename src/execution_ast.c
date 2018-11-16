@@ -137,7 +137,7 @@ int if_cond(struct node *cond)
     {
         struct node *oper_node = get_oper_node(iter);
         char **command_call = to_execute(iter, oper_node);
-        res = exec_command(command_call);0
+        res = exec_command(command_call);
         free(command_call);
         if (oper_node == NULL || oper_node->tokentype == SEMICOLON)
             break;
