@@ -191,6 +191,11 @@ int traversal_ast(struct node *n, int res)
             while (if_cond(n) == 0)
                 res = traversal_ast(n->children->next,res);
         }
+        if (n->type == A_UNTIL)
+        {
+            while (if_cond(n))
+                res = traversal_ast(n->children->next,res);
+        }
         if (n->type == A_FOR)
         {
             while (if_cond(n) == 0)
