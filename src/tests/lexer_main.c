@@ -24,10 +24,10 @@ void print_enum(enum type type)
                 printf("FI");
                 break;
         case 4:
-                printf("&&");
+                printf("LOGICAL_AND");
                 break;
         case 5:
-                printf(";");
+                printf("SEMICOLON");
                 break;
         case 6:
                 printf("WHILE");
@@ -57,13 +57,13 @@ void print_enum(enum type type)
                 printf("ENDOF");
                 break;
         case 15:
-                printf("|");
+                printf("PIPE");
                 break;
         case 16:
-                printf("||");
+                printf("LOGICAL_OR");
                 break;
         case 17:
-                printf("&");
+                printf("AMPERSAND");
                 break;
         case 18:
                 printf("IN");

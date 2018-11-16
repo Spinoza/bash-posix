@@ -9,7 +9,7 @@ class YamlFile(pytest.File):
     def collect(self):
         raw = yaml.safe_load(self.fspath.open())
         for name, spec in sorted(raw.items()):
-            yield OutputDiffItem(name, self, spec)
+            yield BashDiffItem(name, self, spec)
 
 class YamlItem(pytest.Item):
     def __init__(self, name, parent, spec):
@@ -61,12 +61,12 @@ class YamlItem(pytest.Item):
                                 %(instance.name,\
                                 instance.command,\
                                 instance.expected_type,\
-                                instance.expected_value,\
                                 instance.expected_type,\
+                                instance.expected_value,\
                                 instance.output_value)
                     ]
             )
-class OutputDiffItem(YamlItem):
+class BashDiffItem(YamlItem):
     def __init__(self, name, parent, spec):
         super().__init__(name,parent,spec)
         self.name = name
