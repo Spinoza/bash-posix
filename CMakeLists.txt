@@ -30,7 +30,7 @@ target_link_libraries(grammar_check PUBLIC lexer)
 add_library(ast ${CMAKE_SOURCE_DIR}/src/ast.c
     ${CMAKE_SOURCE_DIR}/src/ast_print.c)
 
-add_executable(options ${CMAKE_SOURCE_DIR}/src/options.c)
+add_library(options ${CMAKE_SOURCE_DIR}/src/options.c)
 
 add_executable(exec_main ${CMAKE_SOURCE_DIR}/src/tests/exec_main.c)
 target_link_libraries(exec_main execution)

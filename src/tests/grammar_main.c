@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[])
 {
-    struct linked_list *l = lexer(argv, argc);
+    struct linked_list *l = lexer(argv, argc,1);
     struct nL *n = l->head;
     while (n)
     {

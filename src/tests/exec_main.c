@@ -98,7 +98,7 @@ void print_list(struct linked_list *l_list)
 }
 int main(int argc, char *argv[])
 {
-    struct linked_list *tokens = lexer(argv,argc);
+    struct linked_list *tokens = lexer(argv,argc,1);
     print_list(tokens);
     /*if (!grammar_check(tokens))
     {
