@@ -37,8 +37,3 @@ pipe_test:
         command: "cat | echo hello"
         expected:
                 rvalue: 1
-function_case:
-        type: "output diff"
-        command: "function arr() { yarrr }"
-        expected:
-                rvalue: 1

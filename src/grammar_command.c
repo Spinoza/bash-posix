@@ -4,8 +4,8 @@
 
 static int is_conform(struct nL *tok)
 {
-    char *args[13] = { ">", "<", ">>", ">&", "<&", ">|", "<>", "!", "{",
-        "}", ";;", ")", "("};
+    char *args[14] = { ">", "<", ">>", ">&", "<&", ">|", "<>", "!", "{",
+        "}", ";;", ")", "(", "function"};
 
     for (int i = 0; i < 7; i++)
     {
@@ -13,7 +13,7 @@ static int is_conform(struct nL *tok)
             return 1;
     }
 
-    for (int j = 7; j < 13; j++)
+    for (int j = 7; j < 14; j++)
     {
         if (strcmp(args[j], tok->elem->name) == 0)
             return 2;
@@ -216,7 +216,10 @@ struct nL *g_compoundlist(struct nL *tok)
             break;
         }
         save = tok;
-        t = tok->elem->type;
+        if (!tok->next)
+            return NULL;
+        t = tok->next->elem->type;
+        tok = tok->next;
     }
     tok = save;
     tok = tok->next;

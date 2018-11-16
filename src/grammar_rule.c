@@ -2,17 +2,11 @@
 #include "linked_list.h"
 #include "grammar_check.h"
 
-/*!
- * \file grammar_rule.c
- * \author YDE SO
- * \version 0.1
-*/
-
 
 static int is_conform(struct nL *tok)
 {
-    char *args[13] = { ">", "<", ">>", ">&", "<&", ">|", "<>"
-                , "!", "{", "}", ";;", "(", ")"};
+    char *args[14] = { ">", "<", ">>", ">&", "<&", ">|", "<>"
+                , "!", "{", "}", ";;", "(", ")", "function"};
 
     for (int i = 0; i < 7; i++)
     {
@@ -20,7 +14,7 @@ static int is_conform(struct nL *tok)
             return 1;
     }
 
-    for (int j = 7; j < 13; j++)
+    for (int j = 7; j < 14; j++)
     {
         if (strcmp(args[j], tok->elem->name) == 0)
             return 2;
