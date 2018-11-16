@@ -35,6 +35,10 @@ while_loop:
 until_loop:
 	type: "bash diff"
 	command: "until 0; do word=1; done"
+for_loop:
+	type: "bash diff"
+	command: "for word in tab; do bonsoir done"
+
 pipe_test:
         type: "bash diff"
         command: "cat | echo hello"
@@ -58,4 +62,4 @@ option_invalid:
 	type: "output diff"
 	command: "--bonjour"
 	expected:
-		stderr: "42sh: Invalid option : ./42sh.\n"
+		stderr: "Invalid option : ./42sh.\n"
