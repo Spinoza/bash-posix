@@ -201,7 +201,7 @@ int traversal_ast(struct node *n, int res)
             while (if_cond(n) == 0)
                 res = if_cond(n);
         }
-        return
+        return traversal_ast(n->children,res);
     }
     return traversal_ast(n->children,res);
 }
