@@ -1,0 +1,89 @@
+.TH "42sh" 1 "Fri Nov 16 2018" "42sh" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+42sh
+.SH "SYNOPSIS"
+.PP
+#include <stdlib\&.h>
+.br
+ #include <string\&.h>
+.br
+ #include 'lexer\&.h'
+.br
+ #include 'options\&.h'
+.br
+ #include 'grammar_check\&.h'
+.br
+ #include 'linked_list\&.h'
+.br
+ #include 'ast\&.h'
+.br
+ #include 'execution_ast\&.h'
+.PP
+struct linked_list *lexer(char *input[], int argc);
+.br
+int grammar_check(struct linked_list *tokens);
+.br
+ struct node *build_ast(struct linked_list *tokens);
+.br
+ void print_ast(struct node *ast);
+.br
+ [FIXME]
+.PP
+The program 42sh remains a project and, as thus, needs to be compiled before being used\&.
+.br
+The compilation process is as follows : mkdir build at root, cd build, cmake \&.\&. make
+.br
+The program is then launched as follows : \&./42sh [-/+option] [input line]
+.br
+.SH "DESCRIPTION"
+.PP
+The 42sh project is a command language interpreter base on the sh(1p) interp erter\&.Thus it follows its behaviour: the standard input, a command line script or a file, is read and executed\&. But before execution, it check that the commands are expressed in the conform LL grammar\&. It is composed with [FIXME]4 func tions:
+.br
+ The lexer() function splits an input line from a file, the terminal, or a st ring, into tokens\&.
+.br
+ The grammar_check() function checks if a list of token is conform to the LL grammar\&.
+.br
+ To execute the command line, all the token are organized in an AST tree\&. To create the tree the function build_ast() is called\&. Then the the print_ast() function can be called to print the AST created\&. 
+.SH "OPTIONS"
+.PP
+.PP
+.nf
+The 42sh program can be called with several options, all conforming to the s
+tandard options of the shell language.\n
+.fi
+.PP
+ The command to call 42sh would be : \&./42sh [options] [inputs]
+.br
+The currently supported functions are:
+.br
+--norc This option deactivates the shell resource reader, telling i t not to load any resource file\&.
+.br
+--ast-print This option activates the ast-printer\&. The later shall print the AST resulting of the parsing and lexing of the input string\&.
+.br
+-c Followed by an argument string\&. Sets the special parameter 0 to the first parameter after command line\&. Then, sets all positionnal param eters and executes the command given in argument\&. No command shall be read f rom standard input\&.
+.br
+-/+o Sets or unsets the option given as parameter\&. Calling -o [op tion] shall set the option for the bash and calling +o [option] shall unset it\&. --version Prints the actual version of the 42sh program\&.
+.SH "RETURN VALUES"
+.PP
+.PP
+.nf
+On successful completion, grammar_check() shall return 1. 0 otherwise and in
+any case of error.\n
+.fi
+.PP
+ On successful completion, lexer() shall return a linked_list containing all t okens of the input line, correctly parsed\&. On error, which is basically when a fail of malloc(3) occurs, it returns NULL\&.
+.br
+ 
+.SH "AUTHORS"
+.PP
+Sarah Onfray - sarah\&.onfray - EPITA 2021
+.br
+Leo Naves - leo\&.naves - EPITA 2021
+.br
+Salome Desauty - salome\&.desauty - EPITA 2021
+.br
+Yohann Degli Esposti - yohann\&.degli-esposti - EPITA 2021
+.br
+
