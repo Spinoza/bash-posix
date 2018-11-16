@@ -46,7 +46,7 @@ target_link_libraries(grammar_main grammar)
 target_link_libraries(grammar_main lexer)
 
 add_custom_target(set_env
-    COMMAND ${CMAKE_SOURCE_DIR}/build/set_env.sh
+    COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/set_env.sh
     )
 
 add_custom_target(check_lexer
