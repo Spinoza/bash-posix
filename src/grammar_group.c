@@ -36,12 +36,13 @@ struct nL *g_elseclause(struct nL *tok)
         if (!tok)
             return NULL;
 
+        struct nL *save= tok;
         tok = tok->next;
         if (!tok)
             return NULL;
 
-        struct nL *save = g_elseclause(tok);
-        return save ? save : tok;
+        tok = g_elseclause(tok);
+        return tok ? tok : save;
 
     }
 

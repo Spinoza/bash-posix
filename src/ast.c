@@ -96,7 +96,9 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         {
             struct node *new = init_node(tok->elem->name, tok->elem->type);
             add_node(r, new);
-            tok = build_aux(new, tok->next);
+            if(new->type != A_INSTRUCT)
+                tok = build_aux(new, tok->next);
+            tok = tok->next;
         }
         return tok;
     }
@@ -104,8 +106,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
     {
         return tok;
     }
-
-    if (r->type == A_ELIF)
+    if ((r->type == A_IF)||(r->type == A_ELIF))
     {
         struct node *new = init_node("condition", 23);
         add_node(r, new);
@@ -113,29 +114,19 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         new = init_node("then", THEN);
         add_node(r, new);
         tok = build_aux(new, tok->next);
-        return tok;
-    }
-    if (r->type == A_IF)
-    {
-        struct node *new = init_node("condition", 23);
-        add_node(r, new);
-        tok = build_aux(new, tok);
-        new = init_node("then", THEN);
-        add_node(r, new);
-        tok = build_aux(new, tok->next);
-        while (tok->elem->type == ELIF)
+        if(tok->elem->type == ELIF)
         {
             new = init_node("elif", ELIF);
             add_node(r, new);
             tok = build_aux(new, tok->next);
         }
-        if(tok->elem->type == ELSE)
+        else if(tok->elem->type == ELSE)
         {
             new = init_node("else", ELSE);
             add_node(r, new);
             tok = build_aux(new, tok->next);
         }
-        return tok->next;
+        return tok;
     }
     if (r->type == A_CONDITION)
     {
@@ -167,7 +158,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         new = init_node("do", DO);
         add_node(r,new);
         tok = build_aux(new, tok->next);
-        return tok->next;
+        return tok;
     }
 
     if (r->type == A_FOR)
@@ -178,7 +169,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         new = init_node("do", DO);
         add_node(r, new);
         tok = build_aux(new, tok->next);
-        return tok->next;
+        return tok;
     }
     return NULL;
 }
