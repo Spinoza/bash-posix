@@ -33,4 +33,5 @@ struct node
 
 struct node* build_ast(struct linked_list *tokens);
 void print_ast(struct node *ast);
+void free_node(struct node *n);
 #endif /* ! AST_H */

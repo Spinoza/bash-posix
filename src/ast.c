@@ -59,18 +59,15 @@ static enum ntype node_getype(enum type type)
 
 }
 
-/*static void free_node(struct node *n)
+void free_node(struct node *n)
 {
     if (!n)
         return;
 
-    if (n->instr)
-        free(n->instr);
-
     free_node(n->children);
     free_node(n->next);
     free(n);
-}*/
+}
 
 static struct node* init_node(char *instr, enum type type)
 {
