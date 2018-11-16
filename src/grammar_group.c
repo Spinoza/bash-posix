@@ -103,7 +103,7 @@ struct nL *g_caseclause(struct nL *tok)
 
         save = tok;
     }
-
+    tok = save;
     tok = tok->next;
     if (!tok)
         return NULL;
@@ -178,7 +178,7 @@ struct nL *g_caseitem(struct nL *tok)
         }
         save = tok;
     }
-
+    tok = save;
     tok = tok->next;
     if (!tok)
         return NULL;

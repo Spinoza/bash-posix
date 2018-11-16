@@ -220,6 +220,7 @@ struct nL *g_compoundlist(struct nL *tok)
         save = tok;
         t = tok->elem->type;
     }
+    tok = save;
     tok = tok->next;
     if (!tok)
         return NULL;
