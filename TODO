@@ -24,9 +24,9 @@
 |
 |--------Test suite []
 |---------- Using Cmake / autotools [X]
-|---------- Unitary test for each feature []
+|---------- Unitary test for each feature [X]
 |---------- Respects the rules for testing []
-|---------- Advanced features : colors, output file []
+|---------- Advanced features : colors, output file [X]
 |
 |--------Execution []
 |---------- Simple Commands [X]
@@ -34,5 +34,5 @@
 |-------------- Redirection [X]
 |-------------- Variable Assignment [X]
 |---------- if Commands [X]
-|---------- while and until Commands []
-|---------- for commands []
+|---------- while and until Commands [X]
+|---------- for commands [X]
