@@ -121,7 +121,7 @@ int options_parser(int argc, char *argv[], struct option *options)
         {
             if( (pos = set_commands(options,argv, pos, argc)) == 0)
             {
-                errx(1, "Invalid option : %s.\n", argv[pos]);
+                errx(1, "Invalid option : %s.", argv[pos]);
             }
         }
         else
