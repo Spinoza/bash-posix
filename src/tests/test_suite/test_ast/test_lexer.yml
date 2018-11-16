@@ -2,68 +2,109 @@ easy_word:
         type: "output diff"
         command: "word"
         expected:
-                stdout: "WORD -> ENDOF -> \n"
-                rvalue: 0
+                stdout: "graph ast
+{ 
+    root_0 -- word_1
+}"
 
 assignment_w:
         type: "output diff"
         command: "word=1"
         expected:
-                stdout: "ASSIGNMENT_W -> ENDOF -> \n"
-                rvalue: 0
+                stdout: "graph ast
+{ 
+    root_0 -- PWD=4_1
+}"
 
 if_word_then_word:
         type: "output diff"
         command: "if word1 then cond fi"
         expected:
-                stdout: "IF -> WORD -> THEN -> WORD -> FI -> ENDOF -> \n"
-                rvalue: 0
+                stdout: "graph ast
+{ 
+    root_0 -- if_1
+    if_1 -- condition_2
+    condition_2 -- word1_3
+    if_1 -- then_2
+    then_2 -- cond_3
+}"
+
 
 if_word_and_word_then:
         type: "output diff"
         command: "if word1 && word2 then word3 else word4 fi"
         expected:
-                stdout: "IF -> WORD -> LOGICAL_AND -> WORD -> THEN -> WORD -> ELSE -> \
-                         WORD -> FI -> ENDOF -> \n"
-                rvalue: 0
+                stdout: "graph ast
+{ 
+    root_0 -- if_1
+    if_1 -- condition_2
+    condition_2 -- word1_3
+    condition_2 -- logical_and_3
+    condition_2 -- word2_3
+    if_1 -- then_2
+    then_2 -- word3_3
+    if_1 -- else_2
+    else_2 -- word4_3
+}"
+
 
 complex_case:
         type: "output diff"
         command: "while bonsoir || bonnenuit; do thx; if matin; then butwtf; elif jour; then butearly; else verymuch; fi done"
         expected:
-                stdout: "WHILE -> WORD -> LOGICAL_OR -> WORD -> SEMICOLON -> DO -> WORD -> \
-                        SEMICOLON -> IF -> WORD -> SEMICOLON -> THEN -> WORD -> SEMICOLON -> ELIF -> WORD \
-                        -> SEMICOLON -> THEN -> WORD -> SEMICOLON -> ELSE -> WORD -> SEMICOLON -> FI -> DONE \
-                        -> ENDOF -> \n"
-                rvalue: 0
+                stdout: "graph ast
+{ 
+    root_0 -- while_1
+    while_1 -- condition_2
+    condition_2 -- bonsoir_3
+    condition_2 -- ||_3
+    condition_2 -- bonnenuit_3
+    condition_2 -- ;_3
+    while_1 -- do_2
+    do_2 -- thx_3
+    do_2 -- ;_3
+    do_2 -- if_3
+    if_3 -- condition_4
+    condition_4 -- matin_5
+    condition_4 -- ;_5
+    if_3 -- then_4
+    then_4 -- butwtf_5
+    then_4 -- ;_5
+    if_3 -- elif_4
+    elif_4 -- condition_5
+    condition_5 -- jour_6
+    condition_5 -- ;_6
+    elif_4 -- then_5
+    then_5 -- butearly_6
+    then_5 -- ;_6
+    elif_4 -- else_5
+    else_5 -- verymuch_6
+    else_5 -- ;_6
+    root_0 -- done_1
+}"
 do_while:
         type: "output diff"
         command: "do word1 word2 p=1 while cond"
         expected:
                 stdout: "DO -> WORD -> WORD -> ASSIGNMENT_W -> WHILE -> WORD -> \
                          ENDOF -> \n"
-                rvalue: 0
 while_loop:
         type: "output diff"
         command: "while true; do foo; sleep 2; done"
         expected:
                 stdout: "WHILE -> WORD -> SEMICOLON -> DO -> WORD -> SEMICOLON -> WORD -> WORD -> SEMICOLON -> DONE -> ENDOF -> \n"
-                rvalue: 0
 pipe_test:
         type: "output diff"
         command: "cat | echo hello"
         expected:
                 stdout: "WORD -> PIPE -> WORD -> WORD -> ENDOF -> \n"
-                rvalue: 0
 logical_and_and:
         type: "output diff"
         command: "hello && & bye"
         expected:
                 stdout: "WORD -> LOGICAL_AND -> AMPERSAND -> WORD -> ENDOF -> \n"
-                rvalue: 0
 pipe_and_logical_or:
         type: "output diff"
         command: "echo hello || bye | cat"
         expected:
                 stdout: "WORD -> WORD -> LOGICAL_OR -> WORD -> PIPE -> WORD -> ENDOF -> \n"
-                rvalue: 0
