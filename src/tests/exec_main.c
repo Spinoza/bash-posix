@@ -84,6 +84,9 @@ void print_enum(enum type type)
         case 24:
                 printf("ROOT");
                 break;
+        case 25:
+                printf("REDIRECTION");
+                break;
     }
 }
 void print_list(struct linked_list *l_list)

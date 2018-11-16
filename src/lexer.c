@@ -5,6 +5,7 @@
 #include <string.h>
 
 #define LIST_LENGTH 21
+#define REDIR_LENGTH 9
 
 static struct token *token_init(void)
 {
@@ -15,10 +16,25 @@ static struct token *token_init(void)
 }
 static void read_string(struct token *new, char *string, char **list,
         struct linked_list *l_list);
+/*
+static char **init_redir_list(void)
+{
+    char **list = malloc(sizeof(char *) * REDIR_LENGTH);
+    *list = "<";
+    *(list + 1) =">";
+    *(list + 2) = "<<";
+    *(list + 3) = ">>";
+    *(list + 4) = "<<-";
+    *(list + 5) = ">&";
+    *(list + 6) = "<&";
+    *(list + 7) = ">|";
+    *(list + 8) = "<>";
 
+    return list;
+}*/
 static char **init_list(void)
 {
-    char **list = malloc(sizeof(char *) * 21);
+    char **list = malloc(sizeof(char *) * LIST_LENGTH);
     *list = "if";
     *(list + 1) ="then";
     *(list + 2) = "else";
@@ -58,27 +74,22 @@ enum type check_word(char *string)
     {
         if (*(string + i) == '=')
             return ASSIGNMENT_W;
+        if (*(string + i) == '<' || *(string + i) == '>')
+            return IONUMBER;
     }
     return WORD;
 }
-
-int isanumber(char a)
-{
-    if (a >= 0 && a <= 9)
-        return 1;
-    return 0;
-}
-
-int isaredirection(char a)
-{
-    if (a == '<' || a == '>')
-        return 1;
-    return 0;
-}
-
+/*
 enum type check_ionumber(char *string)
 {
     int b = 0;
+    int i = 0;
+    while (*(string + i) >= '0' && *(string +i) <= '9')
+        i++;
+    if(*(string + i) == '<' || *(string + i) == '>')
+    {
+
+    }
     for (int i = 0; *(string + i); i++)
     {
         if (isanumber(*(string + i)))
@@ -99,23 +110,19 @@ int pos_redirection(char *string)
 {
     for (int i = 0; *(string + i); i++)
     {
-        if (isaredirection(*(string + i)))
+        if (*(string + i) == '<' || *(string + i) == '>')
             return i;
     }
     return 0;
-}
-
+}*/
+/*
 void split_redirection(struct token *new, char *string,
         struct linked_list *l_list, int index)
 {
-    new->name = malloc(sizeof(char) * index);
-    new->name = memcpy(new->name, string, index);
-    new->name[index-1] = '\0';
-    struct token *redirection = token_init();
-    redirection->type = IONUMBER;
-    add(l_list,new);
+    int len = strlen(string);
+    new->name = malloc(sizeof(char)
     return;
-}
+}*/
 
 int check_list(struct token *new, char *string, char **list)
 {
@@ -161,16 +168,16 @@ void read_string(struct token *new, char *string, char **list,
     add(l_list,new);
     if (check_list(new,string,list))
         return;
+    /*if (check_ionumber(string))
+    {}*/
     new->type = check_word(string);
-    if (new->type == WORD)
-        new->type = check_ionumber(string);
-    if (new->type == IONUMBER)
+    /*if (new->type == IONUMBER)
     {
         int index = pos_redirection(string);
         split_redirection(new,string,l_list,index);
         struct token *n = token_init();
         read_string(n, string + index, list, l_list);
-    }
+    }*/
     int index_sc = check_semicolon(string);
     if (index_sc)
     {
@@ -187,11 +194,12 @@ void read_string(struct token *new, char *string, char **list,
 struct linked_list *lexer (char *input[], int argc, int begin)
 {
     char **list = init_list();
+    //char **redir_list = init_redir_list();
     struct linked_list *l_list = init_link();
     for (int i = begin; i < argc; i++)
     {
         struct token *new = token_init();
-        read_string(new, input[i], list, l_list);
+        read_string(new, input[i], list, l_list);//, redir_list);
     }
     struct token *eof = malloc(sizeof(struct token));
     eof->type = ENDOF;
