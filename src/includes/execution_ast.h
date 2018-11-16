@@ -4,7 +4,7 @@ struct assignment
 {
     char *name;
     char *value;
-}
+};
 
 enum operators
 {
@@ -24,6 +24,6 @@ struct tab_a
     size_t capacity;
     struct assignment **assignment;
     //to implemen0t with hashmap
-}
+};
 
 int execution_ast(struct node *n);

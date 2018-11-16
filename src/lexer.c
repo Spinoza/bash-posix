@@ -142,10 +142,11 @@ void split_semicolon(struct token *new, char *string,
 {
     new->name = malloc(sizeof(char) * index_sc);
     new->name = memcpy(new->name, string, index_sc);
-    new->name[index_sc-1] = '\0';
+    new->name[index_sc] = '\0';
     struct token *semicolon = token_init();
     semicolon->type = SEMICOLON;
-    add(l_list,new);
+    semicolon->name = ";";
+    add(l_list,semicolon);
     return;
 }
 
@@ -176,6 +177,7 @@ void read_string(struct token *new, char *string, char **list,
         split_semicolon(new,string,l_list,index_sc);
         struct token *next = token_init();
         read_string(next, string + index_sc + 1,list,l_list);
+        return;
     }
     int string_len = strlen(string) + 1;
     new->name = malloc(sizeof(char) * string_len);

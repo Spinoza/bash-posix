@@ -1,9 +1,10 @@
 #define _GNU_SOURCE
-#include "execution.h"
+#include "execution_ast.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include  <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 //TO IMPLEMENT LATER
 /*
@@ -71,23 +72,25 @@
  }
 */
 
-char *to_execute(struct node *parent, size_t i, size_t index)
+char **to_execute(struct node *child, struct node *oper_node)
 {
-    size_t len = strlen(parent->children[i]->instr) + 2;
-    char *result = calloc(len);
-    i++;
-    result = memcpy(result, parent->children[i]->instr, len);
-    for (; i < parent->nbchild && i < index; i++)
+    struct node *iter = child;
+    size_t len = strlen(iter->instr) + 1;
+    char **result = calloc(len, sizeof(char *));
+    result[0] = malloc(len * sizeof(char));
+    result[0] = memcpy(result[0], iter->instr, len);
+    iter = iter->next;
+    for (int i = 1; iter != oper_node; i++, iter = iter->next)
     {
-        result[len] = ' ';
-        len += strlen(parent->children[i]->instr) + 2;
-        result = realloc(result, len);
-        result = strcat(result, parent->children[i]->instr);
+        len = strlen(iter->instr) + 1;
+        result = realloc(result, i * sizeof(char *));
+        result[i] = malloc(len * sizeof(char));
+        memcpy(result[i], iter->instr, len);
     }
     return result;
 }
 
-int exec_command(char *string)
+int exec_command(char **string)
 {
     pid_t pid = fork();
     if (pid == -1)//error
@@ -97,51 +100,51 @@ int exec_command(char *string)
     }
     if (pid == 0)//child
     {
-        execvp(string);
-        exit(1);
+        int r = execvp(string[0], string);
+        if (r)
+            exit(r);
+        else
+            exit(0);
     }
     else//father
     {
         int status = 0;
         waitpid(pid, &status, 0);
+        if (status == 127)
+            fprintf(stderr,"42sh : %s : command not found.\n",string[0]);
         return status;
     }
 }
 
-int get_index(struct node *cond, size_t index)
+struct node *get_oper_node(struct node *start)
 {
-    for (size_t i = index; i < cond->nbchild; i++)
+    struct node *iter = start;
+    for (; iter; iter = iter->next)
     {
-        if (cond->children[i]->token == LOGICAL_AND ||
-                cond->children[i]->token == LOGICAL_OR)
-            return i;
+        if (iter->tokentype == LOGICAL_AND || iter->tokentype == LOGICAL_OR)
+            return iter;
     }
-    return -1;
+    return NULL;
 }
 int if_cond(struct node *n)
 {
-    struct node *condition = n->children[0];
+    struct node *condition = n->children;
     int res = 0;
-    for (size_t i = 0; i < condition->nbchild;)
+
+    for (struct node *iter = condition->children; iter;)
     {
-        int index = get_index(condition, i + 1);
-        size_t ind;
-        if (index == -1)
-            ind = parent->nbchild;
-        else
-            ind = index;
-        char *string = to_execute(parent, i, ind);
-        res = exec_command(string);
-        if (index == -1)
+        struct node *oper_node = get_oper_node(iter);
+        char **command_call = to_execute(iter, oper_node);
+        res = exec_command(command_call);
+        free(command_call);
+        if (oper_node == NULL)
             break;
-        char *oper = condition->children[index]->instr;
-        if ((!strcmp(oper,"&&") && res) || (!strcmp(oper,"||") && !res))
-        {
-            res = exec_command(condition->children[index + 1]);
-        }
-        i = index + 2;
+        char *oper = oper_node->instr;
+        if ((!strcmp(oper,"&&") && !res) || (!strcmp(oper,"||") && res))
+            break;
+        iter = oper_node->next;
     }
-    return res; //? what is the return value, void fct ?
+    return res;
 }
 /*
 int while_cond(struct node *n)
@@ -150,7 +153,7 @@ int while_cond(struct node *n)
     int res = 0;
     for (size_t i = 0; i < condition->nbchild;)
     {
-        int index = get_index(condition,i + 1);
+        int index = get_oper_node(condition,i + 1);
         if (index == - 1)
             index = parent->nbchild;
         size_t ind = index;
@@ -171,36 +174,50 @@ int while_cond(struct node *n)
 int traversal_ast(struct node *n)
 {
 
-    if (n->type != BODY && n->type != ROOT)
+    if ((n->type != A_BODY && n->type != A_ROOT))
     {
         int res = 0;
-        if (n->type == IF)
+        if (n->type == A_INSTRUCT)
+        {
+            struct node *oper_node = get_oper_node(n);
+            char *oper = "";
+            if (oper_node)
+            {
+                oper = oper_node->instr;
+            }
+            char **command_call = to_execute(n, oper_node);
+            int rvalue = exec_command(command_call);
+            if ((!strcmp(oper,"&&") && !rvalue)
+                || (!strcmp(oper,"||") && rvalue))
+                return traversal_ast(oper_node->next);
+
+            free(command_call);
+        }
+        if (n->type == A_IF)
         {
             res = if_cond(n);
-            if (res)
-                traversal_ast(n->children[1]);
-            else
-                traversal_ast(n->children[2]);
+            if (res == 0)
+                traversal_ast(n->children->next);
+            else if (res == 1) //if res != 1, the exec returned an error
+                traversal_ast(n->children->next->next);
         }
-        if (n->type == WHILE)
+        return res;
+        /*
+        if (n->type == A_WHILE)
         {
             res = while_cond(n);
         }
-        if (n->type == FOR)
-            return for_cond(n);
+        if (n->type == A_FOR)
+            return for_cond(n);*/
     }
-    int rvalue = exec_command(n->instruction);
-    if (!rvalue)
+    struct node *iter = n->children;
+    /*for (; iter; iter = iter->next)
     {
-        for (int i = 0; i < n->nbchild; i++)
-        {
-            int r = traversal_ast(n->children[i]);
-            if (r != 0)
-                return r;
-        }
-    }
-    else
-        return rvalue;
+        int r = traversal_ast(iter);
+        if (r != 0)
+            return r;
+    }*/
+    return traversal_ast(iter); //FIX RETURN VALUE
 }
 
 int execution_ast(struct node *n)
@@ -210,5 +227,5 @@ int execution_ast(struct node *n)
       struct assignment **assignment = malloc(sizeof(struct assignment *)
      * capacity);
      tab->assignment = assignment;*/
-    return traversal_ast(n)//call with tab;
+    return traversal_ast(n);//call with tab;
 }

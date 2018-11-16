@@ -19,7 +19,7 @@ struct nL *g_pipeline(struct nL *tok)
         return NULL;
     }
     tok = g_command(tok);
-    if(!tok)
+    if (!tok)
     {
         return NULL;
     }
@@ -38,7 +38,7 @@ struct nL *g_pipeline(struct nL *tok)
             while (tok->elem->type == ENDOF)
             {
                 tok = tok->next;
-                if(!tok)
+                if (!tok)
                     return NULL;
             }
             tok = g_command(tok);
@@ -55,7 +55,7 @@ struct nL *g_pipeline(struct nL *tok)
 struct nL *g_andor(struct nL *tok)
 {
     tok = g_pipeline(tok);
-    if(!tok)
+    if (!tok)
     {
         return NULL;
     }
@@ -92,7 +92,7 @@ struct nL *g_andor(struct nL *tok)
 struct nL  *g_list(struct nL *tok)
 {
     tok = g_andor(tok);
-    if(!tok)
+    if (!tok)
     {
         return NULL;
     }
@@ -121,7 +121,7 @@ struct nL  *g_list(struct nL *tok)
             }
 
             tok = g_andor(tok);
-            if(!tok)
+            if (!tok)
             {
                 return NULL;
             }

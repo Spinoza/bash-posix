@@ -14,7 +14,7 @@ static struct node* add_node(struct node* p, struct node *c)
         p->children = c;
         return p;
     }
-    while(ch->next)
+    while (ch->next)
     {
         ch = ch->next;
     }
@@ -92,7 +92,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
 {
     if (r->type == A_ROOT)
     {
-        while(tok->elem->type != ENDOF)
+        while (tok->elem->type != ENDOF)
         {
             struct node *new = init_node(tok->elem->name, tok->elem->type);
             add_node(r, new);
@@ -100,7 +100,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         }
         return tok;
     }
-    if(r->type == A_INSTRUCT)
+    if (r->type == A_INSTRUCT)
     {
         return tok;
     }
@@ -123,7 +123,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         new = init_node("then", THEN);
         add_node(r, new);
         tok = build_aux(new, tok->next);
-        while(tok->elem->type == ELIF)
+        while (tok->elem->type == ELIF)
         {
             new = init_node("elif", ELIF);
             add_node(r, new);
@@ -134,22 +134,22 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         tok = build_aux(new, tok->next);
         return tok->next;
     }
-    if(r->type == A_CONDITION)
+    if (r->type == A_CONDITION)
     {
-        while((tok->elem->type != SEMICOLON)&&(tok->elem->type != THEN)&&
+        while ((tok->elem->type != SEMICOLON)&&(tok->elem->type != THEN)&&
               (tok->elem->type != DO))
         {
             struct node *new = init_node(tok->elem->name, tok->elem->type);
             add_node(r, new);
             tok = tok->next;
         }
-        if(tok->elem->type == SEMICOLON)
+        if (tok->elem->type == SEMICOLON)
             return tok->next;
         return tok;
     }
-    if((r->type == A_BODY)||(r->type == A_EBODY)||(r->type == A_ELIF))
+    if ((r->type == A_BODY)||(r->type == A_EBODY)||(r->type == A_ELIF))
     {
-        while((tok->elem->type != ELIF)&&(tok->elem->type != ELSE)&&
+        while ((tok->elem->type != ELIF)&&(tok->elem->type != ELSE)&&
               (tok->elem->type != DONE)&&(tok->elem->type != FI))
         {
             if (tok->elem->type == SEMICOLON)
