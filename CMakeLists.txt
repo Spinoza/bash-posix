@@ -42,6 +42,11 @@ target_link_libraries(exec_main linked_list)
 add_executable(lexer_main ${CMAKE_SOURCE_DIR}/src/tests/lexer_main.c)
 target_link_libraries(lexer_main lexer)
 
+add_executable(ast_main ${CMAKE_SOURCE_DIR}/src/tests/ast_main.c)
+target_link_libraries(ast_main ast)
+target_link_libraries(ast_main lexer)
+target_link_libraries(ast_main grammar)
+
 add_executable(grammar_main ${CMAKE_SOURCE_DIR}/src/tests/grammar_main.c)
 target_link_libraries(grammar_main ast)
 target_link_libraries(grammar_main grammar)
@@ -69,7 +74,13 @@ add_custom_target(check_grammar
     COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/grammar.sh
     DEPENDS lexer_main
 )
+add_custom_target(check_ast
+    COMMENT "Running tests on ast,checking that the dot file produced is correct\n"
+    COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/ast.sh
+    DEPENDS lexer_main
+)
 add_custom_target(check
     COMMAND make check_lexer
     COMMAND make check_grammar
+    COMMAND make check_ast
     )

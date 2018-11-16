@@ -28,6 +28,6 @@ int main(int argc, char *argv[])
     struct node *ast = build_ast(tokens);
     if (options->ast_print == TRUE)
         print_ast(ast);
-    //execute_ast(ast);
+    execution_ast(ast);
     return 0;
 }

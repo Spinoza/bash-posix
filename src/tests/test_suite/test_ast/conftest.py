@@ -31,24 +31,18 @@ class YamlItem(pytest.Item):
                 stderr=subprocess.PIPE,\
                 stdin=subprocess.PIPE)
 
-        out, err = process.communicate(input=self.command)
+        process.communicate(input=self.command)
+        dot_file = open('ast.dot',mode='r')
+        all_of_it = dot_file.read()
+        self.expected["stdout"] = self.expected["stdout"].decode()
+        dot_file.close()
+
         r = process.returncode
         process.kill()
         if "stdout" in self.expected:
-            if self.expected["stdout"] != out:
-                raise YamlException("stdout", self.expected['stdout'],out, self.command, self.name)
-        elif out: #check if no out should be returned but my program returned one
-                raise YamlException("stdout", b'(empty)',out, self.command, self.name)
-                #print("stdout got :[ %s ] \nexpected nothing" % (out))
+            if self.expected["stdout"] != all_of_it:
+                raise YamlException("stdout", self.expected['stdout'],all_of_it, self.command, self.name)
 
-        if "stderr" in self.expected:
-            if self.expected["stderr"] != err:
-                raise YamlException("stderr", self.expected['stderr'],out,self.command, self.name)
-        elif err: #check if no err should be returned but my program returned err
-                raise YamlException("stderr", b'(empty)', out, self.command, self.name)
-
-        if self.expected['rvalue'] != r:
-                raise YamlException('stderr', b'(empty)', out, self.command, self.name)
 
     def repr_failure(self, excinfo):
         "called when runtest raises an exception"

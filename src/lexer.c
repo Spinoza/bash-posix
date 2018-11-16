@@ -124,6 +124,31 @@ void split_redirection(struct token *new, char *string,
     return;
 }*/
 
+void set_name(struct token *new, char **list, int index)
+{
+    switch (index)
+    {
+        case 4:
+            new->name = "logical_and";
+            break;
+        case 5:
+            new->name = "semicolon";
+            break;
+        case 15:
+            new->name = "pipe";
+            break;
+        case 16:
+            new->name = "logical_or";
+            break;
+        case 17:
+            new->name = "and";
+            break;
+        default:
+            new->name = list[index];
+            break;
+    }
+
+}
 int check_list(struct token *new, char *string, char **list)
 {
     for (int i = 0; i < LIST_LENGTH; i++)
@@ -131,7 +156,7 @@ int check_list(struct token *new, char *string, char **list)
         if (!strcmp(string, list[i]))
         {
             new->type = i;
-            new->name = string;
+            set_name(new,list,i);
             return 1;
         }
     }
@@ -152,7 +177,7 @@ void split_semicolon(struct token *new, char *string,
     new->name[index_sc] = '\0';
     struct token *semicolon = token_init();
     semicolon->type = SEMICOLON;
-    semicolon->name = ";";
+    semicolon->name = "semicolon";
     add(l_list,semicolon);
     return;
 }
