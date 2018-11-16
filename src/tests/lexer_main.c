@@ -78,12 +78,15 @@ void print_enum(enum type type)
                 printf("HEREDOC");
                 break;
         case 22:
-                printf("IONUMBER");
+                printf("REDIRECTION");
                 break;
         case 23:
-                printf("CONDITION");
+                printf("IONUMBER");
                 break;
         case 24:
+                printf("CONDITION");
+                break;
+        case 25:
                 printf("ROOT");
                 break;
     }

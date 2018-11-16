@@ -25,10 +25,10 @@ enum type
     ESAC = 19,
     ELIF = 20,
     HEREDOC = 21,
-    IONUMBER = 22,
-    CONDITION = 23,
-    ROOT = 24,
-    REDIRECTION = 25
+    REDIRECTION = 22,
+    IONUMBER = 23,
+    CONDITION = 24,
+    ROOT = 25,
 };
 
 struct token
