@@ -14,7 +14,7 @@
 //!	int grammar_check(struct linked_list *tokens);\n
 //!     struct node *build_ast(struct linked_list *tokens);\n
 //!     void print_ast(struct node *ast);\n
-//!     [FIXME]
+//!     int execution_ast(struct node *n); 
 //!
 //!	The program 42sh remains a project and, as thus, needs to be compiled before 
 //!     being used.\n
@@ -25,7 +25,7 @@
 //!	The 42sh project is a command language interpreter base on the sh(1p) interp
 //!     erter.Thus it follows its behaviour: the standard input, a command line script
 //!     or a file, is read and executed. But before execution, it check that the
-//!     commands are expressed in the conform LL grammar. It is composed with [FIXME]4 func
+//!     commands are expressed in the conform LL grammar. It is composed with 5 func
 //!     tions:\n
 //!     The lexer() function splits an input line from a file, the terminal, or a st
 //!     ring, into tokens.\n
@@ -33,7 +33,9 @@
 //!     grammar.\n
 //!     To execute the command line, all the token are organized in an AST tree. To 
 //!     create the tree the function build_ast() is called. Then the the print_ast()
-//!     function can be called to print the AST created.
+//!     function can be called to print the AST created.\n
+//!     Finally the execution_ast() function goes through the AST tree and interprete
+//!     each node to execute the line command.
 //! @section options OPTIONS
 //!
 //! 	The 42sh program can be called with several options, all conforming to the s
