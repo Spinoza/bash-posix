@@ -184,11 +184,11 @@ void read_string(struct token *new, char *string, char **list,
     memcpy(new->name, string, string_len);
 }
 
-struct linked_list *lexer (char *input[], int argc)
+struct linked_list *lexer (char *input[], int argc, int begin)
 {
     char **list = init_list();
     struct linked_list *l_list = init_link();
-    for (int i = 1; i < argc; i++)
+    for (int i = begin; i < argc; i++)
     {
         struct token *new = token_init();
         read_string(new, input[i], list, l_list);

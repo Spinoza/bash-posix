@@ -3,5 +3,5 @@
 
 #include "linked_list.h"
 
-struct linked_list *lexer(char *input[],int argc);
+struct linked_list *lexer(char *input[],int argc, int begin);
 #endif /* ! LEXER_H */

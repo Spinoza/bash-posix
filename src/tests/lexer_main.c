@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
         printf("Usage: lexer : takes at least one argument\n");
         return 1;
     }
-    struct linked_list *l_list = lexer(argv,argc);
+    struct linked_list *l_list = lexer(argv,argc, 1);
     print_list(l_list);
     free_list(l_list);
 }
