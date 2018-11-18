@@ -33,11 +33,6 @@ void handle_option(struct option *options)
         printf("Option +O detected. %s shall be unset.\n", options->arg_pO);
     }
 
-    if (options->c == TRUE)
-    {
-        printf("Option -c detected. %s shall be done.\n", options->arg_c);
-    }
-
     if (options->norc == TRUE)
     {
         printf("Option --norc detected. Deactivating the resource loader.\n");

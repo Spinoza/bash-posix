@@ -216,6 +216,26 @@ void read_string(struct token *new, char *string, char **list,
     memcpy(new->name, string, string_len);
 }
 
+struct linked_list *lexer_c(char *input)
+{
+    char **list = init_list();
+    struct linked_list *l_list = init_link();
+    char *string = strtok(input, " ");
+    while (string)
+    {
+        struct token *new = token_init();
+        read_string(new, string, list, l_list);
+        string = strtok(NULL, " ");
+    }
+
+    struct token *eof = malloc(sizeof(struct token));
+    eof->type = ENDOF;
+    eof->name = "ENDOF";
+    add(l_list, eof);
+    free(list);
+    return l_list;
+}
+
 struct linked_list *lexer (char *input[], int argc, int begin)
 {
     char **list = init_list();

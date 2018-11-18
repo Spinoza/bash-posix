@@ -21,7 +21,15 @@ int main(int argc, char *argv[])
         return 0;
     }
     handle_option(options);
-    struct linked_list *tokens = lexer(argv, argc, index);
+    struct linked_list *tokens;
+    if (options->c == TRUE)
+    {
+        tokens = lexer_c(options->arg_c);
+    }
+    else
+    {
+        tokens = lexer(argv, argc, index);
+    }
     int isgramm = grammar_check(tokens);
     if (!isgramm)
         errx(1, "Lexer error. Is your input conform to grammar ?");
