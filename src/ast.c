@@ -45,6 +45,8 @@ static enum ntype node_getype(enum type type)
             return A_CASE;
         case 10:
             return A_BODY;
+        case 15:
+            return A_PIPE;
         case 18:
             return A_IN;
         case 20:
@@ -93,13 +95,13 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         {
             struct node *new = init_node(tok->elem->name, tok->elem->type);
             add_node(r, new);
-            if(new->type != A_INSTRUCT)
+            if(new->type != A_INSTRUCT || new->type == A_PIPE)
                 tok = build_aux(new, tok->next);
             tok = tok->next;
         }
         return tok;
     }
-    if (r->type == A_INSTRUCT)
+    if (r->type == A_INSTRUCT || r->type == A_PIPE)
     {
         return tok;
     }
@@ -129,6 +131,8 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
     {
         while ((tok->elem->type != THEN)&&(tok->elem->type != DO))
         {
+            while (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
+                tok = tok->next;
             struct node *new = init_node(tok->elem->name, tok->elem->type);
             add_node(r, new);
             tok = tok->next;
@@ -140,6 +144,8 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         while ((tok->elem->type != ELIF)&&(tok->elem->type != ELSE)&&
               (tok->elem->type != DONE)&&(tok->elem->type != FI))
         {
+            while (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
+                tok = tok->next;
             struct node *new = init_node(tok->elem->name, tok->elem->type);
             add_node(r, new);
             tok = build_aux(new, tok->next);

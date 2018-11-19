@@ -18,7 +18,8 @@ enum ntype
     A_ROOT,
     A_FOR,
     A_IN,
-    A_ELIF
+    A_ELIF,
+    A_PIPE
 };
 
 struct node
