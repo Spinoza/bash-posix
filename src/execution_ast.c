@@ -72,7 +72,6 @@
  }
 */
 
-
 char **to_execute(struct node *child, struct node *oper_node)
 {
     struct node *iter = child;
@@ -146,7 +145,7 @@ int if_cond(struct node *cond)
                 || oper_node->tokentype == AND)
             break;
         char *oper = oper_node->instr;
-        if ((!strcmp(oper,"logical_and") && !res) || (!strcmp(oper,"logical_or") && res))
+        if ((!strcmp(oper,"&&") && !res) || (!strcmp(oper,"||") && res))
             break;
         iter = oper_node->next;
     }
@@ -161,10 +160,10 @@ struct node *instr_execution(struct node *n, int *res)
     char **command_call = to_execute(n, oper_node);
     *res = exec_command(command_call);
     free(command_call);
-    if ((!strcmp(oper,"logical_and") && !(*res))
-            || (!strcmp(oper,"logical_or") && (*res)))
+    if ((!strcmp(oper,"&&") && !(*res))
+            || (!strcmp(oper,"||") && (*res)))
         return oper_node->next;
-    if (!strcmp(oper, "semicolon") && oper_node->next)
+    if (!strcmp(oper, ";") && oper_node->next)
         return oper_node->next;
     return NULL;
 }
@@ -204,6 +203,20 @@ struct node *for_execution(struct node *n, int *res)
     return (n->next);
 }
 
+struct node *case_execution(struct node *n)
+{
+    struct node *elt = n->children;
+    struct node *cases = elt->next;
+    for ( ; cases; cases = cases->next)
+    {
+        if (cases->instr == elt->instr)
+            break;
+    }
+    if (!cases)
+        return NULL;
+    return cases->children;
+}
+
 int traversal_ast(struct node *n, int *res)
 {
     if (!n)
@@ -214,6 +227,8 @@ int traversal_ast(struct node *n, int *res)
             return traversal_ast(instr_execution(n, res), res);
         if (n->type == A_IF)
             return traversal_ast(if_execution(n, res), res);
+        if (n->type == A_CASE)
+            return traversal_ast(case_execution(n), res);
         if (n->type == A_WHILE)
         {
             while (if_cond(n) == 0)
