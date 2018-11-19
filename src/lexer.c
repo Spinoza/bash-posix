@@ -59,11 +59,11 @@ static char **init_list(void)
 
     return list;
 }
-int check_semicolon(char *string)
+int check_specials(char *string) //checks for & and ;
 {
     for (int i = 0; *(string + i); i++)
     {
-        if (*(string + i) == ';')
+        if (*(string + i) == ';' || *(string + i) == '&')
             return i;
     }
     return 0;
@@ -147,8 +147,8 @@ void set_name(struct token *new, char **list, int index)
             new->name = list[index];
             break;
     }
-
 }
+
 int check_list(struct token *new, char *string, char **list)
 {
     for (int i = 0; i < LIST_LENGTH; i++)
@@ -168,6 +168,18 @@ int check_list(struct token *new, char *string, char **list)
     }
     return 0;
 }
+void split_ampersand(struct token *new, char *string,
+        struct linked_list *l_list, int index_sc)
+{
+    new->name = malloc(sizeof(char) * index_sc);
+    new->name = memcpy(new->name, string, index_sc);
+    new->name[index_sc] = '\0';
+    struct token *ampersand = token_init();
+    ampersand->type = AND;
+    ampersand->name = "&";
+    add(l_list,ampersand);
+    return;
+}
 
 void split_semicolon(struct token *new, char *string,
         struct linked_list *l_list, int index_sc)
@@ -182,6 +194,19 @@ void split_semicolon(struct token *new, char *string,
     return;
 }
 
+void split_tokens(struct token *new, char *string, struct linked_list *l_list,
+        int index_sc)
+{
+    switch (string[index_sc])
+    {
+        case ';':
+            split_semicolon(new,string,l_list,index_sc);
+            break;
+        case '&':
+            split_ampersand(new,string,l_list,index_sc);
+            break;
+    }
+}
 void read_string(struct token *new, char *string, char **list,
         struct linked_list *l_list)
 {
@@ -203,10 +228,10 @@ void read_string(struct token *new, char *string, char **list,
         struct token *n = token_init();
         read_string(n, string + index, list, l_list);
     }*/
-    int index_sc = check_semicolon(string);
+    int index_sc = check_specials(string);
     if (index_sc)
     {
-        split_semicolon(new,string,l_list,index_sc);
+        split_tokens(new,string,l_list,index_sc);
         struct token *next = token_init();
         read_string(next, string + index_sc + 1,list,l_list);
         return;

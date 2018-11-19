@@ -123,7 +123,8 @@ struct node *get_oper_node(struct node *start)
     {
         if (iter->tokentype == LOGICAL_AND
             || iter->tokentype == LOGICAL_OR
-            || iter->tokentype == SEMICOLON)
+            || iter->tokentype == SEMICOLON
+            || iter->tokentype == AND)
             return iter;
     }
     return NULL;
@@ -139,7 +140,9 @@ int if_cond(struct node *cond)
         char **command_call = to_execute(iter, oper_node);
         res = exec_command(command_call);
         free(command_call);
-        if (oper_node == NULL || oper_node->tokentype == SEMICOLON)
+        if (oper_node == NULL
+                || oper_node->tokentype == SEMICOLON
+                || oper_node->tokentype == AND)
             break;
         char *oper = oper_node->instr;
         if ((!strcmp(oper,"&&") && !res) || (!strcmp(oper,"||") && res))
@@ -191,7 +194,8 @@ struct node *for_execution(struct node *n, int *res)
     {
         cond = cond->next;
         struct node *do_node = n->children->next->children;
-        for ( ; cond && cond->tokentype != SEMICOLON; cond = cond->next)
+        for ( ; cond && (cond->tokentype != SEMICOLON
+                    || cond->tokentype != AND); cond = cond->next)
         {
             *res = traversal_ast(do_node, res);
         }
