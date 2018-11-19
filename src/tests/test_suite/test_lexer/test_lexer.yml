@@ -67,3 +67,10 @@ pipe_and_logical_or:
         expected:
                 stdout: "WORD -> WORD -> LOGICAL_OR -> WORD -> PIPE -> WORD -> ENDOF -> \n"
                 rvalue: 0
+
+word_and_word_semi:
+        type: "output diff"
+        command: "hello& bye;"
+        expected:
+                stdout: "WORD -> AMPERSAND -> WORD -> SEMICOLON -> ENDOF -> \n"
+                rvalue: 0
