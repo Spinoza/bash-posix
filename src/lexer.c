@@ -1,6 +1,7 @@
 #include "lexer.h"
 #include "token.h"
 
+#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -86,7 +87,7 @@ enum type check_ionumber(char *string)
     int i = 0;
     while (*(string + i) >= '0' && *(string +i) <= '9')
         i++;
-    if(*(string + i) == '<' || *(string + i) == '>')
+    if (*(string + i) == '<' || *(string + i) == '>')
     {
 
     }

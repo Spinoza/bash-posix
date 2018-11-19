@@ -4,6 +4,7 @@
 #include "err.h"
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
 
 struct option *option_init(void)
 {
@@ -73,33 +74,33 @@ static int set_pO(struct option *opts, char *arg[], int pos, int argc)
 
 static int set_commands(struct option *options, char *argv[], int i, int argc)
 {
-    if(!strcmp(argv[i],"-c"))
+    if (!strcmp(argv[i],"-c"))
     {
         options->c = TRUE;
         return set_c(options, argv, i + 1, argc);
     }
-    if(!strcmp(argv[i],"-O"))
+    if (!strcmp(argv[i],"-O"))
     {
         options->minus_O = TRUE;
         return set_mO(options, argv, i + 1, argc);
     }
-    if(!strcmp(argv[i],"--norc"))
+    if (!strcmp(argv[i],"--norc"))
     {
         options->norc = TRUE;
         return i;
     }
-    if(!strcmp(argv[i],"--ast-print"))
+    if (!strcmp(argv[i],"--ast-print"))
     {
         options->ast_print = TRUE;
         return i;
     }
-    if(!strcmp(argv[i],"--version"))
+    if (!strcmp(argv[i],"--version"))
     {
         options->version = TRUE;
         return i;
     }
 
-    if(!strcmp(argv[i],"+O"))
+    if (!strcmp(argv[i],"+O"))
     {
         options->plus_O = TRUE;
         return set_pO(options, argv, i+1, argc);
@@ -112,9 +113,9 @@ int options_parser(int argc, char *argv[], struct option *options)
     int pos = 1;
     while (pos < argc) //Skip the first arg
     {
-        if(argv[pos][0] == '-' || argv[pos][0] == '+')
+        if (argv[pos][0] == '-' || argv[pos][0] == '+')
         {
-            if( (pos = set_commands(options,argv, pos, argc)) == 0)
+            if ( (pos = set_commands(options,argv, pos, argc)) == 0)
             {
                 errx(1, "Invalid option : %s.", argv[pos]);
             }
