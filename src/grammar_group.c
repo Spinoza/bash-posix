@@ -181,6 +181,9 @@ struct nL *g_caseitem(struct nL *tok)
             break;
         }
         save = tok;
+        tok = tok->next;
+        if(!tok)
+            return NULL;
     }
     tok = save;
     tok = tok->next;
