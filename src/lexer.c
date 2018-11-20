@@ -160,6 +160,7 @@ int check_list(struct token *new, char *string, char **list)
         if (!strcmp(string, list[i]))
         {
             new->type = i;
+            set_name(new, list, i);
             return 1;
         }
     }
