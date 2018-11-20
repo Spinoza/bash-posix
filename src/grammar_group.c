@@ -152,19 +152,20 @@ static int is_conform(struct nL *tok)
 
 struct nL *g_caseitem(struct nL *tok)
 {
-    if (tok->elem->type == WORD || !(strcmp(tok->elem->name, "(")))
+    if (!(strcmp(tok->elem->name, "(")))
     {
         tok = tok->next;
         if (!tok)
             return NULL;
     }
-
-    if (tok->elem->type == WORD)
+    if(tok->elem->type != WORD)
+    {
         return NULL;
+    }
 
     struct nL *save = tok;
     tok = tok->next;
-    if (!tok)
+    if(!tok)
         return NULL;
 
     while (tok->elem->type == PIPE)
