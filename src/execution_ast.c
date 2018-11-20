@@ -155,10 +155,9 @@ int pipe_command(char **command1, struct node *n)
     struct node *oper_node = get_oper_node(n);
     char **command2 = to_execute(n, oper_node);
 
-    printf("wowowow\n");
     int fd[2];
     //test area
-    int saved_fd1 = dup(1);
+    //int saved_fd1 = dup(1);
     //end test
     pipe(fd);
     close(0);
@@ -168,10 +167,9 @@ int pipe_command(char **command1, struct node *n)
     dup(fd[1]);
     exec_command(command1);
     //test
-    dup2(saved_fd1, 1);
-    close(saved_fd1);
+    //dup2(saved_fd1, 1);
+    //close(saved_fd1);
     //end test
-    printf("helllloooooo");
     int status = exec_command(command2);
     //stdout back to normal
     return status;
@@ -233,25 +231,25 @@ struct node *for_execution(struct node *n, int *res)
 
 struct node *case_execution(struct node *n)
 {
-    struct node *elt = n->children->children;
-    struct node *cases = n->children->next;
+    struct node *elt = n->children;
+    struct node *cases = elt->next;
     for ( ; cases; cases = cases->next)
     {
-        if (!strcmp(cases->instr, elt->instr))
-            break;
-        if (strcmp(cases->instr, "*"))
+        struct node *condition = cases->children->children;
+        for ( ; condition && condition->next;
+                condition = condition->next->next)
+        {
+            if (!strcmp(condition->instr, elt->instr))
+                break;
+            if (!strcmp(condition->instr, "*"))
+                break;
+        }
+        if (condition)
             break;
     }
     if (!cases)
         return NULL;
-    struct node *rnode = cases->children;
-    while (cases)
-    {
-        if (strcmp(cases->instr, elt->instr))
-            return NULL;
-        cases = cases->next;
-    }
-    return rnode;
+    return cases->children->next;
 }
 
 int traversal_ast(struct node *n, int *res)

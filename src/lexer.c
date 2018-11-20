@@ -331,7 +331,7 @@ struct linked_list *lexer_c(char *input)
     return l_list;
 }
 
-struct linked_list *lexer(char *input[], int argc, int begin)
+struct linked_list *lexer (char *input[], int argc, int begin)
 {
     char **list = init_list();
     //char **redir_list = init_redir_list();
