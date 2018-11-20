@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 
 project(42SH LANGUAGES C)
 
-add_compile_options(-g -Wall -Wextra -Werror -pedantic -std=c99)
+add_compile_options(-g -Wall -Wextra -Werror -pedantic -std=c99 -D_DEFAULT_SOURCE)
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/src/includes
