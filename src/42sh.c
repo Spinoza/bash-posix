@@ -20,7 +20,6 @@ int main(int argc, char *argv[])
         free(options);
         return 0;
     }
-    handle_option(options);
     struct linked_list *tokens;
     if (options->c == TRUE)
     {

@@ -22,29 +22,6 @@ struct option *option_init(void)
     return new;
 }
 
-void handle_option(struct option *options)
-{
-    if (options->minus_O == TRUE)
-    {
-        printf("Option -O detected. %s shall be set.\n", options->arg_mO);
-    }
-
-    if (options->plus_O == TRUE)
-    {
-        printf("Option +O detected. %s shall be unset.\n", options->arg_pO);
-    }
-
-    if (options->norc == TRUE)
-    {
-        printf("Option --norc detected. Deactivating the resource loader.\n");
-    }
-
-    if (options->ast_print == TRUE)
-    {
-        printf("--ast-print : a dot file containing the AST of your input shall be created in your current directory.\n");
-    }
-}
-
 static int set_c(struct option *opts, char *arg[], int pos, int argc)
 {
     if (pos >= argc)
