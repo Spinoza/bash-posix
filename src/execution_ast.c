@@ -124,7 +124,8 @@ struct node *get_oper_node(struct node *start)
         if (iter->tokentype == LOGICAL_AND
             || iter->tokentype == LOGICAL_OR
             || iter->tokentype == SEMICOLON
-            || iter->tokentype == AND)
+            || iter->tokentype == AND
+            || iter->tokentype == PIPE)
             return iter;
     }
     return NULL;
@@ -158,7 +159,10 @@ struct node *instr_execution(struct node *n, int *res)
     struct node *oper_node = get_oper_node(n);
     char *oper = (oper_node ? oper_node->instr : "");
     char **command_call = to_execute(n, oper_node);
-    *res = exec_command(command_call);
+    if (oper_node->tokentype == PIPE)
+        *res = pipe_command(command_call, oper_node->next);
+    else
+        *res = exec_command(command_call);
     free(command_call);
     if ((!strcmp(oper,"logical_and") && !(*res))
             || (!strcmp(oper,"logical_or") && (*res)))
@@ -205,17 +209,33 @@ struct node *for_execution(struct node *n, int *res)
 
 struct node *case_execution(struct node *n)
 {
-    struct node *elt = n->children;
-    struct node *cases = elt->next;
+    struct node *elt = n->children->children;
+    struct node *cases = n->children->next;
     for ( ; cases; cases = cases->next)
     {
-        if (cases->instr == elt->instr)
+        if (!strcmp(cases->instr, elt->instr))
+            break;
+        if (strcmp(cases->instr, "*"))
             break;
     }
     if (!cases)
         return NULL;
+    struct node *rnode = cases->children;
+    while (cases)
+    {
+        if (strcmp(cases->instr, elt->instr))
+            return NULL;
+        cases = cases->next;
+    }
     return cases->children;
 }
+
+
+/*
+struct node *pipe_execution(struct node *n)
+{
+
+}*/
 
 int traversal_ast(struct node *n, int *res)
 {
@@ -224,7 +244,10 @@ int traversal_ast(struct node *n, int *res)
     if ((n->type != A_BODY && n->type != A_ROOT))
     {
         if (n->type == A_INSTRUCT)
-            return traversal_ast(instr_execution(n, res), res);
+        {
+            if (strcmp(n->instr, ";;"))
+                return traversal_ast(instr_execution(n, res), res);
+        }
         if (n->type == A_IF)
             return traversal_ast(if_execution(n, res), res);
         if (n->type == A_CASE)
@@ -240,7 +263,7 @@ int traversal_ast(struct node *n, int *res)
                 *res = traversal_ast(n->children->next, res);
         }
         if (n->type == A_FOR)
-            *res = traversal_ast(for_execution(n, res), res);
+            return traversal_ast(for_execution(n, res), res);
         return traversal_ast(n->next,res);
     }
     return traversal_ast(n->children,res);
