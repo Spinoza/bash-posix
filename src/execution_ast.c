@@ -6,6 +6,7 @@
 #include  <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+
 //TO IMPLEMENT LATER
 /*
    struct assignment *to_assign(char *string)
@@ -76,18 +77,30 @@ char **to_execute(struct node *child, struct node *oper_node)
 {
     struct node *iter = child;
     size_t len = strlen(iter->instr) + 1;
-    char **result = calloc(len, sizeof(char *));
-    result[0] = malloc(len * sizeof(char));
-    result[0] = memcpy(result[0], iter->instr, len);
+    char **result = calloc(1, sizeof(char *));
+    int i = 0;
+    result[i] = calloc(len, sizeof(char));
+    result[i++] = memcpy(result[0], iter->instr, len);
     iter = iter->next;
-    for (int i = 1; iter != oper_node; i++, iter = iter->next)
+    for (; iter && iter != oper_node; i++, iter = iter->next)
     {
         len = strlen(iter->instr) + 1;
-        result = realloc(result, i * sizeof(char *));
-        result[i] = malloc(len * sizeof(char));
+        result = realloc(result, (i + 1) * sizeof(char *));
+        result[i] = calloc(len, sizeof(char));
         memcpy(result[i], iter->instr, len);
     }
+    result = realloc(result, (i + 1) * sizeof(char *));
+    result[i] = NULL;
     return result;
+}
+
+void free_command(char **string)
+{
+    int i = 0;
+    for (; *(string + i); i++)
+        free(*(string + i));
+    free(*(string + i));
+    free(string);
 }
 
 int exec_command(char **string)
@@ -137,13 +150,13 @@ int if_cond(struct node *cond)
         struct node *oper_node = get_oper_node(iter);
         char **command_call = to_execute(iter, oper_node);
         res = exec_command(command_call);
-        free(command_call);
+        free_command(command_call);
         if (oper_node == NULL
                 || oper_node->tokentype == SEMICOLON
                 || oper_node->tokentype == AND)
             break;
         char *oper = oper_node->instr;
-        if ((!strcmp(oper,"logial_and") && !res) || (!strcmp(oper,"logical_or") && res))
+        if ((!strcmp(oper,"logical_and") && !res) || (!strcmp(oper,"logical_or") && res))
             break;
         iter = oper_node->next;
     }
@@ -156,22 +169,22 @@ int pipe_command(char **command1, struct node *n)
     char **command2 = to_execute(n, oper_node);
 
     int fd[2];
-    //test area
-    //int saved_fd1 = dup(1);
-    //end test
     pipe(fd);
+    int saved_fd1 = dup(1);
+
     close(0);
+
+    exec_command(command1);
+    dup2(1, saved_fd1);
+    close(saved_fd1);
     close(fd[0]);
     close(fd[1]);
-    dup(fd[0]);
-    dup(fd[1]);
-    exec_command(command1);
-    //test
-    //dup2(saved_fd1, 1);
-    //close(saved_fd1);
-    //end test
+
     int status = exec_command(command2);
-    //stdout back to normal
+    free_command(command1);
+    free(command1);
+    free_command(command2);
+    free(command2);
     return status;
 }
 
@@ -185,7 +198,7 @@ struct node *instr_execution(struct node *n, int *res)
         *res = pipe_command(command_call, oper_node->next);
     else
         *res = exec_command(command_call);
-    free(command_call);
+    free_command(command_call);
     if ((!strcmp(oper,"logical_and") && !(*res))
             || (!strcmp(oper,"logical_or") && (*res)))
         return oper_node->next;
