@@ -57,7 +57,7 @@ struct nL *g_dogroup(struct nL *tok)
     if (tok->elem->type != DO)
         return NULL;
 
-    tok = tok->next;
+    tok= tok->next;
     if (!tok)
         return NULL;
 
@@ -67,7 +67,9 @@ struct nL *g_dogroup(struct nL *tok)
 
     tok = tok->next;
     if (!tok)
+    {
         return NULL;
+    }
 
     return tok->elem->type == DONE ? tok : NULL;
 }

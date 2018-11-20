@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
         free(options);
         return 0;
     }
-    if (argc == 1 || options->c == FALSE)
+    if (argc == 1)
     {
         return interactive_mode(options);
     }
