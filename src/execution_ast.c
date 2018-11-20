@@ -155,7 +155,11 @@ int pipe_command(char **command1, struct node *n)
     struct node *oper_node = get_oper_node(n);
     char **command2 = to_execute(n, oper_node);
 
+    printf("wowowow\n");
     int fd[2];
+    //test area
+    int saved_fd1 = dup(1);
+    //end test
     pipe(fd);
     close(0);
     close(fd[0]);
@@ -163,7 +167,14 @@ int pipe_command(char **command1, struct node *n)
     dup(fd[0]);
     dup(fd[1]);
     exec_command(command1);
-    return exec_command(command2);
+    //test
+    dup2(saved_fd1, 1);
+    close(saved_fd1);
+    //end test
+    printf("helllloooooo");
+    int status = exec_command(command2);
+    //stdout back to normal
+    return status;
 }
 
 struct node *instr_execution(struct node *n, int *res)

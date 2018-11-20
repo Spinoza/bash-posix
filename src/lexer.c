@@ -291,22 +291,22 @@ int type_oper(struct token *new)
 }
 void check_context(struct linked_list *l_list, struct token *new)
 {
-    if(type_oper(new))
+    if (type_oper(new))
         return;
     struct nL *iter = l_list->head;
     enum type context = ENDOF;
     for (; iter && iter->elem != new; iter = iter->next)
     {
-        if(context == FOR && iter->elem->type == DO)
+        if (context == FOR && iter->elem->type == DO)
             context = ENDOF;
-        if(context == ENDOF && iter->elem->type == FOR)
+        if (context == ENDOF && iter->elem->type == FOR)
             context = FOR;
-        if(context == ENDOF && iter->elem->type == WORD)
+        if (context == ENDOF && iter->elem->type == WORD)
             context = WORD;
-        if(type_oper(iter->elem))
+        if (type_oper(iter->elem))
             context = ENDOF;
     }
-    if(context == WORD)
+    if (context == WORD)
         new->type = WORD;
 }
 struct linked_list *lexer_c(char *input)
@@ -331,7 +331,7 @@ struct linked_list *lexer_c(char *input)
     return l_list;
 }
 
-struct linked_list *lexer (char *input[], int argc, int begin)
+struct linked_list *lexer(char *input[], int argc, int begin)
 {
     char **list = init_list();
     //char **redir_list = init_redir_list();
