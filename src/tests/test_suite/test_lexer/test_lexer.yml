@@ -74,3 +74,16 @@ word_and_word_semi:
         expected:
                 stdout: "WORD -> AMPERSAND -> WORD -> SEMICOLON -> ENDOF -> \n"
                 rvalue: 0
+
+random_complex_1:
+        type: "output diff"
+        command: "while echo lol; do echo hello;echo bye; done; pwd"
+        expected:
+                stdout: "WHILE -> WORD -> WORD -> SEMICOLON -> DO -> WORD -> WORD -> SEMICOLON -> WORD -> WORD -> SEMICOLON -> DONE -> SEMICOLON -> WORD -> ENDOF -> \n"
+                rvalue: 0
+semicolon_split:
+        type: "output diff"
+        command: "if pwd;then echo lol;fi"
+        expected:
+                stdout: "IF -> WORD -> SEMICOLON -> THEN -> WORD -> WORD -> SEMICOLON -> FI -> ENDOF -> \n"
+                rvalue: 0

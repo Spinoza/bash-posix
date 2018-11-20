@@ -56,9 +56,7 @@ void free_list(struct linked_list *l)
     {
         struct nL *copy = node;
         node = node->next;
-        if (copy->elem->type == WORD || copy->elem->type == ASSIGNMENT_W
-                || copy->elem->type == IONUMBER)
-            free(copy->elem->name);
+        free(copy->elem->name);
         free(copy->elem);
         free(copy);
     }
