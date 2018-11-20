@@ -86,15 +86,18 @@ struct nL *g_caseclause(struct nL *tok)
         return NULL;
     while (tok->elem->type == WORD && (!strcmp(";;", tok->elem->name)))
     {
+        struct nL *stock = tok;
         tok = tok->next;
-        if (!tok)
-            return NULL;
-
-        while (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
+        while (!tok ||(tok->elem->type == ENDOF &&
+                      !(strcmp("\n", tok->elem->name))))
         {
-            tok = tok->next;
             if (!tok)
-                return NULL;
+            {
+                stock->next = handletty();
+                tok = stock;
+            }
+            stock = tok;
+            tok = tok->next;
         }
 
         tok = g_caseitem(tok);
@@ -108,23 +111,23 @@ struct nL *g_caseclause(struct nL *tok)
     }
     tok = save;
     tok = tok->next;
-    if (!tok)
-        return NULL;
 
-    if (tok->elem->type == WORD && !(strcmp(";;", tok->elem->name)))
+    if (tok && tok->elem->type == WORD && !(strcmp(";;", tok->elem->name)))
     {
         save = tok;
         tok = tok->next;
-        if (!tok)
-            return NULL;
     }
 
-    while (tok->elem->type == ENDOF && (!strcmp("\n", tok->elem->name)))
+    while (!tok || (tok->elem->type == ENDOF &&
+                   (!strcmp("\n", tok->elem->name))))
     {
+        if(!tok)
+        {
+            save->next = handletty();
+            tok = save;
+        }
         save = tok;
         tok = tok->next;
-        if (!tok)
-            return NULL;
     }
 
     return save;
