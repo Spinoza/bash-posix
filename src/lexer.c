@@ -17,21 +17,21 @@ static struct token *token_init(void)
 static void read_string(struct token *new, char *string, char **list,
         struct linked_list *l_list);
 /*
-static char **init_redir_list(void)
-{
-    char **list = malloc(sizeof(char *) * REDIR_LENGTH);
-    *list = "<";
-    *(list + 1) =">";
-    *(list + 2) = "<<";
-    *(list + 3) = ">>";
-    *(list + 4) = "<<-";
-    *(list + 5) = ">&";
-    *(list + 6) = "<&";
-    *(list + 7) = ">|";
-    *(list + 8) = "<>";
+   static char **init_redir_list(void)
+   {
+   char **list = malloc(sizeof(char *) * REDIR_LENGTH);
+ *list = "<";
+ *(list + 1) =">";
+ *(list + 2) = "<<";
+ *(list + 3) = ">>";
+ *(list + 4) = "<<-";
+ *(list + 5) = ">&";
+ *(list + 6) = "<&";
+ *(list + 7) = ">|";
+ *(list + 8) = "<>";
 
-    return list;
-}*/
+ return list;
+ }*/
 static char **init_list(void)
 {
     char **list = malloc(sizeof(char *) * LIST_LENGTH);
@@ -63,7 +63,8 @@ int check_specials(char *string) //checks for & and ;
 {
     for (int i = 0; *(string + i); i++)
     {
-        if (*(string + i) == ';' || *(string + i) == '&')
+        if (*(string + i) == ';' || *(string + i) == '&'
+            || *(string + i) == '(' || *(string + i) == ')')
             return i;
     }
     return 0;
@@ -80,49 +81,49 @@ enum type check_word(char *string)
     return WORD;
 }
 /*
-enum type check_ionumber(char *string)
-{
-    int b = 0;
-    int i = 0;
-    while (*(string + i) >= '0' && *(string +i) <= '9')
-        i++;
-    if(*(string + i) == '<' || *(string + i) == '>')
-    {
+   enum type check_ionumber(char *string)
+   {
+   int b = 0;
+   int i = 0;
+   while (*(string + i) >= '0' && *(string +i) <= '9')
+   i++;
+   if (*(string + i) == '<' || *(string + i) == '>')
+   {
 
-    }
-    for (int i = 0; *(string + i); i++)
-    {
-        if (isanumber(*(string + i)))
-            b++;
-        else
-        {
-            if (b)
-            {
-                if (isaredirection(*(string + i)))
-                    return IONUMBER;
-            }
-        }
-    }
-    return WORD;
-}
+   }
+   for (int i = 0; *(string + i); i++)
+   {
+   if (isanumber(*(string + i)))
+   b++;
+   else
+   {
+   if (b)
+   {
+   if (isaredirection(*(string + i)))
+   return IONUMBER;
+   }
+   }
+   }
+   return WORD;
+   }
 
-int pos_redirection(char *string)
-{
-    for (int i = 0; *(string + i); i++)
-    {
-        if (*(string + i) == '<' || *(string + i) == '>')
-            return i;
-    }
-    return 0;
-}*/
+   int pos_redirection(char *string)
+   {
+   for (int i = 0; *(string + i); i++)
+   {
+   if (*(string + i) == '<' || *(string + i) == '>')
+   return i;
+   }
+   return 0;
+   }*/
 /*
-void split_redirection(struct token *new, char *string,
-        struct linked_list *l_list, int index)
-{
-    int len = strlen(string);
-    new->name = malloc(sizeof(char)
-    return;
-}*/
+   void split_redirection(struct token *new, char *string,
+   struct linked_list *l_list, int index)
+   {
+   int len = strlen(string);
+   new->name = malloc(sizeof(char)
+   return;
+   }*/
 
 void set_name(struct token *new, char **list, int index)
 {
@@ -199,6 +200,19 @@ void split_semicolon(struct token *new, char *string,
     return;
 }
 
+void split_parenthesis(struct token *new, char *string,
+        struct linked_list *l_list, int index_sc)
+{
+    new->name = calloc(index_sc + 1, sizeof(char));
+    new->name = memcpy(new->name, string, index_sc);
+    struct token *parenthesis = token_init();
+    parenthesis->type = WORD;
+    parenthesis->name = calloc(2, sizeof(char));
+    parenthesis->name[0] = string[index_sc];
+    add(l_list,parenthesis);
+    return;
+}
+
 void split_tokens(struct token *new, char *string, struct linked_list *l_list,
         int index_sc)
 {
@@ -209,6 +223,12 @@ void split_tokens(struct token *new, char *string, struct linked_list *l_list,
             break;
         case '&':
             split_ampersand(new,string,l_list,index_sc);
+            break;
+        case '(':
+            split_parenthesis(new,string,l_list, index_sc);
+            break;
+        case ')':
+            split_parenthesis(new,string,l_list, index_sc);
             break;
     }
 }
@@ -233,7 +253,7 @@ void read_string(struct token *new, char *string, char **list,
     if (check_list(new,string,list))
         return;
     new->type = check_word(string);
-    if(index_sc)
+    if (index_sc)
         return;
     int string_len = strlen(string) + 1;
     new->name = calloc(sizeof(char), string_len);

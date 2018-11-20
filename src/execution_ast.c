@@ -101,10 +101,7 @@ int exec_command(char **string)
     if (pid == 0)//child
     {
         int r = execvp(string[0], string);
-        if (r)
-            exit(r);
-        else
-            exit(0);
+        exit(r);
     }
     else//father
     {
@@ -122,10 +119,10 @@ struct node *get_oper_node(struct node *start)
     for (; iter; iter = iter->next)
     {
         if (iter->tokentype == LOGICAL_AND
-            || iter->tokentype == LOGICAL_OR
-            || iter->tokentype == SEMICOLON
-            || iter->tokentype == AND
-            || iter->tokentype == PIPE)
+                || iter->tokentype == LOGICAL_OR
+                || iter->tokentype == SEMICOLON
+                || iter->tokentype == AND
+                || iter->tokentype == PIPE)
             return iter;
     }
     return NULL;
@@ -153,13 +150,29 @@ int if_cond(struct node *cond)
     return res;
 }
 
+int pipe_command(char **command1, struct node *n)
+{
+    struct node *oper_node = get_oper_node(n);
+    char **command2 = to_execute(n, oper_node);
+
+    int fd[2];
+    pipe(fd);
+    close(0);
+    close(fd[0]);
+    close(fd[1]);
+    dup(fd[0]);
+    dup(fd[1]);
+    exec_command(command1);
+    return exec_command(command2);
+}
+
 struct node *instr_execution(struct node *n, int *res)
 {
     /*check redirection*/
     struct node *oper_node = get_oper_node(n);
     char *oper = (oper_node ? oper_node->instr : "");
     char **command_call = to_execute(n, oper_node);
-    if (oper_node->tokentype == PIPE)
+    if (oper_node && oper_node->tokentype == PIPE)
         *res = pipe_command(command_call, oper_node->next);
     else
         *res = exec_command(command_call);
@@ -227,15 +240,8 @@ struct node *case_execution(struct node *n)
             return NULL;
         cases = cases->next;
     }
-    return cases->children;
+    return rnode;
 }
-
-
-/*
-struct node *pipe_execution(struct node *n)
-{
-
-}*/
 
 int traversal_ast(struct node *n, int *res)
 {
