@@ -145,7 +145,7 @@ int if_cond(struct node *cond)
                 || oper_node->tokentype == AND)
             break;
         char *oper = oper_node->instr;
-        if ((!strcmp(oper,"&&") && !res) || (!strcmp(oper,"||") && res))
+        if ((!strcmp(oper,"logial_and") && !res) || (!strcmp(oper,"logical_or") && res))
             break;
         iter = oper_node->next;
     }
@@ -160,10 +160,10 @@ struct node *instr_execution(struct node *n, int *res)
     char **command_call = to_execute(n, oper_node);
     *res = exec_command(command_call);
     free(command_call);
-    if ((!strcmp(oper,"&&") && !(*res))
-            || (!strcmp(oper,"||") && (*res)))
+    if ((!strcmp(oper,"logical_and") && !(*res))
+            || (!strcmp(oper,"logical_or") && (*res)))
         return oper_node->next;
-    if (!strcmp(oper, ";") && oper_node->next)
+    if (!strcmp(oper, "semicolon") && oper_node->next)
         return oper_node->next;
     return NULL;
 }
