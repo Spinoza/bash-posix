@@ -87,3 +87,17 @@ semicolon_split:
         expected:
                 stdout: "IF -> WORD -> SEMICOLON -> THEN -> WORD -> WORD -> SEMICOLON -> FI -> ENDOF -> \n"
                 rvalue: 0
+
+ampersand_split:
+        type: "output diff"
+        command: "&ls"
+        expected:
+                stdout: "AND -> WORD -> ENDOF -> \n"
+                rvalue: 0
+
+parenthesis_split:
+        type: "output diff"
+        command: "case_condition)"
+        expected:
+                stdout: "WORD -> WORD -> ENDOF -> \n"
+                rvalue: 0
