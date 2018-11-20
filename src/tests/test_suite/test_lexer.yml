@@ -1,26 +1,26 @@
 easy_word:
-        type: "output diff"
+        type: "lexer diff"
         command: "word"
         expected:
                 stdout: "WORD -> ENDOF -> \n"
                 rvalue: 0
 
 assignment_w:
-        type: "output diff"
+        type: "lexer diff"
         command: "word=1"
         expected:
                 stdout: "ASSIGNMENT_W -> ENDOF -> \n"
                 rvalue: 0
 
 if_word_then_word:
-        type: "output diff"
+        type: "lexer diff"
         command: "if word1 then cond fi"
         expected:
                 stdout: "IF -> WORD -> THEN -> WORD -> FI -> ENDOF -> \n"
                 rvalue: 0
 
 if_word_and_word_then:
-        type: "output diff"
+        type: "lexer diff"
         command: "if word1 && word2 then word3 else word4 fi"
         expected:
                 stdout: "IF -> WORD -> LOGICAL_AND -> WORD -> THEN -> WORD -> ELSE -> \
@@ -28,7 +28,7 @@ if_word_and_word_then:
                 rvalue: 0
 
 complex_case:
-        type: "output diff"
+        type: "lexer diff"
         command: "while bonsoir || bonnenuit; do thx; if matin; then butwtf; elif jour; then butearly; else verymuch; fi done"
         expected:
                 stdout: "WHILE -> WORD -> LOGICAL_OR -> WORD -> SEMICOLON -> DO -> WORD -> \
@@ -37,66 +37,66 @@ complex_case:
                         -> ENDOF -> \n"
                 rvalue: 0
 do_while:
-        type: "output diff"
+        type: "lexer diff"
         command: "do word1 word2 p=1 while cond"
         expected:
                 stdout: "DO -> WORD -> WORD -> ASSIGNMENT_W -> WHILE -> WORD -> \
                          ENDOF -> \n"
                 rvalue: 0
 while_loop:
-        type: "output diff"
+        type: "lexer diff"
         command: "while true; do foo; sleep 2; done"
         expected:
                 stdout: "WHILE -> WORD -> SEMICOLON -> DO -> WORD -> SEMICOLON -> WORD -> WORD -> SEMICOLON -> DONE -> ENDOF -> \n"
                 rvalue: 0
 pipe_test:
-        type: "output diff"
+        type: "lexer diff"
         command: "cat | echo hello"
         expected:
                 stdout: "WORD -> PIPE -> WORD -> WORD -> ENDOF -> \n"
                 rvalue: 0
 logical_and_and:
-        type: "output diff"
+        type: "lexer diff"
         command: "hello && & bye"
         expected:
                 stdout: "WORD -> LOGICAL_AND -> AMPERSAND -> WORD -> ENDOF -> \n"
                 rvalue: 0
 pipe_and_logical_or:
-        type: "output diff"
+        type: "lexer diff"
         command: "echo hello || bye | cat"
         expected:
                 stdout: "WORD -> WORD -> LOGICAL_OR -> WORD -> PIPE -> WORD -> ENDOF -> \n"
                 rvalue: 0
 
 word_and_word_semi:
-        type: "output diff"
+        type: "lexer diff"
         command: "hello& bye;"
         expected:
                 stdout: "WORD -> AMPERSAND -> WORD -> SEMICOLON -> ENDOF -> \n"
                 rvalue: 0
 
 random_complex_1:
-        type: "output diff"
+        type: "lexer diff"
         command: "while echo lol; do echo hello;echo bye; done; pwd"
         expected:
                 stdout: "WHILE -> WORD -> WORD -> SEMICOLON -> DO -> WORD -> WORD -> SEMICOLON -> WORD -> WORD -> SEMICOLON -> DONE -> SEMICOLON -> WORD -> ENDOF -> \n"
                 rvalue: 0
 semicolon_split:
-        type: "output diff"
+        type: "lexer diff"
         command: "if pwd;then echo lol;fi"
         expected:
                 stdout: "IF -> WORD -> SEMICOLON -> THEN -> WORD -> WORD -> SEMICOLON -> FI -> ENDOF -> \n"
                 rvalue: 0
 
 ampersand_split:
-        type: "output diff"
+        type: "lexer diff"
         command: "&ls"
         expected:
                 stdout: "AND -> WORD -> ENDOF -> \n"
                 rvalue: 0
 
 parenthesis_split:
-        type: "output diff"
+        type: "lexer diff"
         command: "case_condition)"
         expected:
                 stdout: "WORD -> WORD -> ENDOF -> \n"

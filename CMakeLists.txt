@@ -58,18 +58,18 @@ add_custom_target(set_env
 
 add_custom_target(check_lexer
     COMMENT "Running tests on lexer, building token linked_list\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/lexer.sh
+    COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/unit.sh test_lexer.yml
     DEPENDS lexer_main
 )
 add_custom_target(check_grammar
     COMMENT "Running tests on grammar,checking the token list\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/grammar.sh
+    COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/unit.sh test_grammar.yml
     DEPENDS grammar_main
 )
 add_custom_target(check_ast
     COMMENT "Running tests on ast,checking that the dot file produced is
     correct\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/ast.sh
+    COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/unit.sh test_ast.yml
     DEPENDS ast_main
 )
 add_custom_target(check_42sh

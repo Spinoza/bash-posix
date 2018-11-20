@@ -63,11 +63,15 @@ int check_specials(char *string) //checks for & and ;
 {
     for (int i = 0; *(string + i); i++)
     {
-        if (*(string + i) == ';' || *(string + i) == '&'
-            || *(string + i) == '(' || *(string + i) == ')')
+        if (*(string + i) == ';' ||
+                *(string + i) == '(' ||
+                *(string + i) == ')')
+            return i;
+        if (*(string + i + 1)
+                && *(string + i) == '&' && *(string + i + 1) != '&')
             return i;
     }
-    return 0;
+    return -1;
 }
 enum type check_word(char *string)
 {
@@ -232,6 +236,7 @@ void split_tokens(struct token *new, char *string, struct linked_list *l_list,
             break;
     }
 }
+
 void read_string(struct token *new, char *string, char **list,
         struct linked_list *l_list)
 {
@@ -242,19 +247,25 @@ void read_string(struct token *new, char *string, char **list,
     }
     add(l_list,new);
     int index_sc = check_specials(string);
-    if (index_sc)
+    if (index_sc != -1)
     {
-        split_tokens(new,string,l_list,index_sc);
         struct token *next = token_init();
+        if (index_sc == 0)
+        {
+            new->name = calloc(2, sizeof(char));
+            new->name[0] = string[index_sc];
+        }
+        else
+            split_tokens(new,string,l_list,index_sc);
         read_string(next, string + index_sc + 1,list,l_list);
         if (check_list(new,new->name,list))
             return;
+        new->type = check_word(string);
+        return;
     }
     if (check_list(new,string,list))
         return;
     new->type = check_word(string);
-    if (index_sc)
-        return;
     int string_len = strlen(string) + 1;
     new->name = calloc(sizeof(char), string_len);
     memcpy(new->name, string, string_len);
@@ -286,6 +297,10 @@ void check_context(struct linked_list *l_list, struct token *new)
     enum type context = ENDOF;
     for (; iter && iter->elem != new; iter = iter->next)
     {
+        if(context == FOR && iter->elem->type == DO)
+            context = ENDOF;
+        if(context == ENDOF && iter->elem->type == FOR)
+            context = FOR;
         if(context == ENDOF && iter->elem->type == WORD)
             context = WORD;
         if(type_oper(iter->elem))
