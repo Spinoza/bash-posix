@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.0)
 
 project(42SH LANGUAGES C)
 
-add_compile_options(-g -Wall -Wextra -Werror -pedantic -std=c99 -D_DEFAULT_SOURCE)
+add_compile_options(-g -Wall -Wextra -Werror -pedantic -std=c99
+    -D_DEFAULT_SOURCE)
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/src/includes
@@ -66,7 +67,8 @@ add_custom_target(check_grammar
     DEPENDS grammar_main
 )
 add_custom_target(check_ast
-    COMMENT "Running tests on ast,checking that the dot file produced is correct\n"
+    COMMENT "Running tests on ast,checking that the dot file produced is
+    correct\n"
     COMMAND ${CMAKE_SOURCE_DIR}/src/tests/test_scripts/ast.sh
     DEPENDS ast_main
 )
