@@ -1,65 +1,23 @@
-easy_word:
+easy_echo:
         type: "bash diff"
-        command: "word"
+        command: "echo test"
         expected:
+                stdout:
+                stderr:
+                rvalue:
 
-assignment_w:
+easy_echo_semicolon:
         type: "bash diff"
-        command: "word=1"
+        command: "echo test;"
         expected:
+                stdout:
+                stderr:
+                rvalue:
 
-if_word_then_word:
+echo_multiple_args:
         type: "bash diff"
-        command: "if word1 then cond fi"
+        command: "echo word1 word2 word3 word4"
         expected:
-
-if_word_and_word_then:
-        type: "bash diff"
-        command: "if word1 && word2 then word3 else word4 fi"
-        expected:
-
-complex_case:
-        type: "bash diff"
-        command: "while bonsoir || bonnenuit; do thx=1; if matin; then butwtf=1; elif jour; then butearly=1; else verymuch=1; fi done"
-        expected:
-
-do_while:
-        type: "bash diff"
-        command: "do word1 word2 p=1 while cond"
-        expected:
-
-while_loop:
-        type: "bash diff"
-        command: "while true; do foo; sleep 2; done"
-        expected:
-until_loop:
-	type: "bash diff"
-	command: "until 0; do word=1; done"
-for_loop:
-	type: "bash diff"
-	command: "for word in tab; do bonsoir done"
-
-pipe_test:
-        type: "bash diff"
-        command: "cat | echo hello"
-        expected:
-
-logical_and_and:
-        type: "bash diff"
-        command: "hello && & bye"
-        expected:
-
-pipe_and_logical_or:
-        type: "bash diff"
-        command: "echo hello || bye | cat"
-        expected:
-option_version:
-	type: "output diff"
-	command: "--version"
-        expected:
-		stdout: "Version 0.3\n"
-option_invalid:
-	type: "output diff"
-	command: "--bonjour"
-	expected:
-		stderr: "Invalid option : ./42sh.\n"
+                stdout:
+                stderr:
+                rvalue:

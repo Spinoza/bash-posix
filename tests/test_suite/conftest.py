@@ -3,14 +3,15 @@ import subprocess
 import yaml
 
 def pytest_collect_file(parent, path):
-    print(path)
     if path.ext == ".yml" and path.basename.startswith("test"):
         return YamlFile(path, parent)
 
 class YamlFile(pytest.File):
     def collect(self):
+        print("here")
         raw = yaml.safe_load(self.fspath.open())
         for name, spec in sorted(raw.items()):
+            print(spec['type'])
             if spec['type'] == "lexer diff":
                 yield LexerDiffItem(name, self, spec)
             if spec['type'] == "grammar diff":
@@ -19,6 +20,9 @@ class YamlFile(pytest.File):
                 yield BashDiffItem(name, self, spec)
             if spec ['type'] == "ast print diff":
                 yield FileDiffItem(name, self, spec)
+            if spec ['type'] == "output diff":
+                print("in output")
+                yield OutputDiffItem(name, self, spec)
 
 class YamlItem(pytest.Item):
     def __init__(self, name, parent, spec):
@@ -38,10 +42,9 @@ class YamlItem(pytest.Item):
             args.append("./grammar_main")
 
         if type(self) is FileDiffItem:
-            print("here")
             args.append("./ast_main")
 
-        if type(self) is BashDiffItem:
+        if type(self) is BashDiffItem or type(self) is OutputDiffItem:
             args.append("./42sh")
 
         for string in tmp:
@@ -60,6 +63,7 @@ class YamlItem(pytest.Item):
             all_of_it = dot_file.read()
             self.expected["stdout"] = self.expected["stdout"].decode()
             dot_file.close()
+            print("Failed test in ast_print")
 
             if "stdout" in self.expected:
                 if self.expected["stdout"] != all_of_it:
@@ -68,25 +72,43 @@ class YamlItem(pytest.Item):
             return
 
         if type(self) is GrammarDiffItem:
+            print("Failed test in grammar")
             if self.expected['rvalue'] != r:
                 raise YamlException('return value', self.expected['rvalue'],\
                         r, self.command, self.name)
             return
-        if "stdout" in self.expected:
-            if self.expected["stdout"] != out:
-                raise YamlException("stdout", self.expected['stdout'],out, self.command, self.name)
-        elif out: #check if no out should be returned but my program returned one
-                raise YamlException("stdout", b'(empty)',out, self.command, self.name)
 
-        if "stderr" in self.expected:
-            if self.expected["stderr"] != err:
-                raise YamlException("stderr", self.expected['stderr'],out,self.command, self.name)
-        if not "stderr" in self.expected:
-            if err: #check if no err should be returned but my program returned err
-                raise YamlException("stderr", b'(empty)', out, self.command, self.name)
+        if type(self) is LexerDiffItem or type(self) is OutputDiffItem:
+            print("Failed test in lexer")
+            if "stdout" in self.expected:
+                if self.expected["stdout"] != out:
+                        raise YamlException("stdout", self.expected['stdout'],\
+                                out, self.command, self.name)
+            elif out: #check if no out should be returned but my program returned one
+                raise YamlException("stdout", b'(empty)',out, self.command,\
+                        self.name)
 
-        if self.expected['rvalue'] != r:
-                raise YamlException('stderr', b'(empty)', out, self.command, self.name)
+            if not "stderr" in self.expected:
+                if err: #check if no err should be returned but my program returned err
+                    raise YamlException("stderr", b'(empty)', out,\
+                            self.command, self.name)
+
+        if type(self) is BashDiffItem:
+            if "stdout" in self.expected:
+                if self.expected["stdout"] != out:
+                        raise YamlException("stdout", self.expected['stdout'],\
+                                out, self.command, self.name)
+            elif out: #check if no out should be returned but my program returned one
+                raise YamlException("stdout", "expected nothing",out, self.command,\
+                        self.name)
+
+            if not "stderr" in self.expected:
+                if err: #check if no err should be returned but my program returned err
+                    raise YamlException("stderr", "expected nothing", out,\
+                            self.command, self.name)
+            if self.expected['rvalue'] != r:
+                raise YamlException('return value', self.expected['rvalue'], r \
+                        , self.command, self.name)
 
     def repr_failure(self, excinfo):
         "called when runtest raises an exception"
@@ -118,6 +140,7 @@ class BashDiffItem(YamlItem):
                 stderr=subprocess.PIPE,\
                 stdin=subprocess.PIPE)
         out, err = bash.communicate(input=self.command)
+        print(out)
         if "stdout" in self.expected:
             self.expected["stdout"] = out
         if "stderr" in self.expected:
@@ -137,6 +160,15 @@ class FileDiffItem(YamlItem):
             self.expected[item] = str.encode(self.expected[item])
 
 class LexerDiffItem(YamlItem):
+    def __init__(self, name, parent, spec):
+        super().__init__(name,parent,spec)
+        self.name = name
+        for item in self.expected:
+            if item == "rvalue":
+                self.expected["rvalue"] = int(self.expected["rvalue"])
+                continue
+            self.expected[item] = str.encode(self.expected[item])
+class OutputDiffItem(YamlItem):
     def __init__(self, name, parent, spec):
         super().__init__(name,parent,spec)
         self.name = name

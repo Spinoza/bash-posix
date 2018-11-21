@@ -79,12 +79,17 @@ add_custom_target(check_ast
 )
 add_custom_target(check_42sh
     COMMENT "Running tests on 42sh, comparing with bash\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh 42sh &> result.txt
+    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c 42sh
     DEPENDS 42sh
 )
 add_custom_target(check
-    COMMAND make check_lexer
-    COMMAND make check_grammar
-    COMMAND make check_ast
-    COMMAND make check_42sh
+    COMMENT "Running all tests.\n"
+    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c all
+    DEPENDS lexer_main
+    DEPENDS grammar_main
+    DEPENDS ast_main
+    DEPENDS 42sh
+    )
+
+add_custom_target(check_sanity
     )
