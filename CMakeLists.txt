@@ -13,31 +13,31 @@ include_directories(
 ##LIBRARIES
 
 
-add_library(linked_list ${CMAKE_SOURCE_DIR}/src/linked_list.c)
+add_library(linked_list ${CMAKE_SOURCE_DIR}/src/utils/linked_list.c)
 
-add_library(lexer ${CMAKE_SOURCE_DIR}/src/lexer.c)
+add_library(lexer ${CMAKE_SOURCE_DIR}/src/lexer/lexer.c)
 target_link_libraries(lexer PRIVATE linked_list)
 
-add_library(tty ${CMAKE_SOURCE_DIR}/src/handlePS1.c)
+add_library(tty ${CMAKE_SOURCE_DIR}/src/prompt/handlePS1.c)
 
 
-add_library(grammar ${CMAKE_SOURCE_DIR}/src/grammar_check.c
-    ${CMAKE_SOURCE_DIR}/src/grammar_command.c
-    ${CMAKE_SOURCE_DIR}/src/grammar_rule.c
-    ${CMAKE_SOURCE_DIR}/src/grammar_group.c
+add_library(grammar ${CMAKE_SOURCE_DIR}/src/grammar/grammar_check.c
+    ${CMAKE_SOURCE_DIR}/src/grammar/grammar_command.c
+    ${CMAKE_SOURCE_DIR}/src/grammar/grammar_rule.c
+    ${CMAKE_SOURCE_DIR}/src/grammar/grammar_group.c
     )
 
 target_link_libraries(grammar PRIVATE lexer)
 target_link_libraries(grammar PRIVATE tty)
 
-add_library(execution ${CMAKE_SOURCE_DIR}/src/execution_ast.c)
+add_library(execution ${CMAKE_SOURCE_DIR}/src/ast/execution_ast.c)
 target_link_libraries(execution ast)
 
-add_library(ast ${CMAKE_SOURCE_DIR}/src/ast.c
-    ${CMAKE_SOURCE_DIR}/src/ast_print.c)
+add_library(ast ${CMAKE_SOURCE_DIR}/src/ast/ast.c
+    ${CMAKE_SOURCE_DIR}/src/ast/ast_print.c)
 target_link_libraries(ast grammar)
 
-add_library(options ${CMAKE_SOURCE_DIR}/src/options.c)
+add_library(options ${CMAKE_SOURCE_DIR}/src/utils/options.c)
 
 ##EXECUTABLES
 
