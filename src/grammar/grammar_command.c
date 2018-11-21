@@ -5,7 +5,7 @@
 
 static int is_conform(struct nL *tok)
 {
-    char *args[14] = { ">", "<", ">>", ">&", "<&", ">|", "<>", "!",
+    char *args[9] = { ">", "<", ">>", ">&", "<&", ">|", "<>", "!",
                      "function"};
 
     for (int i = 0; i < 7; i++)
@@ -14,7 +14,7 @@ static int is_conform(struct nL *tok)
             return 1;
     }
 
-    for (int j = 7; j < 14; j++)
+    for (int j = 7; j < 9; j++)
     {
         if (strcmp(args[j], tok->elem->name) == 0)
             return 2;
