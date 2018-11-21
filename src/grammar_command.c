@@ -111,11 +111,16 @@ struct nL *g_funcdec(struct nL *tok)
     if (!tok)
         return NULL;
 
-    while (tok->elem->type == ENDOF)
+    struct nL *save = tok;
+    while (!tok || tok->elem->type == ENDOF)
     {
+        if(!tok)
+        {
+            save->next = handletty();
+            tok = save;
+        }
+        save = tok;
         tok = tok->next;
-        if (!tok)
-            return NULL;
     }
 
     tok = g_shellcommand(tok);
