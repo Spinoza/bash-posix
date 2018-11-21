@@ -181,6 +181,7 @@ int pipe_command(char **command1, struct node *n)
     {
         close(fd[0]);
         int r = execvp(command1[0], command1);
+        printf("wowow\n");
         exit(r);
     }
     else//father execute the command2
@@ -188,15 +189,25 @@ int pipe_command(char **command1, struct node *n)
         close(fd[1]);
         int status = 0;
         waitpid(pid, &status, 0);
-        if (status == 127)
-            fprintf(stderr,"42sh : %s : command not found.\n",command1[0]);
-        status = exec_command(command2);
-        //stdout back to normal
-        free_command(command1);
-        if (status == 127)
-            fprintf(stderr,"42sh : %s : command not found.\n", command2[0]);
-        free_command(command2);
-        return status;
+
+        pid = fork;
+        if (pid == -1)
+        {
+            fprintf(stderr,"42sh : fork : An error occured.\n");
+            exit(1);
+        }
+        if (pid == 0)
+        {
+            //child : command2 execution
+        }
+        else
+        {
+            if (status == 127)
+                fprintf(stderr,"42sh : %s : command not found.\n", command2[0]);
+            free_command(command1);
+            free_command(command2);
+            return status;
+        }
     }
 }
 
