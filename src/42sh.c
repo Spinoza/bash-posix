@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <readline/readline.h>
@@ -13,21 +14,47 @@
 #include "execution_ast.h"
 #include "err.h"
 
-static size_t mstrlen(char *str)
+
+static size_t mstrlen (char * string)
 {
-    return *str ? 1 + strlen(str + 1) : 0;
+    return *string ? 1 + mstrlen(string + 1) : 0;
+}
+
+static char * from_tok_toS(struct linked_list *tokens)
+{
+    int cursor = 0;
+    struct nL *start = tokens->head;
+    char * final = malloc(mstrlen(start->elem->name) * sizeof(char) + 2);
+    cursor += mstrlen(start->elem->name);
+    final = strcat(final, start->elem->name);
+    while (start->next)
+    {
+        start = start->next;
+        final = realloc(final, cursor + 1 + mstrlen(start->elem->name) * sizeof(char));
+        if (((start->elem->type == ENDOF && start->prev->elem->type != SEMICOLON) && !(strcmp(start->elem->name, "\n"))) || ((start->elem->type == SEMICOLON)))
+        {
+            final[cursor] = ';';
+            cursor++;
+        }
+
+        else if (start->elem->type != SEMICOLON && start->elem->type != ENDOF)
+        {
+            final[cursor] = ' ';
+            cursor++;
+            final = strcat(final, start->elem->name);
+            cursor += mstrlen(start->elem->name);
+        }
+    }
+
+    return final;
 }
 
 static int interactive_mode(struct option *options)
 {
+    using_history();
     while (isatty(STDIN_FILENO))
     {
-        char *line;
-        size_t n = 0;
-        printf("%s$ ", basename("/build/42sh"));
-        getline(&line, &n, stdin);
-        size_t i = mstrlen(line);
-        line[i - 1] = '\0';
+        char * line = readline("42sh$ ");
         struct linked_list *tokens = lexer_c(line);
         int isgramm = grammar_check(tokens);
         if (!isgramm)
@@ -36,6 +63,8 @@ static int interactive_mode(struct option *options)
         }
         else
         {
+            char * hist_add = from_tok_toS(tokens);
+            add_history(hist_add);
             struct node *ast = build_ast(tokens);
             if (options->ast_print == TRUE)
                 print_ast(ast);

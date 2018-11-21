@@ -56,6 +56,7 @@ target_link_libraries(42sh execution)
 target_link_libraries(42sh ast)
 target_link_libraries(42sh options)
 target_link_libraries(42sh tty)
+target_link_libraries(42sh readline)
 
 add_custom_target(set_env
     COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/set_env.sh
