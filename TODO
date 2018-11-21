@@ -8,9 +8,9 @@
 |---------- DESCRIPTION []
 |---------- AUTHORS []
 |
-|--------Prompt []
-|---------- PS1 []
-|---------- PS2 []
+|--------Prompt [X]
+|---------- PS1 [X]
+|---------- PS2 [X]
 |
 |--------Test suite []
 |---------- Respects the rules for testing []
@@ -24,7 +24,8 @@
 |-------------- Pipes []
 |-------------- Functions []
 |-------------- Case commands []
-|---------- Resource files []
+|
+|------- Resource files []
 |
 |--------History []
 
