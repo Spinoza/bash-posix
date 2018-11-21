@@ -69,9 +69,13 @@ int check_specials(char *string) //checks for & and ;
                 *(string + i) == '{' ||
                 *(string + i) == '}')
             return i;
-        if (*(string + i + 1)
-                && *(string + i) == '&' && *(string + i + 1) != '&')
-            return i;
+        if (*(string + i) == '&')
+        {
+            if(!*(string + i + 1))
+                return i;
+            if(*(string + i + 1) != '&')
+                return i;
+        }
     }
     return -1;
 }
@@ -273,6 +277,8 @@ void read_string(struct token *new, char *string, char **list,
         return;
     }
     add(l_list,new);
+    if (check_list(new,string,list))
+        return;
     int index_sc = check_specials(string);
     if (index_sc != -1)
     {
@@ -290,8 +296,6 @@ void read_string(struct token *new, char *string, char **list,
         new->type = check_word(string);
         return;
     }
-    if (check_list(new,string,list))
-        return;
     new->type = check_word(string);
     int string_len = strlen(string) + 1;
     new->name = calloc(sizeof(char), string_len);

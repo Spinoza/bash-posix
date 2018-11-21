@@ -27,3 +27,8 @@
 |---------- Resource files []
 |
 |--------History []
+
+|----v0.5 Current bugs
+|-------- Lexer []
+|---------- Parenthesis/Brackets at the beginning of words not recognized []
+

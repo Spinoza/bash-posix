@@ -14,17 +14,16 @@ assignment_w:
 
 if_word_then_word:
         type: "lexer diff"
-        command: "if word1 then cond fi"
+        command: "if word; then cond; fi"
         expected:
-                stdout: "IF -> WORD -> THEN -> WORD -> FI -> ENDOF -> \n"
+                stdout: "IF -> WORD -> SEMICOLON -> THEN -> WORD -> SEMICOLON -> FI -> ENDOF -> \n"
                 rvalue: 0
 
 if_word_and_word_then:
         type: "lexer diff"
-        command: "if word1 && word2 then word3 else word4 fi"
+        command: "if word1 && word2; then word3; else word4; fi"
         expected:
-                stdout: "IF -> WORD -> LOGICAL_AND -> WORD -> THEN -> WORD -> ELSE -> \
-                         WORD -> FI -> ENDOF -> \n"
+                stdout: "IF -> WORD -> LOGICAL_AND -> WORD -> SEMICOLON -> THEN -> WORD -> SEMICOLON -> ELSE -> WORD -> SEMICOLON -> FI -> ENDOF -> \n"
                 rvalue: 0
 
 complex_case:
@@ -38,9 +37,9 @@ complex_case:
                 rvalue: 0
 do_while:
         type: "lexer diff"
-        command: "do word1 word2 p=1 while cond"
+        command: "do echo word2 p=1; while cond"
         expected:
-                stdout: "DO -> WORD -> WORD -> ASSIGNMENT_W -> WHILE -> WORD -> \
+                stdout: "DO -> WORD -> WORD -> WORD -> SEMICOLON -> WHILE -> WORD -> \
                          ENDOF -> \n"
                 rvalue: 0
 while_loop:
@@ -92,7 +91,7 @@ ampersand_split:
         type: "lexer diff"
         command: "&ls"
         expected:
-                stdout: "AND -> WORD -> ENDOF -> \n"
+                stdout: "AMPERSAND -> WORD -> ENDOF -> \n"
                 rvalue: 0
 
 parenthesis_split:
