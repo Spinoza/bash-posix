@@ -171,6 +171,9 @@ int pipe_command(char **command1, struct node *n)
     int fd[2];
     pipe(fd);
 
+    dup2(fd[0], 0);
+    dup2(fd[1], 1);
+
     pid_t pid = fork();
     if (pid == -1)//error
     {
@@ -180,17 +183,17 @@ int pipe_command(char **command1, struct node *n)
     if (pid == 0)//child want to execute command1
     {
         close(fd[0]);
+        //dup2(fd[1], 1);
+        printf("not here\n");
         int r = execvp(command1[0], command1);
-        printf("wowow\n");
         exit(r);
     }
     else//father execute the command2
     {
-        close(fd[1]);
+        //close(fd[1]);
         int status = 0;
         waitpid(pid, &status, 0);
-
-        pid = fork;
+        pid = fork();
         if (pid == -1)
         {
             fprintf(stderr,"42sh : fork : An error occured.\n");
@@ -198,7 +201,9 @@ int pipe_command(char **command1, struct node *n)
         }
         if (pid == 0)
         {
-            //child : command2 execution
+            close(fd[0]);
+            int re = execvp(command2[0], command2);
+            exit(re);
         }
         else
         {
