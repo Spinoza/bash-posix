@@ -34,23 +34,25 @@ class YamlItem(pytest.Item):
 
     def runtest(self):
         tmp = self.command.decode()
-        print(tmp)
-        tmp = tmp.split()
         args = []
-        if type(self) is LexerDiffItem:
-            args.append("./lexer_main")
+        if not type(self) is BashDiffItem and not type(self) is OutputDiffItem:
+            tmp = tmp.split()
+            if type(self) is LexerDiffItem:
+                args.append("./lexer_main")
 
-        if type(self) is GrammarDiffItem:
-            args.append("./grammar_main")
+            if type(self) is GrammarDiffItem:
+                args.append("./grammar_main")
 
-        if type(self) is FileDiffItem:
-            args.append("./ast_main")
+            if type(self) is FileDiffItem:
+                args.append("./ast_main")
+
+            for string in tmp:
+                args.append(string)
 
         if type(self) is BashDiffItem or type(self) is OutputDiffItem:
             args.append("./42sh")
-
-        for string in tmp:
-            args.append(string)
+            args.append("-c")
+            args.append(tmp)
 
         process = subprocess.Popen(args,\
                 stdout=subprocess.PIPE,\
@@ -58,10 +60,11 @@ class YamlItem(pytest.Item):
                 stdin=subprocess.PIPE)
 
         out, err = process.communicate(input=self.command)
+        print(out)
         r = process.returncode
         process.kill()
         if type(self) is FileDiffItem:
-            dot_file = open('ast.dot',mode='r')
+            dot_file = open('ast.dot', mode='r')
             all_of_it = dot_file.read()
             self.expected["stdout"] = self.expected["stdout"].decode()
             dot_file.close()
@@ -80,7 +83,7 @@ class YamlItem(pytest.Item):
                         r, self.command, self.name)
             return
 
-        if type(self) is LexerDiffItem or type(self) is OutputDiffItem:
+        if type(self) is OutputDiffItem:
             print("Failed test in lexer")
             if "stdout" in self.expected:
                 if self.expected["stdout"] != out:
@@ -142,7 +145,6 @@ class BashDiffItem(YamlItem):
                 stderr=subprocess.PIPE,\
                 stdin=subprocess.PIPE)
         out, err = bash.communicate(input=self.command)
-        print(out)
         if "stdout" in self.expected:
             self.expected["stdout"] = out
         if "stderr" in self.expected:
