@@ -179,18 +179,23 @@ struct nL *g_simplecommand(struct nL *tok)
 }
 struct nL *g_compoundlist(struct nL *tok)
 {
-    while (tok->elem->type == ENDOF)
+    struct nL *save = tok;
+    while (!tok || tok->elem->type == ENDOF)
     {
+        if(!tok)
+        {
+            save->next = handletty();
+            tok = save;
+        }
+        save = tok;
         tok = tok->next;
-        if (!tok)
-            return NULL;
     }
 
     tok = g_andor(tok);
     if (!tok)
         return NULL;
 
-    struct nL *save = tok;
+    save = tok;
     tok = tok->next;
     if (!tok->next)
         return NULL;
@@ -198,15 +203,17 @@ struct nL *g_compoundlist(struct nL *tok)
     enum type t = tok->elem->type;
     while (t == SEMICOLON || t == AND || t == ENDOF)
     {
+        struct nL *stock = tok;
         tok = tok->next;
-        if (!tok)
-            return NULL;
-
-        while (tok->elem->type == ENDOF)
+        while (!tok || tok->elem->type == ENDOF)
         {
+            if(!tok)
+            {
+                save->next = handletty();
+                tok = save;
+            }
+            save = tok;
             tok = tok->next;
-            if (!tok)
-                return NULL;
         }
 
         tok = g_andor(tok);
@@ -231,15 +238,15 @@ struct nL *g_compoundlist(struct nL *tok)
     {
         save = tok;
         tok = tok->next;
-        if (!tok)
-            return NULL;
-
-        while (tok->elem->type == ENDOF)
+        while (!tok || tok->elem->type == ENDOF)
         {
+            if(!tok)
+            {
+                save->next = handletty();
+                tok = save;
+            }
             save = tok;
             tok = tok->next;
-            if (!tok)
-                return NULL;
         }
     }
 
