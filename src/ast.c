@@ -95,7 +95,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         {
             struct node *new = init_node(tok->elem->name, tok->elem->type);
             add_node(r, new);
-            if(new->type != A_INSTRUCT || new->type == A_PIPE)
+            if(new->type != A_INSTRUCT && new->type != A_PIPE)
                 tok = build_aux(new, tok->next);
             tok = tok->next;
         }
