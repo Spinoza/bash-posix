@@ -175,11 +175,15 @@ struct nL *g_rulefor(struct nL *tok)
     else
     {
         struct nL *save = tok;
-        while(tok->elem->type == ENDOF)
+        while(!tok || tok->elem->type == ENDOF)
         {
-            tok = tok->next;
             if(!tok)
-                return NULL;
+            {
+                save->next = handletty();
+                tok = save;
+            }
+            save = tok;
+            tok = tok->next;
         }
         if(tok->elem->type == IN)
         {
@@ -209,11 +213,15 @@ struct nL *g_rulefor(struct nL *tok)
         }
     }
 
-    while(tok->elem->type == ENDOF)
+    while(!tok || tok->elem->type == ENDOF)
     {
-        tok = tok->next;
         if(!tok)
-            return NULL;
+        {
+            save->next = handletty();
+            tok = save;
+        }
+        save = tok;
+        tok = tok->next;
     }
     return g_dogroup(tok);
 }
