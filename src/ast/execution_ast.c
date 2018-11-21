@@ -169,11 +169,12 @@ int pipe_command(char **command1, struct node *n)
     char **command2 = to_execute(n, oper_node);
 
     int fd[2];
-    pipe(fd);
-
-    dup2(fd[0], 0);
-    dup2(fd[1], 1);
-
+    int a = pipe(fd);
+    if (a == -1)
+    {
+        printf("error pipe\n");
+        return -1;
+    }
     pid_t pid = fork();
     if (pid == -1)//error
     {
@@ -183,16 +184,28 @@ int pipe_command(char **command1, struct node *n)
     if (pid == 0)//child want to execute command1
     {
         close(fd[0]);
-        //dup2(fd[1], 1);
+        close(1);
+        int b = dup2(fd[1], 1);
+        if (b == -1)
+            return -1;
         printf("not here\n");
         int r = execvp(command1[0], command1);
         exit(r);
     }
     else//father execute the command2
     {
-        //close(fd[1]);
+        close(fd[1]);
         int status = 0;
         waitpid(pid, &status, 0);
+        close(0);
+        int b = dup2(fd[0], 0);
+        if (b == -1)
+            return -1;
+        int r = execvp(command2[0], command2);
+        printf("dfwef\n");
+        return r;
+        /*int status = 0;
+        //waitpid(pid, &status, 0);
         pid = fork();
         if (pid == -1)
         {
@@ -212,7 +225,7 @@ int pipe_command(char **command1, struct node *n)
             free_command(command1);
             free_command(command2);
             return status;
-        }
+        }*/
     }
 }
 
