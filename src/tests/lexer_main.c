@@ -89,6 +89,19 @@ void print_enum(enum type type)
         case 25:
                 printf("ROOT");
                 break;
+        case 26:
+                printf("OPEN_PAR");
+                break;
+        case 27:
+                printf("CLOSE_PAR");
+                break;
+        case 28:
+                printf("OPEN_BRA");
+                break;
+        case 29:
+                printf("CLOSE_BRA");
+                break;
+
     }
 }
 void print_list(struct linked_list *l_list)
