@@ -5,8 +5,8 @@
 
 static int is_conform(struct nL *tok)
 {
-    char *args[14] = { ">", "<", ">>", ">&", "<&", ">|", "<>", "!", "{",
-        "}", ";;", ")", "(", "function"};
+    char *args[14] = { ">", "<", ">>", ">&", "<&", ">|", "<>", "!",
+                     "function"};
 
     for (int i = 0; i < 7; i++)
     {
@@ -101,12 +101,12 @@ struct nL *g_funcdec(struct nL *tok)
     tok = tok->next;
     if (!tok)
         return NULL;
-    if (strcmp(tok->elem->name, "("))
+    if (tok->elem->type != OPEN_PAR)
         return NULL;
     tok = tok->next;
     if (!tok)
         return NULL;
-    if (strcmp(tok->elem->name, ")"))
+    if (tok->elem->type != CLOSE_PAR)
         return NULL;
     tok = tok->next;
     if (!tok)
@@ -262,7 +262,7 @@ struct nL *g_compoundlist(struct nL *tok)
 struct nL *g_shellcommand(struct nL *tok)
 {
     struct nL *new = tok;
-    if(!strcmp(new->elem->name, "{"))
+    if(tok->elem->type == OPEN_BRA)
     {
         new =new->next;
         if(!new)
@@ -273,13 +273,13 @@ struct nL *g_shellcommand(struct nL *tok)
             new = new->next;
             if(!new)
                 return NULL;
-            if(!strcmp("}", new->elem->name))
+            if(tok->elem->type == CLOSE_BRA)
                 return new;
         }
     }
 
     new = tok;
-    if(!strcmp(new->elem->name, "("))
+    if(tok->elem->type == OPEN_PAR)
     {
         new =new->next;
         if(!new)
@@ -290,7 +290,7 @@ struct nL *g_shellcommand(struct nL *tok)
             new = new->next;
             if(!new)
                 return NULL;
-            if(!strcmp(")", new->elem->name))
+            if(tok->elem->type == CLOSE_PAR)
                 return new;
         }
     }

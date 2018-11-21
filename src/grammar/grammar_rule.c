@@ -6,7 +6,7 @@
 static int is_conform(struct nL *tok)
 {
     char *args[14] = { ">", "<", ">>", ">&", "<&", ">|", "<>"
-                , "!", "{", "}", ";;", "(", ")", "function"};
+                , "!", "function"};
 
     for (int i = 0; i < 7; i++)
     {

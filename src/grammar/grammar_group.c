@@ -85,7 +85,7 @@ struct nL *g_caseclause(struct nL *tok)
     tok = tok->next;
     if(!tok)
         return NULL;
-    while (tok->elem->type == WORD && (!strcmp(";;", tok->elem->name)))
+    while (tok->elem->type == TWO_SEMIC)
     {
         struct nL *stock = tok;
         tok = tok->next;
@@ -113,7 +113,7 @@ struct nL *g_caseclause(struct nL *tok)
     tok = save;
     tok = tok->next;
 
-    if (tok && tok->elem->type == WORD && !(strcmp(";;", tok->elem->name)))
+    if (tok->elem->type == TWO_SEMIC)
     {
         save = tok;
         tok = tok->next;
@@ -156,7 +156,7 @@ static int is_conform(struct nL *tok)
 
 struct nL *g_caseitem(struct nL *tok)
 {
-    if (!(strcmp(tok->elem->name, "(")))
+    if (tok->elem->type == OPEN_PAR)
     {
         tok = tok->next;
         if (!tok)
@@ -194,7 +194,7 @@ struct nL *g_caseitem(struct nL *tok)
     if (!tok)
         return NULL;
 
-    if (strcmp(tok->elem->name, ")"))
+    if (tok->elem->type != CLOSE_PAR)
         return NULL;
 
     save = tok;
