@@ -1,3 +1,3 @@
 python -m venv env
 source ./env/bin/activate
-pip install -r ../src/tests/test_suite/requirements.txt
+pip install -r ../tests/test_scripts/requirements.txt

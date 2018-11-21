@@ -98,5 +98,5 @@ parenthesis_split:
         type: "lexer diff"
         command: "case_condition)"
         expected:
-                stdout: "WORD -> WORD -> ENDOF -> \n"
+                stdout: "WORD -> CLOSE_PAR -> ENDOF -> \n"
                 rvalue: 0

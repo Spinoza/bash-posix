@@ -2,19 +2,8 @@ import pytest
 import subprocess
 import yaml
 
-def pytest_addoption(parser):
-    parser.addoption("--all", action="store_true",
-        help="run all combinations")
-
-def pytest_generate_tests(metafunc):
-    if 'param1' in metafunc.fixturenames:
-        if metafunc.config.getoption('all'):
-            end = 5
-        else:
-            end = 2
-        metafunc.parametrize("param1", range(end))
-
 def pytest_collect_file(parent, path):
+    print(path)
     if path.ext == ".yml" and path.basename.startswith("test"):
         return YamlFile(path, parent)
 
@@ -42,7 +31,6 @@ class YamlItem(pytest.Item):
     def runtest(self):
         tmp = self.command.decode().split()
         args = []
-        args.append("valgrind")
         if type(self) is LexerDiffItem:
             args.append("./lexer_main")
 
@@ -50,6 +38,7 @@ class YamlItem(pytest.Item):
             args.append("./grammar_main")
 
         if type(self) is FileDiffItem:
+            print("here")
             args.append("./ast_main")
 
         if type(self) is BashDiffItem:
@@ -57,6 +46,7 @@ class YamlItem(pytest.Item):
 
         for string in tmp:
             args.append(string)
+
         process = subprocess.Popen(args,\
                 stdout=subprocess.PIPE,\
                 stderr=subprocess.PIPE,\
@@ -77,6 +67,11 @@ class YamlItem(pytest.Item):
                             all_of_it, self.command, self.name)
             return
 
+        if type(self) is GrammarDiffItem:
+            if self.expected['rvalue'] != r:
+                raise YamlException('return value', self.expected['rvalue'],\
+                        r, self.command, self.name)
+            return
         if "stdout" in self.expected:
             if self.expected["stdout"] != out:
                 raise YamlException("stdout", self.expected['stdout'],out, self.command, self.name)
@@ -84,7 +79,7 @@ class YamlItem(pytest.Item):
                 raise YamlException("stdout", b'(empty)',out, self.command, self.name)
 
         if "stderr" in self.expected:
-            if not err:
+            if self.expected["stderr"] != err:
                 raise YamlException("stderr", self.expected['stderr'],out,self.command, self.name)
         if not "stderr" in self.expected:
             if err: #check if no err should be returned but my program returned err

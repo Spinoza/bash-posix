@@ -20,14 +20,12 @@ target_link_libraries(lexer PRIVATE linked_list)
 
 
 add_library(grammar ${CMAKE_SOURCE_DIR}/src/grammar_check.c
-    ${CMAKE_SOURCE_DIR}/src/handlePS1.c
     ${CMAKE_SOURCE_DIR}/src/grammar_command.c
     ${CMAKE_SOURCE_DIR}/src/grammar_rule.c
     ${CMAKE_SOURCE_DIR}/src/grammar_group.c
     )
 
 target_link_libraries(grammar PRIVATE lexer)
-target_link_libraries(grammar PRIVATE tty)
 
 add_library(execution ${CMAKE_SOURCE_DIR}/src/execution_ast.c)
 target_link_libraries(execution ast)
@@ -62,23 +60,23 @@ add_custom_target(set_env
 
 add_custom_target(check_lexer
     COMMENT "Running tests on lexer, building token linked_list\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/unit.sh test_lexer.yml
+    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c lexer
     DEPENDS lexer_main
 )
 add_custom_target(check_grammar
     COMMENT "Running tests on grammar,checking the token list\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/unit.sh test_grammar.yml
+    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c grammar
     DEPENDS grammar_main
 )
 add_custom_target(check_ast
     COMMENT "Running tests on ast,checking that the dot file produced is
     correct\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/unit.sh test_ast.yml
+    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c ast-print
     DEPENDS ast_main
 )
 add_custom_target(check_42sh
     COMMENT "Running tests on 42sh, comparing with bash\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/42sh.sh &> result.txt
+    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh 42sh &> result.txt
     DEPENDS 42sh
 )
 add_custom_target(check
