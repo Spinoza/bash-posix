@@ -78,8 +78,8 @@ struct nL *g_rulecase(struct nL *tok)
     {
         if (!tok)
         {
-            save->next = handletty();
-            tok = save;
+            save->prev->next = handletty();
+            tok = save->prev;
         }
         save = tok;
         tok = tok->next;
@@ -179,8 +179,8 @@ struct nL *g_rulefor(struct nL *tok)
         {
             if(!tok)
             {
-                save->next = handletty();
-                tok = save;
+                save->prev->next = handletty();
+                tok = save->prev;
             }
             save = tok;
             tok = tok->next;
@@ -217,8 +217,8 @@ struct nL *g_rulefor(struct nL *tok)
     {
         if(!tok)
         {
-            stock->next = handletty();
-            tok = stock;
+            stock->prev->next = handletty();
+            tok = stock->prev;
         }
         stock = tok;
         tok = tok->next;
