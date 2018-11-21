@@ -1,6 +1,19 @@
 import pytest
 import subprocess
 import yaml
+
+def pytest_addoption(parser):
+    parser.addoption("--all", action="store_true",
+        help="run all combinations")
+
+def pytest_generate_tests(metafunc):
+    if 'param1' in metafunc.fixturenames:
+        if metafunc.config.getoption('all'):
+            end = 5
+        else:
+            end = 2
+        metafunc.parametrize("param1", range(end))
+
 def pytest_collect_file(parent, path):
     if path.ext == ".yml" and path.basename.startswith("test"):
         return YamlFile(path, parent)
@@ -29,6 +42,7 @@ class YamlItem(pytest.Item):
     def runtest(self):
         tmp = self.command.decode().split()
         args = []
+        args.append("valgrind")
         if type(self) is LexerDiffItem:
             args.append("./lexer_main")
 
