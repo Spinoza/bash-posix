@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define LIST_LENGTH 21
+#define LIST_LENGTH 31
 #define REDIR_LENGTH 9
 
 static struct token *token_init(void)
@@ -47,8 +47,8 @@ static char **init_list(void)
     *(list + 9) = "case";
     *(list + 10) = "do";
     *(list + 11) = "done";
-    *(list + 12) = "";
-    *(list + 13) = "";
+    *(list + 12) = ""; // WORD
+    *(list + 13) = ""; // ASSIGNMENT_W
     *(list + 14) = "ENDOF";
     *(list + 15) = "|";
     *(list + 16) = "||";
@@ -56,6 +56,16 @@ static char **init_list(void)
     *(list + 18) = "in";
     *(list + 19) = "esac";
     *(list + 20) = "elif";
+    *(list + 21) = ""; // HEREDOC
+    *(list + 22) = "";
+    *(list + 23) = "";
+    *(list + 24) = "";
+    *(list + 25) = "";
+    *(list + 26) = "(";
+    *(list + 27) = ")";
+    *(list + 28) = "{";
+    *(list + 29) = "}";
+    *(list + 30) = ";;";
 
     return list;
 }
@@ -63,19 +73,16 @@ int check_specials(char *string) //checks for & and ;
 {
     for (int i = 0; *(string + i); i++)
     {
-        if (*(string + i) == ';' ||
-                *(string + i) == '(' ||
-                *(string + i) == ')' ||
-                *(string + i) == '{' ||
-                *(string + i) == '}')
+        if (*(string + i) == ';'
+                || *(string + i) == '('
+                || *(string + i) == ')'
+                || *(string + i) == '{'
+                || *(string + i) == '}')
             return i;
-        if (*(string + i) == '&')
-        {
-            if(!*(string + i + 1))
-                return i;
-            if(*(string + i + 1) != '&')
-                return i;
-        }
+        if(!*(string + i + 1) && *(string + i) == '&')
+            return i;
+        if(*(string + i) == '&' && *(string + i + 1) != '&')
+            return i;
     }
     return -1;
 }
@@ -155,6 +162,21 @@ void set_name(struct token *new, char **list, int index)
         case 17:
             string = "and";
             break;
+        case 26:
+            string = "open_par";
+            break;
+        case 27:
+            string = "close_par";
+            break;
+        case 28:
+            string = "open_bra";
+            break;
+        case 29:
+            string = "close_bra";
+            break;
+        case 30:
+            string = "two_semic";
+            break;
         default:
             string = list[index];
             break;
@@ -226,19 +248,19 @@ void split_parenthesis(struct token *new, char *string,
     return;
 }
 
-void split_braket(struct token *new, char *string,
+void split_bracket(struct token *new, char *string,
         struct linked_list *l_list, int index_sc)
 {
     new->name = calloc(index_sc + 1, sizeof(char));
     new->name = memcpy(new->name, string, index_sc);
-    struct token *braket = token_init();
-    braket->name = calloc(2, sizeof(char));
-    braket->name[0] = string[index_sc];
-    if (braket->name[0] == '{')
-        braket->type = OPEN_BRA;
+    struct token *bracket = token_init();
+    bracket->name = calloc(2, sizeof(char));
+    bracket->name[0] = string[index_sc];
+    if (bracket->name[0] == '{')
+        bracket->type = OPEN_BRA;
     else
-        braket->type = CLOSE_BRA;
-    add(l_list, braket);
+        bracket->type = CLOSE_BRA;
+    add(l_list, bracket);
     return;
 }
 
@@ -260,10 +282,10 @@ void split_tokens(struct token *new, char *string, struct linked_list *l_list,
             split_parenthesis(new,string,l_list, index_sc);
             break;
         case '{':
-            split_braket(new,string,l_list, index_sc);
+            split_bracket(new,string,l_list, index_sc);
             break;
         case '}':
-            split_braket(new,string,l_list, index_sc);
+            split_bracket(new,string,l_list, index_sc);
             break;
     }
 }
@@ -315,6 +337,16 @@ int type_oper(struct token *new)
         case LOGICAL_OR:
             return 1;
         case AND:
+            return 1;
+        case OPEN_PAR:
+            return 1;
+        case CLOSE_PAR:
+            return 1;
+        case OPEN_BRA:
+            return 1;
+        case CLOSE_BRA:
+            return 1;
+        case TWO_SEMIC:
             return 1;
         default :
             return 0;

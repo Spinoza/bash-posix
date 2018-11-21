@@ -101,6 +101,9 @@ void print_enum(enum type type)
         case 29:
                 printf("CLOSE_BRA");
                 break;
+        case 30:
+                printf("TWO_SEMIC");
+                break;
 
     }
 }
