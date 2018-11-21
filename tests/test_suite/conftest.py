@@ -33,7 +33,9 @@ class YamlItem(pytest.Item):
             self.expected = self.spec["expected"]
 
     def runtest(self):
-        tmp = self.command.decode().split()
+        tmp = self.command.decode()
+        print(tmp)
+        tmp = tmp.split()
         args = []
         if type(self) is LexerDiffItem:
             args.append("./lexer_main")
@@ -131,10 +133,10 @@ class BashDiffItem(YamlItem):
     def __init__(self, name, parent, spec):
         super().__init__(name,parent,spec)
         self.name = name
-        tmp = self.command.decode().split()
+        tmp = self.command.decode()
         args = ["bash"]
-        for string in tmp:
-            args.append(string)
+        args.append("-c")
+        args.append(tmp)
         bash = subprocess.Popen(args,\
                 stdout=subprocess.PIPE,\
                 stderr=subprocess.PIPE,\
