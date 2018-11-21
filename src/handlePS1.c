@@ -26,4 +26,6 @@ struct nL *handletty(void)
         free(tokens);
         return ret;
     }
+
+    return NULL;
 }
