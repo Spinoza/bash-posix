@@ -21,3 +21,106 @@ echo_multiple_args:
                 stdout:
                 stderr:
                 rvalue:
+
+echo_multiple_args_semicolon:
+        type: "bash diff"
+        command: "echo word1 word2 word3 word4;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+ls:
+        type: "bash diff"
+        command: "ls"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+ls_semicolon:
+        type: "bash diff"
+        command: "ls;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+ls_multiple_args_semicolon:
+        type: "bash diff"
+        command: "ls -l -a;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+ls_shortened_args_semicolon:
+        type: "bash diff"
+        command: "ls -la;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+pwd:
+        type: "bash diff"
+        command: "pwd;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+pwd_args:
+        type: "bash diff"
+        command: "pwd blabla blabla blabla;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+echo_if:
+        type: "bash diff"
+        command: "echo if;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+echo_if_then:
+        type: "bash diff"
+        command: "echo if then;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+echo_if_then_else:
+        type: "bash diff"
+        command: "echo if then else;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+echo_if_then_else_fi:
+        type: "bash diff"
+        command: "echo if then else fi;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+less_no_param:
+        type: "bash diff"
+        command: "less;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+less_param:
+        type: "bash diff"
+        command: "less ast.dot;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+

@@ -60,7 +60,6 @@ class YamlItem(pytest.Item):
                 stdin=subprocess.PIPE)
 
         out, err = process.communicate(input=self.command)
-        print(out)
         r = process.returncode
         process.kill()
         if type(self) is FileDiffItem:
@@ -148,7 +147,7 @@ class BashDiffItem(YamlItem):
         if "stdout" in self.expected:
             self.expected["stdout"] = out
         if "stderr" in self.expected:
-            self.expected["stdout"] = err
+            self.expected["stderr"] = err
         if "rvalue" in self.expected:
             self.expected["rvalue"] = bash.returncode
         bash.kill()
