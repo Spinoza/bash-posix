@@ -215,10 +215,10 @@ struct nL *g_compoundlist(struct nL *tok)
         {
             if(!tok)
             {
-                save->next = handletty();
-                tok = save;
+                stock->next = handletty();
+                tok = stock;
             }
-            save = tok;
+            stock = tok;
             tok = tok->next;
         }
 

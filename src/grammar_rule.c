@@ -212,15 +212,15 @@ struct nL *g_rulefor(struct nL *tok)
             tok = save;
         }
     }
-
+    struct nL *stock = tok;
     while(!tok || tok->elem->type == ENDOF)
     {
         if(!tok)
         {
-            save->next = handletty();
-            tok = save;
+            stock->next = handletty();
+            tok = stock;
         }
-        save = tok;
+        stock = tok;
         tok = tok->next;
     }
     return g_dogroup(tok);
