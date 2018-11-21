@@ -170,22 +170,34 @@ int pipe_command(char **command1, struct node *n)
 
     int fd[2];
     pipe(fd);
-    int saved_fd1 = dup(1);
 
-    close(0);
-
-    exec_command(command1);
-    dup2(1, saved_fd1);
-    close(saved_fd1);
-    close(fd[0]);
-    close(fd[1]);
-
-    int status = exec_command(command2);
-    free_command(command1);
-    free(command1);
-    free_command(command2);
-    free(command2);
-    return status;
+    pid_t pid = fork();
+    if (pid == -1)//error
+    {
+        fprintf(stderr,"42sh : fork : An error occured.\n");
+        exit(1);
+    }
+    if (pid == 0)//child want to execute command1
+    {
+        close(fd[0]);
+        int r = execvp(command1[0], command1);
+        exit(r);
+    }
+    else//father execute the command2
+    {
+        close(fd[1]);
+        int status = 0;
+        waitpid(pid, &status, 0);
+        if (status == 127)
+            fprintf(stderr,"42sh : %s : command not found.\n",command1[0]);
+        status = exec_command(command2);
+        //stdout back to normal
+        free_command(command1);
+        if (status == 127)
+            fprintf(stderr,"42sh : %s : command not found.\n", command2[0]);
+        free_command(command2);
+        return status;
+    }
 }
 
 struct node *instr_execution(struct node *n, int *res)
