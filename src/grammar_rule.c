@@ -72,30 +72,33 @@ struct nL *g_rulecase(struct nL *tok)
     int conf = is_conform(tok);
     if (tok->elem->type != WORD || conf == 1 || conf == 2)
         return NULL;
-
+    struct nL *save = tok;
     tok = tok->next;
-    if(!tok)
-        return NULL;
-    while (tok->elem->type == ENDOF)
+    while (!tok || tok->elem->type == ENDOF)
     {
+        if (!tok)
+        {
+            save->next = handletty();
+            tok = save;
+        }
+        save = tok;
         tok = tok->next;
-        if(!tok)
-            return NULL;
     }
 
     if (tok->elem->type != IN)
         return NULL;
 
-
+    save = tok;
     tok = tok->next;
-    if(!tok)
-        return NULL;
-
-    while ( tok->elem->type == ENDOF)
+    while (!tok || tok->elem->type == ENDOF)
     {
+        if (!tok)
+        {
+            save->next = handletty();
+            tok =save;
+        }
+        save =tok;
         tok = tok->next;
-        if(!tok)
-            return NULL;
     }
 
     struct nL *new = g_caseclause(tok);
