@@ -8,6 +8,7 @@ struct nL
 {
     struct token *elem;
     struct nL *next;
+    struct nL *prev;
 };
 
 struct linked_list

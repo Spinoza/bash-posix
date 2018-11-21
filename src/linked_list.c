@@ -25,6 +25,7 @@ struct linked_list *add(struct linked_list *l, struct token *elem)
         return l;
 
     node->next = NULL;
+    node->prev = NULL;
     node->elem = elem;
 
     if (!l->head)
@@ -42,6 +43,7 @@ struct linked_list *add(struct linked_list *l, struct token *elem)
         head = head->next;
     }
 
+    node->prev = head;
     head->next = node;
     return l;
 }
