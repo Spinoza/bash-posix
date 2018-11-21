@@ -1,7 +1,7 @@
 #include <string.h>
 #include "linked_list.h"
 #include "grammar_check.h"
-
+#include "handlePS1.h"
 
 static int is_conform(struct nL *tok)
 {

@@ -5,7 +5,7 @@
 #include "linked_list.h"
 #include "token.h"
 #include "grammar_check.h"
-
+#include "handlePS1.h"
 
 struct nL *g_pipeline(struct nL *tok)
 {
