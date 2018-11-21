@@ -194,6 +194,7 @@ int pipe_command(char **command1, struct node *n)
     }
     else//father execute the command2
     {
+        /*
         close(fd[1]);
         int status = 0;
         waitpid(pid, &status, 0);
@@ -203,9 +204,10 @@ int pipe_command(char **command1, struct node *n)
             return -1;
         int r = execvp(command2[0], command2);
         printf("dfwef\n");
-        return r;
-        /*int status = 0;
-        //waitpid(pid, &status, 0);
+        return r;*/
+        //in fork solution
+        int status = 0;
+        waitpid(pid, &status, 0);
         pid = fork();
         if (pid == -1)
         {
@@ -214,18 +216,23 @@ int pipe_command(char **command1, struct node *n)
         }
         if (pid == 0)
         {
-            close(fd[0]);
+            close(fd[1]);
+            close(0);
+            int b = dup2(fd[0], 0);
+            if (b == -1)
+                return -1;
             int re = execvp(command2[0], command2);
             exit(re);
         }
         else
         {
+            status = 0;
+            //waitpid(pid, &status, 0);
             if (status == 127)
                 fprintf(stderr,"42sh : %s : command not found.\n", command2[0]);
-            free_command(command1);
             free_command(command2);
             return status;
-        }*/
+        }
     }
 }
 
@@ -240,6 +247,9 @@ struct node *instr_execution(struct node *n, int *res)
     else
         *res = exec_command(command_call);
     free_command(command_call);
+    while (oper_node && oper_node->tokentype == PIPE)
+        oper_node = get_oper_node(oper_node->next);
+    oper = (oper_node ? oper_node->instr : "");
     if ((!strcmp(oper,"logical_and") && !(*res))
             || (!strcmp(oper,"logical_or") && (*res)))
         return oper_node->next;
