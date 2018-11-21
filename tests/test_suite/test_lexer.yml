@@ -100,3 +100,24 @@ parenthesis_split:
         expected:
                 stdout: "WORD -> CLOSE_PAR -> ENDOF -> \n"
                 rvalue: 0
+
+parenthesis_simple:
+        type: "lexer diff"
+        command: "(word)"
+        expected:
+                stdout: "OPEN_PAR -> WORD -> CLOSE_PAR -> ENDOF -> \n"
+                rvalue: 0
+
+brackets_split:
+        type: "lexer diff"
+        command: "word{"
+        expected:
+                stdout: "WORD -> OPEN_BRA -> ENDOF -> \n"
+                rvalue: 0
+
+brackets_split_simple:
+        type: "lexer diff"
+        command: "{case_condition}"
+        expected:
+                stdout: "OPEN_BRA -> WORD -> CLOSE_BRA -> ENDOF -> \n"
+                rvalue: 0
