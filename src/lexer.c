@@ -65,7 +65,9 @@ int check_specials(char *string) //checks for & and ;
     {
         if (*(string + i) == ';' ||
                 *(string + i) == '(' ||
-                *(string + i) == ')')
+                *(string + i) == ')' ||
+                *(string + i) == '{' ||
+                *(string + i) == '}')
             return i;
         if (*(string + i + 1)
                 && *(string + i) == '&' && *(string + i + 1) != '&')
@@ -210,10 +212,29 @@ void split_parenthesis(struct token *new, char *string,
     new->name = calloc(index_sc + 1, sizeof(char));
     new->name = memcpy(new->name, string, index_sc);
     struct token *parenthesis = token_init();
-    parenthesis->type = WORD;
     parenthesis->name = calloc(2, sizeof(char));
     parenthesis->name[0] = string[index_sc];
+    if (parenthesis->name[0] == '(')
+        parenthesis->type = OPEN_PAR;
+    else
+        parenthesis->type = CLOSE_PAR;
     add(l_list,parenthesis);
+    return;
+}
+
+void split_braket(struct token *new, char *string,
+        struct linked_list *l_list, int index_sc)
+{
+    new->name = calloc(index_sc + 1, sizeof(char));
+    new->name = memcpy(new->name, string, index_sc);
+    struct token *braket = token_init();
+    braket->name = calloc(2, sizeof(char));
+    braket->name[0] = string[index_sc];
+    if (braket->name[0] == '{')
+        braket->type = OPEN_BRA;
+    else
+        braket->type = CLOSE_BRA;
+    add(l_list, braket);
     return;
 }
 
@@ -233,6 +254,12 @@ void split_tokens(struct token *new, char *string, struct linked_list *l_list,
             break;
         case ')':
             split_parenthesis(new,string,l_list, index_sc);
+            break;
+        case '{':
+            split_braket(new,string,l_list, index_sc);
+            break;
+        case '}':
+            split_braket(new,string,l_list, index_sc);
             break;
     }
 }

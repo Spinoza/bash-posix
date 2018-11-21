@@ -28,7 +28,11 @@ enum type
     IONUMBER = 22,
     CONDITION = 23,
     ROOT = 24,
-    REDIRECTION = 25
+    REDIRECTION = 25,
+    OPEN_PAR = 26,
+    CLOSE_PAR = 27,
+    OPEN_BRA = 28,
+    CLOSE_BRA = 29
 };
 
 struct token
