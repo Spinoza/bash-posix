@@ -18,6 +18,8 @@ add_library(linked_list ${CMAKE_SOURCE_DIR}/src/linked_list.c)
 add_library(lexer ${CMAKE_SOURCE_DIR}/src/lexer.c)
 target_link_libraries(lexer PRIVATE linked_list)
 
+add_library(tty ${CMAKE_SOURCE_DIR}/src/handlePS1.c)
+
 
 add_library(grammar ${CMAKE_SOURCE_DIR}/src/grammar_check.c
     ${CMAKE_SOURCE_DIR}/src/grammar_command.c
@@ -26,6 +28,7 @@ add_library(grammar ${CMAKE_SOURCE_DIR}/src/grammar_check.c
     )
 
 target_link_libraries(grammar PRIVATE lexer)
+target_link_libraries(grammar PRIVATE tty)
 
 add_library(execution ${CMAKE_SOURCE_DIR}/src/execution_ast.c)
 target_link_libraries(execution ast)
@@ -35,7 +38,6 @@ add_library(ast ${CMAKE_SOURCE_DIR}/src/ast.c
 target_link_libraries(ast grammar)
 
 add_library(options ${CMAKE_SOURCE_DIR}/src/options.c)
-
 
 ##EXECUTABLES
 
@@ -53,6 +55,7 @@ add_executable(42sh ${CMAKE_SOURCE_DIR}/src/42sh.c)
 target_link_libraries(42sh execution)
 target_link_libraries(42sh ast)
 target_link_libraries(42sh options)
+target_link_libraries(42sh tty)
 
 add_custom_target(set_env
     COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/set_env.sh
