@@ -32,14 +32,17 @@ struct nL *g_pipeline(struct nL *tok)
             return NULL;
         if (tok->elem->type == PIPE)
         {
+            struct nL *stock = tok;
             tok = tok->next;
-            if (!tok)
-                return NULL;
-            while (tok->elem->type == ENDOF)
+            while (!tok || tok->elem->type == ENDOF)
             {
+                if(!tok)
+                {
+                    stock->next = handletty();
+                    tok = stock;
+                }
+                tok = stock;
                 tok = tok->next;
-                if (!tok)
-                    return NULL;
             }
             tok = g_command(tok);
             if (!tok)
@@ -68,14 +71,17 @@ struct nL *g_andor(struct nL *tok)
             return NULL;
         if (tok->elem->type == LOGICAL_AND || tok->elem->type == LOGICAL_OR)
         {
+            struct nL *stock = tok;
             tok = tok->next;
-            if (!tok)
-                return NULL;
-            while (tok->elem->type == ENDOF)
+            while (!tok || tok->elem->type == ENDOF)
             {
+                if(!tok)
+                {
+                    stock->next = handletty();
+                    tok = stock;
+                }
+                stock = tok;
                 tok = tok->next;
-                if (!tok)
-                    return NULL;
             }
             tok = g_pipeline(tok);
             if (!tok)
