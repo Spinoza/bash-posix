@@ -32,7 +32,8 @@ enum type
     OPEN_PAR = 26,
     CLOSE_PAR = 27,
     OPEN_BRA = 28,
-    CLOSE_BRA = 29
+    CLOSE_BRA = 29,
+    TWO_SEMIC = 30
 };
 
 struct token
