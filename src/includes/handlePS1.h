@@ -3,6 +3,6 @@
 
 #include "linked_list.h"
 
-struct linked_list *handletty(void);
+struct nL *handletty(void);
 
 #endif /* ! ATTY_H */

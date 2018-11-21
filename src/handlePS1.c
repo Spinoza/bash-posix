@@ -7,7 +7,7 @@
 
 static size_t mstrlen(char *str)
 {
-    return *str ? 1 + strlen(str + 1) : 0;
+    return *str ? 1 + mstrlen(str + 1) : 0;
 }
 
 
