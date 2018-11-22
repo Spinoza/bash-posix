@@ -13,41 +13,48 @@
 #include "ast.h"
 #include "execution_ast.h"
 #include "err.h"
-#include "file_handle.h"
 #include <sys/types.h>
 #include <sys/wait.h>
 
 static int norc_opt(void)
 {
-    char *arg1 = "../etc/42shrc";
-    char *arg2 =  "../.42shrc";
-
-    struct linked_list *tokens1 = read_fil(arg1);
-    if(!grammar_check(tokens1))
+    char *arg1[] = {"../etc/42shrc", NULL};
+    char *arg2[] = {"../.42shrc", NULL};
+    pid_t pid = fork();
+    if (pid == -1)
     {
-        printf("Error in loading 42shrc. Check your grammar\n");
-        free_list(tokens1);
+        errx(1, "oopsie: error in forking ! -_('_')_-");
     }
 
-    struct linked_list *tokens2 = read_fil(arg2);
-    if(!grammar_check(tokens2))
+    if (pid == 0)
     {
-        printf("Error in loading .42shrc. Check your grammar\n");
-        free_list(tokens2);
+        pid_t pid2 = fork();
+        if (pid2 == -1)
+        {
+            errx(1, "oopsie: error in forking in child !");
+        }
+
+        if (pid2 == 0)
+        {
+            int a = execvp(arg1[0], arg1);
+            exit (a);
+        }
+
+        else
+        {
+            int r = 0;
+            waitpid(pid2, &r, 0);
+            r = execvp(arg2[0], arg2);
+            exit(r);
+        }
     }
 
-    struct node *ast1 = build_ast(tokens1);
-    struct node *ast2 = build_ast(tokens2);
-
-    execution_ast(ast1);
-    execution_ast(ast2);
-
-    free_list(tokens1);
-    free_node(ast1);
-    free_list(tokens2);
-    free_node(ast2);
-
-    return 0;
+    else
+    {
+        int status = 0;
+        waitpid(pid, &status, 0);
+        return status;
+    }
 }
 static size_t mstrlen (char * string)
 {
@@ -98,19 +105,11 @@ static char * from_tok_toS(struct linked_list *tokens)
 static int interactive_mode(struct option *options, FILE *history)
 {
     using_history();
-    char *listadd = NULL;
-    struct linked_list *tokens = NULL;
+    char *listadd;
     while (isatty(STDIN_FILENO))
     {
         char *line = readline("42sh$ ");
-        if (is_file(line))
-        {
-            tokens = read_fil(line);
-        }
-        else
-        {
-            tokens = lexer_c(line);
-        }
+        struct linked_list *tokens = lexer_c(line);
         int isgramm = grammar_check(tokens);
         if (!isgramm)
         {
@@ -165,25 +164,11 @@ int main(int argc, char *argv[])
     struct linked_list *tokens;
     if (options->c == TRUE)
     {
-        if (is_file(options->arg_c))
-        {
-            tokens = read_fil(options->arg_c);
-        }
-        else
-        {
-            tokens = lexer_c(options->arg_c);
-        }
+        tokens = lexer_c(options->arg_c);
     }
     else
     {
-        if (is_file(argv[1]))
-        {
-            tokens = read_fil(argv[1]);
-        }
-        else
-        {
-            tokens = lexer(argv, argc, index);
-        }
+        tokens = lexer(argv, argc, index);
     }
     int isgramm = grammar_check(tokens);
     if (!isgramm)

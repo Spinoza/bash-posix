@@ -21,8 +21,6 @@ target_link_libraries(lexer PRIVATE linked_list)
 add_library(tty ${CMAKE_SOURCE_DIR}/src/prompt/handlePS1.c)
 target_link_libraries(tty readline)
 
-add_library(filing ${CMAKE_SOURCE_DIR}/src/utils/file_handle.c)
-
 add_library(grammar ${CMAKE_SOURCE_DIR}/src/grammar/grammar_check.c
     ${CMAKE_SOURCE_DIR}/src/grammar/grammar_command.c
     ${CMAKE_SOURCE_DIR}/src/grammar/grammar_rule.c
@@ -59,7 +57,6 @@ target_link_libraries(42sh ast)
 target_link_libraries(42sh options)
 target_link_libraries(42sh tty)
 target_link_libraries(42sh readline)
-target_link_libraries(42sh filing)
 
 add_custom_target(set_env
     COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/set_env.sh
