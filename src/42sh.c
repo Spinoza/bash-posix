@@ -13,6 +13,7 @@
 #include "ast.h"
 #include "execution_ast.h"
 #include "err.h"
+#include "file_handle.h"
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -105,11 +106,19 @@ static char * from_tok_toS(struct linked_list *tokens)
 static int interactive_mode(struct option *options, FILE *history)
 {
     using_history();
-    char *listadd;
+    char *listadd = NULL;
+    struct linked_list *tokens = NULL;
     while (isatty(STDIN_FILENO))
     {
         char *line = readline("42sh$ ");
-        struct linked_list *tokens = lexer_c(line);
+        if (is_file(line))
+        {
+            tokens = read_fil(line);
+        }
+        else
+        {
+            tokens = lexer_c(line);
+        }
         int isgramm = grammar_check(tokens);
         if (!isgramm)
         {
