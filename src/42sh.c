@@ -58,7 +58,7 @@ static int norc_opt(void)
 }
 static size_t mstrlen (char * string)
 {
-    return *string ? 1 + mstrlen(string + 1) : 0;
+    return (*string ? 1 + mstrlen(string + 1) : 0);
 }
 
 static size_t fulllen(struct linked_list *tokens)
@@ -78,13 +78,14 @@ static char * from_tok_toS(struct linked_list *tokens)
 {
     int cursor = 0;
     struct nL *start = tokens->head;
-    char * final = malloc(fulllen(tokens) * sizeof(char) + 2);
+    char * final = calloc(fulllen(tokens) + 2, sizeof(char));
     cursor += mstrlen(start->elem->name);
     memcpy(final, start->elem->name, mstrlen(start->elem->name));
     while (start->next)
     {
         start = start->next;
-        if (((start->elem->type == ENDOF && start->prev->elem->type != SEMICOLON) && !(strcmp(start->elem->name, "\n"))) || ((start->elem->type == SEMICOLON)))
+        if (((start->elem->type == ENDOF && start->prev->elem->type != SEMICOLON)
+            && !(strcmp(start->elem->name, "\n"))) || ((start->elem->type == SEMICOLON)))
         {
             final[cursor] = ';';
             cursor++;
@@ -105,7 +106,7 @@ static char * from_tok_toS(struct linked_list *tokens)
 static int interactive_mode(struct option *options, FILE *history)
 {
     using_history();
-    char *listadd;
+    char *listadd = NULL;
     while (isatty(STDIN_FILENO))
     {
         char *line = readline("42sh$ ");
@@ -131,6 +132,7 @@ static int interactive_mode(struct option *options, FILE *history)
                 fclose(history);
                 history = fopen("../.42sh_history", "a");
             }
+            history = history;
             struct node *ast = build_ast(tokens);
             if (options->ast_print == TRUE)
                 print_ast(ast);
