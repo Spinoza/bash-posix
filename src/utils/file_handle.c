@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <string.h>
 #include "lexer.h"
 #include "file_handle.h"
 
@@ -32,7 +33,11 @@ static struct nL *find_actual(struct linked_list *ll, struct nL *actual)
 
 int is_file(char *path)
 {
-    FILE *file = fopen(path, "r");
+    char *copy = calloc(mstrlen(path) + 1, sizeof(char));
+    memcpy(copy, path, mstrlen(path));
+    char *path2 = strtok(copy, " \n;");
+    FILE *file = fopen(path2, "r");
+    free(copy);
     if (!file)
         return 0;
 
@@ -42,7 +47,11 @@ int is_file(char *path)
 
 struct linked_list *read_fil(char *path)
 {
-    FILE *file = fopen(path, "r");
+    char *copy = calloc(mstrlen(path) + 1, sizeof(char));
+    memcpy(copy, path, mstrlen(path));
+    char *path2 = strtok(copy, " \n;");
+    FILE *file = fopen(path2, "r");
+    free(copy);
     char *line = NULL;
     size_t len = 0;
     ssize_t isread;
@@ -71,7 +80,6 @@ struct linked_list *read_fil(char *path)
         line = NULL;
         actual = find_actual(toret, actual);
     }
-
     fclose(file);
-return toret;
+    return toret;
 }

@@ -165,7 +165,14 @@ int main(int argc, char *argv[])
     struct linked_list *tokens;
     if (options->c == TRUE)
     {
-        tokens = lexer_c(options->arg_c);
+        if (is_file(options->arg_c))
+        {
+            tokens = read_fil(options->arg_c);
+        }
+        else
+        {
+            tokens = lexer_c(options->arg_c);
+        }
     }
     else
     {
