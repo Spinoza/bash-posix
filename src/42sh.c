@@ -19,43 +19,35 @@
 
 static int norc_opt(void)
 {
-    char *arg1[] = {"../etc/42shrc", NULL};
-    char *arg2[] = {"../.42shrc", NULL};
-    pid_t pid = fork();
-    if (pid == -1)
+    char *arg1 = "../etc/42shrc";
+    char *arg2 =  "../.42shrc";
+
+    struct linked_list *tokens1 = read_fil(arg1);
+    if(!grammar_check(tokens1))
     {
-        errx(1, "oopsie: error in forking ! -_('_')_-");
+        printf("Error in loading 42shrc. Check your grammar\n");
+        free_list(tokens1);
     }
 
-    if (pid == 0)
+    struct linked_list *tokens2 = read_fil(arg2);
+    if(!grammar_check(tokens2))
     {
-        pid_t pid2 = fork();
-        if (pid2 == -1)
-        {
-            errx(1, "oopsie: error in forking in child !");
-        }
-
-        if (pid2 == 0)
-        {
-            int a = execvp(arg1[0], arg1);
-            exit (a);
-        }
-
-        else
-        {
-            int r = 0;
-            waitpid(pid2, &r, 0);
-            r = execvp(arg2[0], arg2);
-            exit(r);
-        }
+        printf("Error in loading .42shrc. Check your grammar\n");
+        free_list(tokens2);
     }
 
-    else
-    {
-        int status = 0;
-        waitpid(pid, &status, 0);
-        return status;
-    }
+    struct node *ast1 = build_ast(tokens1);
+    struct node *ast2 = build_ast(tokens2);
+
+    execution_ast(ast1);
+    execution_ast(ast2);
+
+    free_list(tokens1);
+    free_node(ast1);
+    free_list(tokens2);
+    free_node(ast2);
+
+    return 0;
 }
 static size_t mstrlen (char * string)
 {
