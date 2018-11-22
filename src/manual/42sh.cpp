@@ -1,21 +1,6 @@
 //! @~English
 //! @page 42sh 
 //! @section synopsis SYNOPSIS
-//!    #include <stdlib.h>\n
-//!    #include <string.h>\n
-//!    #include "lexer.h"\n
-//!    #include "options.h"\n
-//!    #include "grammar_check.h"\n
-//!    #include "linked_list.h"\n
-//!    #include "ast.h"\n
-//!    #include "execution_ast.h"
-//!
-//!	struct linked_list *lexer(char *input[], int argc);\n
-//!	int grammar_check(struct linked_list *tokens);\n
-//!     struct node *build_ast(struct linked_list *tokens);\n
-//!     void print_ast(struct node *ast);\n
-//!     int execution_ast(struct node *n); 
-//!
 //!	The program 42sh remains a project and, as thus, needs to be compiled before 
 //!     being used.\n
 //!	The compilation process is as follows : mkdir build at root, cd build, cmake
@@ -36,8 +21,8 @@
 //!     function can be called to print the AST created.\n
 //!     Finally the execution_ast() function goes through the AST tree and interprete
 //!     each node to execute the line command.
-//! @section options OPTIONS
 //!
+//! @section options OPTIONS
 //! 	The 42sh program can be called with several options, all conforming to the s
 //!     tandard options of the shell language.\n
 //!	The command to call 42sh would be : ./42sh [options] [inputs]\n
@@ -54,8 +39,22 @@
 //!     tion] shall set the option for the bash and calling +o [option] shall unset it.
 //!	--version	Prints the actual version of the 42sh program. 
 //!
-//! @section returnval RETURN VALUES
+//! @section examples EXAMPLES
+//!	1. To execute a command from a string:\n
 //!
+//!		./42sh -c "echo Hello World!;"\n
+//!
+//!	2. To execute the 42sh in interactive mode:\n
+//!
+//!		./42sh //press enter to lunch the PS1 then enter your command after the
+//!		name the program\n
+//!		42sh$ echo Hello;\n
+//!
+//!	3. To execute a command from a file:\n
+//!
+//!		./42sh path_to-file\n
+//!
+//! @section returnval RETURN VALUES
 //!     On successful completion, grammar_check() shall return 1. 0 otherwise and in
 //!     any case of error.\n
 //!	On successful completion, lexer() shall return a linked_list containing all t
