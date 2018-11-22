@@ -194,18 +194,6 @@ int pipe_command(char **command1, struct node *n)
     }
     else//father execute the command2
     {
-        /*
-        close(fd[1]);
-        int status = 0;
-        waitpid(pid, &status, 0);
-        close(0);
-        int b = dup2(fd[0], 0);
-        if (b == -1)
-            return -1;
-        int r = execvp(command2[0], command2);
-        printf("dfwef\n");
-        return r;*/
-        //in fork solution
         int status = 0;
         waitpid(pid, &status, 0);
         pid = fork();
