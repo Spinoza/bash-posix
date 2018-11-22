@@ -19,7 +19,7 @@ add_library(lexer ${CMAKE_SOURCE_DIR}/src/lexer/lexer.c)
 target_link_libraries(lexer PRIVATE linked_list)
 
 add_library(tty ${CMAKE_SOURCE_DIR}/src/prompt/handlePS1.c)
-
+target_link_libraries(tty readline)
 
 add_library(grammar ${CMAKE_SOURCE_DIR}/src/grammar/grammar_check.c
     ${CMAKE_SOURCE_DIR}/src/grammar/grammar_command.c

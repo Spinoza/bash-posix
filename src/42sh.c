@@ -13,24 +13,77 @@
 #include "ast.h"
 #include "execution_ast.h"
 #include "err.h"
+#include <sys/types.h>
+#include <sys/wait.h>
 
+static int norc_opt(void)
+{
+    char *arg1[] = {"../etc/42shrc", NULL};
+    char *arg2[] = {"../.42shrc", NULL};
+    pid_t pid = fork();
+    if (pid == -1)
+    {
+        errx(1, "oopsie: error in forking ! -_('_')_-");
+    }
 
+    if (pid == 0)
+    {
+        pid_t pid2 = fork();
+        if (pid2 == -1)
+        {
+            errx(1, "oopsie: error in forking in child !");
+        }
+
+        if (pid2 == 0)
+        {
+            int a = execvp(arg1[0], arg1);
+            exit (a);
+        }
+
+        else
+        {
+            int r = 0;
+            waitpid(pid2, &r, 0);
+            r = execvp(arg2[0], arg2);
+            exit(r);
+        }
+    }
+
+    else
+    {
+        int status = 0;
+        waitpid(pid, &status, 0);
+        return status;
+    }
+}
 static size_t mstrlen (char * string)
 {
     return *string ? 1 + mstrlen(string + 1) : 0;
+}
+
+static size_t fulllen(struct linked_list *tokens)
+{
+    size_t len = 0;
+    struct nL *start = tokens->head;
+    while (start)
+    {
+        len += mstrlen(start->elem->name) + 2;
+        start = start->next;
+    }
+
+    return len;
 }
 
 static char * from_tok_toS(struct linked_list *tokens)
 {
     int cursor = 0;
     struct nL *start = tokens->head;
-    char * final = malloc(mstrlen(start->elem->name) * sizeof(char) + 2);
+    char * final = malloc(fulllen(tokens) * sizeof(char) + 2);
     cursor += mstrlen(start->elem->name);
-    final = strcat(final, start->elem->name);
+    memcpy(final, start->elem->name, mstrlen(start->elem->name));
     while (start->next)
     {
         start = start->next;
-        final = realloc(final, cursor + 1 + mstrlen(start->elem->name) * sizeof(char));
         if (((start->elem->type == ENDOF && start->prev->elem->type != SEMICOLON) && !(strcmp(start->elem->name, "\n"))) || ((start->elem->type == SEMICOLON)))
         {
             final[cursor] = ';';
@@ -41,7 +94,7 @@ static char * from_tok_toS(struct linked_list *tokens)
         {
             final[cursor] = ' ';
             cursor++;
-            final = strcat(final, start->elem->name);
+            memcpy(final + cursor, start->elem->name, mstrlen(start->elem->name));
             cursor += mstrlen(start->elem->name);
         }
     }
@@ -52,19 +105,26 @@ static char * from_tok_toS(struct linked_list *tokens)
 static int interactive_mode(struct option *options)
 {
     using_history();
+    char *listadd;
     while (isatty(STDIN_FILENO))
     {
-        char * line = readline("42sh$ ");
+        char *line = readline("42sh$ ");
         struct linked_list *tokens = lexer_c(line);
         int isgramm = grammar_check(tokens);
         if (!isgramm)
         {
+            free(line);
+            listadd = from_tok_toS(tokens);
+            if (listadd)
+                 add_history(listadd);
             fprintf(stdout, "lexer error: Is your input conform to grammar ?\n");
         }
         else
         {
-            char * hist_add = from_tok_toS(tokens);
-            add_history(hist_add);
+            free(line);
+            listadd = from_tok_toS(tokens);
+            if (listadd)
+                 add_history(listadd);
             struct node *ast = build_ast(tokens);
             if (options->ast_print == TRUE)
                 print_ast(ast);
@@ -86,7 +146,11 @@ int main(int argc, char *argv[])
         free(options);
         return 0;
     }
-    if (argc == 1)
+    if (options->norc == FALS)
+    {
+        norc_opt();
+    }
+    if (index >= argc && options->c == FALS)
     {
         return interactive_mode(options);
     }
