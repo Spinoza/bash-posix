@@ -176,7 +176,14 @@ int main(int argc, char *argv[])
     }
     else
     {
-        tokens = lexer(argv, argc, index);
+        if (is_file(argv[1]))
+        {
+            tokens = read_fil(argv[1]);
+        }
+        else
+        {
+            tokens = lexer(argv, argc, index);
+        }
     }
     int isgramm = grammar_check(tokens);
     if (!isgramm)
