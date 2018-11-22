@@ -102,7 +102,7 @@ static char * from_tok_toS(struct linked_list *tokens)
     return final;
 }
 
-static int interactive_mode(struct option *options)
+static int interactive_mode(struct option *options, FILE *history)
 {
     using_history();
     char *listadd;
@@ -124,7 +124,13 @@ static int interactive_mode(struct option *options)
             free(line);
             listadd = from_tok_toS(tokens);
             if (listadd)
-                 add_history(listadd);
+                add_history(listadd);
+            if (listadd && history)
+            {
+                fwrite(listadd, 1, mstrlen(listadd), history);
+                fclose(history);
+                history = fopen("../.42sh_history", "a");
+            }
             struct node *ast = build_ast(tokens);
             if (options->ast_print == TRUE)
                 print_ast(ast);
@@ -136,6 +142,7 @@ static int interactive_mode(struct option *options)
 
 int main(int argc, char *argv[])
 {
+    FILE *history = fopen("../.42sh_history", "a");
     struct option *options = option_init();
     if (!options)
         errx(1, "Parsing error: memory full.");
@@ -152,7 +159,7 @@ int main(int argc, char *argv[])
     }
     if (index >= argc && options->c == FALS)
     {
-        return interactive_mode(options);
+        return interactive_mode(options, history);
     }
     struct linked_list *tokens;
     if (options->c == TRUE)
@@ -166,11 +173,15 @@ int main(int argc, char *argv[])
     int isgramm = grammar_check(tokens);
     if (!isgramm)
         errx(1, "Lexer error. Is your input conform to grammar ?");
+    char *toks = from_tok_toS(tokens);
+    fwrite(toks, 1, mstrlen(toks), history);
+    free(toks);
     struct node *ast = build_ast(tokens);
     if (options->ast_print == TRUE)
         print_ast(ast);
 
     int res = execution_ast(ast);
+    fclose(history);
     free(options);
     free_list(tokens);
     free_node(ast);
