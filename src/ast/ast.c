@@ -227,6 +227,22 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         return tok;
 
     }
+    if(r->type == A_FUNCTION)
+    {
+        if(tok->elem->type == OPEN_PAR)
+            tok = tok->prev;
+        struct node *new = init_node(tok->elem->name, tok->elem->type);
+        add_node(r, new);
+        tok = tok->next;
+        new = init_node("body", 10);
+        add_node(r, new);
+        while(tok->elem->type != WORD)
+        {
+            tok = tok->next;
+        }
+        tok = build_aux(new, tok);
+        return tok;
+    }
     return NULL;
 }
 
