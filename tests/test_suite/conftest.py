@@ -41,12 +41,14 @@ class YamlItem(pytest.Item):
     def runtest(self):
         tmp = self.command.decode()
         args = []
+        """
         option_value = metafunc.config.option.valgrind
         valgrind_b = 0
         if 'valgrind' in metafunc.fixturenames and option_value is not None:
             valgrind_b = 1
             args.append("valgrind")
             args.append("--error-exitcode=1")
+            """
         if not type(self) is BashDiffItem and not type(self) is OutputDiffItem:
             tmp = tmp.split()
             if type(self) is LexerDiffItem:
@@ -74,6 +76,7 @@ class YamlItem(pytest.Item):
         out, err = process.communicate(input=self.command)
         r = process.returncode
         process.kill()
+        """
         if valgrind_b == 1 and r == 1:
             print("bad sanity")
             raise YamlException("valgrind", "no memory leaks", out,
@@ -81,7 +84,7 @@ class YamlItem(pytest.Item):
         if valgrind_b == 1 and r == 0:
             print("good sanity")
             return
-
+        """
         if type(self) is FileDiffItem:
             dot_file = open('ast.dot', mode='r')
             all_of_it = dot_file.read()
