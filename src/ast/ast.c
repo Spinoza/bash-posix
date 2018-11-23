@@ -130,7 +130,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
     if (r->type == A_CONDITION)
     {
         while ((tok->elem->type != THEN)&&(tok->elem->type != DO)&&
-               (strcmp(")", tok->elem->name)))
+               (tok->elem->type != CLOSE_PAR))
         {
             while (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
                 tok = tok->next;
@@ -144,7 +144,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
     {
         while ((tok->elem->type != ELIF)&&(tok->elem->type != ELSE)&&
               (tok->elem->type != DONE)&&(tok->elem->type != FI)&&
-              (strcmp(";;", tok->elem->name)))
+              (tok->elem->type != TWO_SEMIC))
         {
             while (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
                 tok = tok->next;
@@ -182,7 +182,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         add_node(r, new);
         tok = build_aux(new, tok->next);
         while(tok->elem->type == ENDOF || tok->elem->type == IN ||
-             (!strcmp("(", tok->elem->name)))
+             (tok->elem->type == OPEN_PAR))
         {
             tok = tok->next;
         }
@@ -193,7 +193,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
             struct node *new2 = init_node("condition", 23);
             add_node(new, new2);
             tok = build_aux(new2, tok);
-            while(tok->elem->type == ENDOF || (!strcmp(")", tok->elem->name)))
+            while(tok->elem->type == ENDOF || (tok->elem->type == CLOSE_PAR))
             {
                 tok = tok->next;
             }
