@@ -55,6 +55,8 @@ static enum ntype node_getype(enum type type)
             return A_CONDITION;
         case 24:
             return A_ROOT;
+        case 31:
+            return A_FUNCTION;
         default:
             return A_INSTRUCT;
     }
@@ -87,13 +89,33 @@ static struct node* init_node(char *instr, enum type type)
     return node;
 }
 
+static struct node *new_node(struct nL *tok)
+{
+    int t = 0;
+    if(tok->elem->type == WORD && tok->next->elem->type == OPEN_PAR &&
+      tok->next->next->elem->type == CLOSE_PAR)
+    {
+        t = 1;
+    }
+    struct node *new;
+    if((!strcmp("function", tok->elem->name))||(t==1))
+    {
+        new = init_node("function", 31);
+    }
+    else
+    {
+        new = init_node(tok->elem->name, tok->elem->type);
+    }
+    return new;
+}
+
 static struct nL *build_aux(struct node *r, struct nL *tok)
 {
     if (r->type == A_ROOT)
     {
         while (tok->elem->type != ENDOF)
         {
-            struct node *new = init_node(tok->elem->name, tok->elem->type);
+            struct node *new = new_node(tok);
             add_node(r, new);
             if(new->type != A_INSTRUCT && new->type != A_PIPE)
                 tok = build_aux(new, tok->next);
@@ -134,9 +156,9 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         {
             while (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
                 tok = tok->next;
-            struct node *new = init_node(tok->elem->name, tok->elem->type);
+            struct node *new = new_node(tok);
             add_node(r, new);
-            tok = tok->next;
+            tok = build_aux(new, tok->next);
         }
         return tok;
     }
@@ -148,7 +170,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         {
             while (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
                 tok = tok->next;
-            struct node *new = init_node(tok->elem->name, tok->elem->type);
+            struct node *new = new_node(tok);
             add_node(r, new);
             tok = build_aux(new, tok->next);
         }
@@ -178,7 +200,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
     }
     if(r->type == A_CASE)
     {
-        struct node *new = init_node(tok->elem->name, tok->elem->type);
+        struct node *new = new_node(tok);
         add_node(r, new);
         tok = build_aux(new, tok->next);
         while(tok->elem->type == ENDOF || tok->elem->type == IN ||
