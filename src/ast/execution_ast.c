@@ -298,8 +298,7 @@ struct node *case_execution(struct node *n)
     for ( ; cases; cases = cases->next)
     {
         struct node *condition = cases->children->children;
-        for ( ; condition && condition->next;
-                condition = condition->next->next)
+        for ( ; condition; condition = condition->next)
         {
             if (!strcmp(condition->instr, elt->instr))
                 break;
