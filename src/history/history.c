@@ -1,4 +1,5 @@
 #include <limits.h>
+#include <string.h>
 #include <stdlib.h>
 #include "history.h"
 #include <unistd.h>
@@ -22,8 +23,9 @@ struct passwd *get_path(void)
 void init_interact(void)
 {
     struct passwd *user = get_path();
-    char *path = calloc(mstrlen(user->pw_dir) + 14, sizeof(char));
-    path = strcat(path, ".42sh_history");
+    char *path = calloc(mstrlen(user->pw_dir) + 15, sizeof(char));
+    strcpy(path, user->pw_dir);
+    path = strcat(path, "/.42sh_history");
     FILE *history = fopen(path, "r+");
     free(path);
     char *line;

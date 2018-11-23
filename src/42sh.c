@@ -135,8 +135,9 @@ static int interactive_mode(struct option *options)
             {
                 add_history(listadd);
                 struct passwd *user = get_path();
-                char *path = calloc(mstrlen(user->pw_dir) + 14, sizeof(char));
-                path = strcat(path, ".42sh_history");
+                char *path = calloc(mstrlen(user->pw_dir) + 15, sizeof(char));
+                strcpy(path, user->pw_dir);
+                strcat(path, "/.42sh_history");
                 FILE *history = fopen(path, "a");
                 free(path);
                 if (!history)
@@ -157,8 +158,9 @@ static int interactive_mode(struct option *options)
 int main(int argc, char *argv[])
 {
     struct passwd *user = get_path();
-    char *path = calloc(mstrlen(user->pw_dir) + 14, sizeof(char));
-    strcat(path, ".42sh_history");
+    char *path = calloc(mstrlen(user->pw_dir) + 15, sizeof(char));
+    strcpy(path, user->pw_dir);
+    strcat(path, "/.42sh_history");
     FILE *history = fopen(path, "r+");
     if (!history)
     {
@@ -200,8 +202,9 @@ int main(int argc, char *argv[])
     {
         errx(2, "Lexer error. Is your input conform to grammar ?");
     }
-    char *path2 = calloc(mstrlen(user->pw_dir) + 14, sizeof(char));
-    strcat(path2, ".42sh_history");
+    char *path2 = calloc(mstrlen(user->pw_dir) + 15, sizeof(char));
+    strcpy(path2, user->pw_dir);
+    strcat(path2, "./42sh_history");
     history = fopen(path2, "a");
     char *toks = from_tok_toS(tokens);
     if (history)
