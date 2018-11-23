@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <limits.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -16,6 +18,7 @@
 #include "err.h"
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <pwd.h>
 
 static int norc_opt(void)
 {
@@ -104,10 +107,10 @@ static char * from_tok_toS(struct linked_list *tokens)
     return final;
 }
 
-static int interactive_mode(struct option *options, FILE *history)
+static int interactive_mode(struct option *options)
 {
     using_history();
-    init_interact(history);
+    init_interact();
     int retcode = 0;
     char *listadd = NULL;
     while (isatty(STDIN_FILENO))
@@ -129,15 +132,19 @@ static int interactive_mode(struct option *options, FILE *history)
             free(line);
             listadd = from_tok_toS(tokens);
             if (listadd)
-                add_history(listadd);
-            if (listadd && history)
             {
+                add_history(listadd);
+                struct passwd *user = get_path();
+                char *path = calloc(mstrlen(user->pw_dir) + 14, sizeof(char));
+                path = strcat(path, ".42sh_history");
+                FILE *history = fopen(path, "a");
+                free(path);
+                if (!history)
+                    continue;
                 fwrite(listadd, 1, mstrlen(listadd), history);
                 fwrite("\n", 1, 1, history);
                 fclose(history);
-                history = fopen("../.42sh_history", "a");
             }
-            history = history;
             struct node *ast = build_ast(tokens);
             if (options->ast_print == TRUE)
                 print_ast(ast);
@@ -149,9 +156,18 @@ static int interactive_mode(struct option *options, FILE *history)
 
 int main(int argc, char *argv[])
 {
-    FILE *history = fopen("../.42sh_history", "r+");
+    struct passwd *user = get_path();
+    char *path = calloc(mstrlen(user->pw_dir) + 14, sizeof(char));
+    strcat(path, ".42sh_history");
+    FILE *history = fopen(path, "r+");
     if (!history)
-        history = fopen("../.42sh_history", "w+");
+    {
+        history = fopen(path, "w+");
+    }
+    if(history)
+        fclose(history);
+    free(path);
+    path = NULL;
     struct option *options = option_init();
     if (!options)
         errx(1, "Parsing error: memory full.");
@@ -168,7 +184,7 @@ int main(int argc, char *argv[])
     }
     if (index >= argc && options->c == FALS)
     {
-        return interactive_mode(options, history);
+        return interactive_mode(options);
     }
     struct linked_list *tokens;
     if (options->c == TRUE)
@@ -181,16 +197,27 @@ int main(int argc, char *argv[])
     }
     int isgramm = grammar_check(tokens);
     if (!isgramm)
+    {
         errx(2, "Lexer error. Is your input conform to grammar ?");
+    }
+    char *path2 = calloc(mstrlen(user->pw_dir) + 14, sizeof(char));
+    strcat(path2, ".42sh_history");
+    history = fopen(path2, "a");
     char *toks = from_tok_toS(tokens);
-    fwrite(toks, 1, mstrlen(toks), history);
+    if (history)
+    {
+        fwrite(toks, 1, mstrlen(toks), history);
+        fwrite("\n", 1, 1, history);
+        fclose(history);
+    }
+    free(path2);
+    path2 = NULL;
     free(toks);
     struct node *ast = build_ast(tokens);
     if (options->ast_print == TRUE)
         print_ast(ast);
 
     int res = execution_ast(ast);
-    fclose(history);
     free(options);
     free_list(tokens);
     free_node(ast);

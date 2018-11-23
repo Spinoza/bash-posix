@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 
-void init_interact(FILE *history);
+void init_interact(void);
+struct passwd *get_path(void);
 
 #endif /* ! HISTORY_H */
