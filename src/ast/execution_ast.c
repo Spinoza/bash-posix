@@ -1,4 +1,5 @@
 #define _GNU_SOURCE
+#include <err.h>
 #include "execution_ast.h"
 #include <string.h>
 #include <stdlib.h>
@@ -185,11 +186,12 @@ int pipe_handling(char **command1, struct node *n)
         }
         if (pid1 == 0)//child want to execute command1
         {
-            close(fd[0]);
+            close(0);
             close(1);
-            int b = dup2(fd[1], 1);
-            if (b == -1)
-                return -1;
+            int d1 = dup2(fd[1], 1);
+            int d2 = dup2(fd[0], 0);
+            if (d1 == -1 || d2 == -1)
+                err(1, "dup error\n");
             int r = execvp(command1[0], command1);
             exit(r);
         }
@@ -213,11 +215,9 @@ int pipe_handling(char **command1, struct node *n)
     }
     if (pid1 == 0)
     {
-        close(fd[1]);
         close(0);
-        int b = dup2(fd[0], 0);
-        if (b == -1)
-            return -1;
+        close(fd[1]);
+        dup2(fd[0], 0);
         int re = execvp(command1[0], command1);
         exit(re);
     }
