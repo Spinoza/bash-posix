@@ -150,6 +150,8 @@ static int interactive_mode(struct option *options, FILE *history)
 int main(int argc, char *argv[])
 {
     FILE *history = fopen("../.42sh_history", "r+");
+    if (!history)
+        history = fopen("../.42sh_history", "w+");
     struct option *options = option_init();
     if (!options)
         errx(1, "Parsing error: memory full.");
