@@ -33,7 +33,8 @@ enum ntype
     A_FOR, /**< Informs that what follows are for conditions and body*/
     A_IN, /**< Node that separates comparing from comprared instructions */
     A_ELIF, /**< Cf A_IF*/
-    A_PIPE /**< Siblings must be executed with a pipe between them */
+    A_PIPE, /**< Siblings must be executed with a pipe between them */
+    A_FUNCTION /**< Tree that will declare a function*/
 };
 
 /**

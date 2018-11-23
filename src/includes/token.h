@@ -46,7 +46,8 @@ enum type
     CLOSE_PAR = 27, /**< The string parsed is a closing parenthesis. */
     OPEN_BRA = 28, /**< The string parsed is an opening bracket. */
     CLOSE_BRA = 29, /**< The string parsed is a closing bracket. */
-    TWO_SEMIC = 30 /**< The string parsed is a double semicolon. */
+    TWO_SEMIC = 30, /**< The string parsed is a double semicolon. */
+    FUNCTION = 31 /**< Used to build the ast tree*/
 };
 
 /**
