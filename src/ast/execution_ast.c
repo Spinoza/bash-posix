@@ -172,7 +172,7 @@ int pipe_command(char **command1, struct node *n)
     int a = pipe(fd);
     if (a == -1)
     {
-        printf("error pipe\n");
+        fprintf(stderr, "error pipe\n");
         return -1;
     }
     pid_t pid = fork();
@@ -188,7 +188,6 @@ int pipe_command(char **command1, struct node *n)
         int b = dup2(fd[1], 1);
         if (b == -1)
             return -1;
-        printf("not here\n");
         int r = execvp(command1[0], command1);
         exit(r);
     }
@@ -215,7 +214,7 @@ int pipe_command(char **command1, struct node *n)
         else
         {
             status = 0;
-            waitpid(pid, &status, 0);
+            //waitpid(pid, &status, 0);
             if (status == 127)
                 fprintf(stderr,"42sh : %s : command not found.\n", command2[0]);
             free_command(command2);
@@ -316,9 +315,9 @@ int traversal_ast(struct node *n, int *res)
                 return traversal_ast(instr_execution(n, res), res);
         }
         if (n->type == A_IF)
-            return traversal_ast(if_execution(n, res), res);
+            *res = traversal_ast(if_execution(n, res), res);
         if (n->type == A_CASE)
-            return traversal_ast(case_execution(n), res);
+            *res = traversal_ast(case_execution(n), res);
         if (n->type == A_WHILE)
         {
             while (if_cond(n) == 0)
@@ -330,10 +329,10 @@ int traversal_ast(struct node *n, int *res)
                 *res = traversal_ast(n->children->next, res);
         }
         if (n->type == A_FOR)
-            return traversal_ast(for_execution(n, res), res);
+            *res = traversal_ast(for_execution(n, res), res);
         return traversal_ast(n->next,res);
     }
-    return traversal_ast(n->children,res);
+    return traversal_ast(n->children, res);
 }
 
 int execution_ast(struct node *n)
