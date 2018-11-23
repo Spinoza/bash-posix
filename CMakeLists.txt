@@ -18,6 +18,8 @@ add_library(linked_list ${CMAKE_SOURCE_DIR}/src/utils/linked_list.c)
 add_library(lexer ${CMAKE_SOURCE_DIR}/src/lexer/lexer.c)
 target_link_libraries(lexer PRIVATE linked_list)
 
+add_library(history ${CMAKE_SOURCE_DIR}/src/history/history.c)
+
 add_library(tty ${CMAKE_SOURCE_DIR}/src/prompt/handlePS1.c)
 target_link_libraries(tty readline)
 
@@ -57,6 +59,7 @@ target_link_libraries(42sh ast)
 target_link_libraries(42sh options)
 target_link_libraries(42sh tty)
 target_link_libraries(42sh readline)
+target_link_libraries(42sh history)
 
 add_custom_target(set_env
     COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/set_env.sh

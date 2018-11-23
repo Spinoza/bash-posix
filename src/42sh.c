@@ -6,6 +6,7 @@
 #include <readline/history.h>
 #include <libgen.h>
 #include "lexer.h"
+#include "history.h"
 #include "grammar_check.h"
 #include "options.h"
 #include "token.h"
@@ -106,6 +107,8 @@ static char * from_tok_toS(struct linked_list *tokens)
 static int interactive_mode(struct option *options, FILE *history)
 {
     using_history();
+    init_interact(history);
+    int retcode = 0;
     char *listadd = NULL;
     while (isatty(STDIN_FILENO))
     {
@@ -119,6 +122,7 @@ static int interactive_mode(struct option *options, FILE *history)
             if (listadd)
                  add_history(listadd);
             fprintf(stdout, "lexer error: Is your input conform to grammar ?\n");
+            retcode = 2;
         }
         else
         {
@@ -129,6 +133,7 @@ static int interactive_mode(struct option *options, FILE *history)
             if (listadd && history)
             {
                 fwrite(listadd, 1, mstrlen(listadd), history);
+                fwrite("\n", 1, 1, history);
                 fclose(history);
                 history = fopen("../.42sh_history", "a");
             }
@@ -136,15 +141,15 @@ static int interactive_mode(struct option *options, FILE *history)
             struct node *ast = build_ast(tokens);
             if (options->ast_print == TRUE)
                 print_ast(ast);
-            execution_ast(ast);
+            retcode = execution_ast(ast);
         }
     }
-    return 1;
+    return retcode;
 }
 
 int main(int argc, char *argv[])
 {
-    FILE *history = fopen("../.42sh_history", "a");
+    FILE *history = fopen("../.42sh_history", "r+");
     struct option *options = option_init();
     if (!options)
         errx(1, "Parsing error: memory full.");
@@ -174,7 +179,7 @@ int main(int argc, char *argv[])
     }
     int isgramm = grammar_check(tokens);
     if (!isgramm)
-        errx(1, "Lexer error. Is your input conform to grammar ?");
+        errx(2, "Lexer error. Is your input conform to grammar ?");
     char *toks = from_tok_toS(tokens);
     fwrite(toks, 1, mstrlen(toks), history);
     free(toks);
