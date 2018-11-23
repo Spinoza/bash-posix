@@ -273,7 +273,7 @@ struct nL *g_shellcommand(struct nL *tok)
             new = new->next;
             if(!new)
                 return NULL;
-            if(tok->elem->type == CLOSE_BRA)
+            if(new->elem->type == CLOSE_BRA)
                 return new;
         }
     }
@@ -290,7 +290,7 @@ struct nL *g_shellcommand(struct nL *tok)
             new = new->next;
             if(!new)
                 return NULL;
-            if(tok->elem->type == CLOSE_PAR)
+            if(new->elem->type == CLOSE_PAR)
                 return new;
         }
     }
@@ -317,7 +317,18 @@ struct nL *g_shellcommand(struct nL *tok)
 
 struct nL *g_command(struct nL *tok)
 {
-    struct nL *new = g_simplecommand(tok);
+    struct nL *new = g_funcdec(tok);
+    if(new)
+    {
+        while(1)
+        {
+            tok = new;
+            new = g_redirection(new->next);
+            if(!new)
+                return tok;
+        }
+    }
+    new = g_simplecommand(tok);
     if(new)
         return new;
     new = g_shellcommand(tok);
@@ -331,15 +342,6 @@ struct nL *g_command(struct nL *tok)
                 return tok;
         }
     }
-    new = g_funcdec(tok);
-    if(!new)
-        return NULL;
-    while(1)
-    {
-        tok = new;
-        new = g_redirection(new->next);
-        if(!new)
-            return tok;
-    }
+    return NULL;
 }
 
