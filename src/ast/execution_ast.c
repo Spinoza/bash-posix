@@ -215,7 +215,7 @@ int pipe_command(char **command1, struct node *n)
         else
         {
             status = 0;
-            //waitpid(pid, &status, 0);
+            waitpid(pid, &status, 0);
             if (status == 127)
                 fprintf(stderr,"42sh : %s : command not found.\n", command2[0]);
             free_command(command2);
