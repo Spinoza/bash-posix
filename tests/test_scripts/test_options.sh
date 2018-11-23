@@ -54,7 +54,7 @@ if [ $lexer -eq 1 ]; then
     #If sanity
     #   call with valgrind
     #else
-    pytest "--valgrind" "--timeout=10" "../tests/test_suite/unit_tests/test_lexer.yml"
+    pytest "--timeout=10" "--valgrind=true" "../tests/test_suite/unit_tests/test_lexer.yml"
 
 fi;
 
