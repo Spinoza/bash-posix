@@ -163,64 +163,75 @@ int if_cond(struct node *cond)
     return res;
 }
 
-int pipe_command(char **command1, struct node *n)
+int pipe_handling(char **command1, struct node *n)
 {
     struct node *oper_node = get_oper_node(n);
-    char **command2 = to_execute(n, oper_node);
-
+    pid_t pid1;
+    int status = 0;
     int fd[2];
-    int a = pipe(fd);
-    if (a == -1)
+
+    while (oper_node && oper_node->tokentype == PIPE)
     {
-        fprintf(stderr, "error pipe\n");
-        return -1;
-    }
-    pid_t pid = fork();
-    if (pid == -1)//error
-    {
-        fprintf(stderr,"42sh : fork : An error occured.\n");
-        exit(1);
-    }
-    if (pid == 0)//child want to execute command1
-    {
-        close(fd[0]);
-        close(1);
-        int b = dup2(fd[1], 1);
-        if (b == -1)
+        if (pipe(fd) == -1)
+        {
+            fprintf(stderr, "error pipe\n");
             return -1;
-        int r = execvp(command1[0], command1);
-        exit(r);
-    }
-    else//father execute the command2
-    {
-        int status = 0;
-        waitpid(pid, &status, 0);
-        pid = fork();
-        if (pid == -1)
+        }
+        pid1 = fork();
+        if (pid1 == -1)//error
         {
             fprintf(stderr,"42sh : fork : An error occured.\n");
             exit(1);
         }
-        if (pid == 0)
+        if (pid1 == 0)//child want to execute command1
         {
-            close(fd[1]);
-            close(0);
-            int b = dup2(fd[0], 0);
+            close(fd[0]);
+            close(1);
+            int b = dup2(fd[1], 1);
             if (b == -1)
                 return -1;
-            int re = execvp(command2[0], command2);
-            exit(re);
+            int r = execvp(command1[0], command1);
+            exit(r);
         }
         else
         {
-            status = 0;
-            //waitpid(pid, &status, 0);
+            waitpid(pid1,&status,0);
             if (status == 127)
-                fprintf(stderr,"42sh : %s : command not found.\n", command2[0]);
-            free_command(command2);
-            return status;
+                fprintf(stderr,"42sh : %s : \
+                command not found.\n", command1[0]);
         }
+        n = oper_node->next;
+        oper_node = get_oper_node(n);
+        free_command(command1);
+        command1 = to_execute(n, oper_node);
     }
+    pid1 = fork();
+    if (pid1 == -1)
+    {
+        fprintf(stderr,"42sh : fork : An error occured.\n");
+        exit(1);
+    }
+    if (pid1 == 0)
+    {
+        close(fd[1]);
+        close(0);
+        int b = dup2(fd[0], 0);
+        if (b == -1)
+            return -1;
+        int re = execvp(command1[0], command1);
+        exit(re);
+    }
+    else
+    {
+        status = 0;
+        waitpid(pid1, &status, 0);
+        if (status == 127)
+            fprintf(stderr,"42sh : %s :\
+            command not found.\n", command1[0]);
+        free_command(command1);
+        return status;
+    }
+
 }
 
 struct node *instr_execution(struct node *n, int *res)
@@ -230,17 +241,17 @@ struct node *instr_execution(struct node *n, int *res)
     char *oper = (oper_node ? oper_node->instr : "");
     char **command_call = to_execute(n, oper_node);
     if (oper_node && oper_node->tokentype == PIPE)
-        *res = pipe_command(command_call, oper_node->next);
+        *res = pipe_handling(command_call, n);
     else
         *res = exec_command(command_call);
     free_command(command_call);
     while (oper_node && oper_node->tokentype == PIPE)
         oper_node = get_oper_node(oper_node->next);
     oper = (oper_node ? oper_node->instr : "");
-    if ((!strcmp(oper,"logical_and") && !(*res))
-            || (!strcmp(oper,"logical_or") && (*res)))
+    if ((!strcmp(oper,"&&") && !(*res))
+            || (!strcmp(oper,"||") && (*res)))
         return oper_node->next;
-    if (!strcmp(oper, "semicolon") && oper_node->next)
+    if (!strcmp(oper, ";") && oper_node->next)
         return oper_node->next;
     return NULL;
 }
@@ -311,8 +322,7 @@ int traversal_ast(struct node *n, int *res)
     {
         if (n->type == A_INSTRUCT)
         {
-            if (strcmp(n->instr, ";;"))
-                return traversal_ast(instr_execution(n, res), res);
+            return traversal_ast(instr_execution(n, res), res);
         }
         if (n->type == A_IF)
             *res = traversal_ast(if_execution(n, res), res);

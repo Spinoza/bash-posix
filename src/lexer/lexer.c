@@ -120,6 +120,7 @@ void print_list(struct linked_list *l_list)
     for (; head; head = head->next)
     {
         print_enum(head->elem->type);
+        printf("%s ",head->elem->name);
         printf(" -> ");
     }
     printf("\n");
@@ -189,9 +190,9 @@ int check_specials(char *string) //checks for & and ;
                 || *(string + i) == '{'
                 || *(string + i) == '}')
             return i;
-        if(!*(string + i + 1) && *(string + i) == '&')
+        if (!*(string + i + 1) && *(string + i) == '&')
             return i;
-        if(*(string + i) == '&' && *(string + i + 1) != '&')
+        if (*(string + i) == '&' && *(string + i + 1) != '&')
             return i;
     }
     return -1;
@@ -252,49 +253,6 @@ enum type check_word(char *string)
    return;
    }*/
 
-void set_name(struct token *new, char **list, int index)
-{
-    char *string = list[index];
-    switch (index)
-    {
-        case 4:
-            string = "logical_and";
-            break;
-        case 5:
-            string = "semicolon";
-            break;
-        case 15:
-            string = "pipe";
-            break;
-        case 16:
-            string = "logical_or";
-            break;
-        case 17:
-            string = "and";
-            break;
-        case 26:
-            string = "open_par";
-            break;
-        case 27:
-            string = "close_par";
-            break;
-        case 28:
-            string = "open_bra";
-            break;
-        case 29:
-            string = "close_bra";
-            break;
-        case 30:
-            string = "two_semic";
-            break;
-        default:
-            string = list[index];
-            break;
-    }
-    int len = strlen(string);
-    new->name = calloc(20, sizeof(char));
-    new->name = memcpy(new->name, string, len);
-}
 
 int check_list(struct token *new, char *string, char **list)
 {
@@ -303,7 +261,9 @@ int check_list(struct token *new, char *string, char **list)
         if (!strcmp(string, list[i]))
         {
             new->type = i;
-            set_name(new, list, i);
+            int len = strlen(list[i]);
+            new->name = calloc(20, sizeof(char));
+            new->name = memcpy(new->name, list[i], len);
             return 1;
         }
     }
@@ -324,7 +284,7 @@ void split_ampersand(struct token *new, char *string,
     struct token *ampersand = token_init();
     ampersand->type = AND;
     ampersand->name = calloc(5, sizeof(char));
-    memcpy(ampersand->name, "and", 4);
+    memcpy(ampersand->name, "&", 4);
     add(l_list,ampersand);
     return;
 }
@@ -337,7 +297,7 @@ void split_semicolon(struct token *new, char *string,
     struct token *semicolon = token_init();
     semicolon->type = SEMICOLON;
     semicolon->name = calloc(20, sizeof(char));
-    memcpy(semicolon->name, "semicolon", 10);
+    memcpy(semicolon->name, ";", 10);
     add(l_list,semicolon);
     return;
 }
