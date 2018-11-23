@@ -111,6 +111,9 @@ void print_enum(enum type type)
         case 30:
                 printf("TWO_SEMIC");
                 break;
+        case 31:
+                printf("FUNCTION");
+                break;
 
     }
 }
