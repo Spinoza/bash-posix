@@ -120,7 +120,6 @@ void print_list(struct linked_list *l_list)
     for (; head; head = head->next)
     {
         print_enum(head->elem->type);
-        printf(" %s ",head->elem->name);
         printf(" -> ");
     }
     printf("\n");
@@ -473,7 +472,8 @@ void check_context(struct linked_list *l_list, struct token *new)
     {
         if (context == FOR && iter->elem->type == DO)
             context = ENDOF;
-        if (context == ENDOF && iter->elem->type == FOR)
+        if (context == ENDOF
+                && (iter->elem->type == FOR || iter->elem->type == CASE))
             context = FOR;
         if (context == ENDOF && iter->elem->type == WORD)
             context = WORD;

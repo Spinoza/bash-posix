@@ -1,0 +1,20 @@
+while_false:
+        type: "bash diff"
+        command: "while false; do echo false; done;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+while_true:
+        type: "infite loop"
+        command: "while true; do echo true; done;"
+        expected:
+
+for_easy:
+        type: "bash diff"
+        command: "for i in 1; do echo easy_for; done;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+

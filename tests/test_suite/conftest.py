@@ -2,6 +2,13 @@ import pytest
 import subprocess
 import yaml
 
+@pytest.mark.unit
+def test_print_name(name):
+    print ("Displaying name: %s" % name)
+
+def pytest_addoption(parser):
+    parser.addoption("--name", action="store", default="default name")
+
 def pytest_collect_file(parent, path):
     if path.ext == ".yml" and path.basename.startswith("test"):
         return YamlFile(path, parent)
@@ -21,8 +28,9 @@ class YamlFile(pytest.File):
             if spec ['type'] == "ast print diff":
                 yield FileDiffItem(name, self, spec)
             if spec ['type'] == "output diff":
-                print("in output")
                 yield OutputDiffItem(name, self, spec)
+            if spec ['type'] == "infinite loop":
+                yield InfiniteLoopDiffItem(name, self, spec)
 
 class YamlItem(pytest.Item):
     def __init__(self, name, parent, spec):
@@ -180,6 +188,11 @@ class OutputDiffItem(YamlItem):
                 self.expected["rvalue"] = int(self.expected["rvalue"])
                 continue
             self.expected[item] = str.encode(self.expected[item])
+
+class InfiniteLoopDiffItem(YamlItem):
+    def __init__(self, name, parent, spec):
+        super().__init__(name,parent,spec)
+        self.name = name
 
 class GrammarDiffItem(YamlItem):
     def __init__(self, name, parent, spec):

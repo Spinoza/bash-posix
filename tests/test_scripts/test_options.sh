@@ -40,6 +40,7 @@ do
     fi;
 done
 
+#PYTEST_TIMEOUT=10
 source ./env/bin/activate
 if [ $sanity -eq 1 ]; then
     echo "call with valgrind"
@@ -53,23 +54,22 @@ if [ $lexer -eq 1 ]; then
     #If sanity
     #   call with valgrind
     #else
-    pytest "../tests/test_suite/test_lexer.yml"
+    pytest "--valgrind" "--timeout=10" "../tests/test_suite/unit_tests/test_lexer.yml"
 
 fi;
 
 if [ $grammar -eq 1 ]; then
-    echo "before grammar"
-    pytest "../tests/test_suite/test_grammar.yml"
+    pytest "../tests/test_suite/unit_tests/test_grammar.yml"
 fi;
 
 
 if [ $ast_print -eq 1 ]; then
-    pytest "../tests/test_suite/test_ast.yml"
+    pytest "../tests/test_suite/unit_tests/test_ast.yml"
 fi;
 
 
 if [ $main -eq 1 ]; then
-    pytest "../tests/test_suite/test_42sh.yml"
+    pytest "--timeout=2" "../tests/test_suite/42sh_tests/"
 fi;
 
 
