@@ -32,8 +32,8 @@
 |----v0.5 Current bugs
 |-------- Lexer []
 |---------- Parenthesis/Brackets at the beginning of words not recognized []
-|-------- History []
-|---------- Jump on non initialized value, causing some problems with huge calls []
+|-------- History [X]
+|---------- Jump on non initialized value, causing some problems with huge calls [X]
 |-------- Loader []
 |---------- Position of the files []
 

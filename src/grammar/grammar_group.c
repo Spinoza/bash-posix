@@ -89,8 +89,7 @@ struct nL *g_caseclause(struct nL *tok)
     {
         struct nL *stock = tok;
         tok = tok->next;
-        while (!tok ||(tok->elem->type == ENDOF &&
-                      !(strcmp("\n", tok->elem->name))))
+        while (!tok ||(tok->elem->type == ENDOF))
         {
             if (!tok)
             {
@@ -119,8 +118,7 @@ struct nL *g_caseclause(struct nL *tok)
         tok = tok->next;
     }
 
-    while (!tok || (tok->elem->type == ENDOF &&
-                   (!strcmp("\n", tok->elem->name))))
+    while (!tok || (tok->elem->type == ENDOF))
     {
         if(!tok)
         {
