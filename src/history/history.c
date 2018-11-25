@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include "history.h"
 #include <unistd.h>
-#include <pwd.h>
 #include <sys/types.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -13,18 +12,11 @@ static size_t mstrlen(char *string)
     return *string ? 1 + mstrlen(string + 1) : 0;
 }
 
-struct passwd *get_path(void)
-{
-    uid_t uid = getuid();
-    struct passwd *passw = getpwuid(uid);
-    return passw;
-}
-
 void init_interact(void)
 {
-    struct passwd *user = get_path();
-    char *path = calloc(mstrlen(user->pw_dir) + 15, sizeof(char));
-    strcpy(path, user->pw_dir);
+    char *home = getenv("HOME");
+    char *path = calloc(mstrlen(home) + 15, sizeof(char));
+    strcpy(path, home);
     path = strcat(path, "/.42sh_history");
     FILE *history = fopen(path, "r+");
     free(path);

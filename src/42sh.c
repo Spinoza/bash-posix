@@ -18,7 +18,6 @@
 #include "err.h"
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <pwd.h>
 
 static int norc_opt(void)
 {
@@ -134,9 +133,9 @@ static int interactive_mode(struct option *options)
             if (listadd)
             {
                 add_history(listadd);
-                struct passwd *user = get_path();
-                char *path = calloc(mstrlen(user->pw_dir) + 15, sizeof(char));
-                strcpy(path, user->pw_dir);
+                char *home = getenv("HOME");
+                char *path = calloc(mstrlen(home) + 15, sizeof(char));
+                strcpy(path, home);
                 strcat(path, "/.42sh_history");
                 FILE *history = fopen(path, "a");
                 free(path);
@@ -157,9 +156,9 @@ static int interactive_mode(struct option *options)
 
 int main(int argc, char *argv[])
 {
-    struct passwd *user = get_path();
-    char *path = calloc(mstrlen(user->pw_dir) + 15, sizeof(char));
-    strcpy(path, user->pw_dir);
+    char *home = getenv("HOME");
+    char *path = calloc(mstrlen(home) + 15, sizeof(char));
+    strcpy(path, home);
     strcat(path, "/.42sh_history");
     FILE *history = fopen(path, "r+");
     if (!history)
@@ -202,8 +201,9 @@ int main(int argc, char *argv[])
     {
         errx(2, "Lexer error. Is your input conform to grammar ?");
     }
-    char *path2 = calloc(mstrlen(user->pw_dir) + 15, sizeof(char));
-    strcpy(path2, user->pw_dir);
+    char *home2 = getenv("HOME");
+    char *path2 = calloc(mstrlen(home2) + 15, sizeof(char));
+    strcpy(path2, home2);
     strcat(path2, "./42sh_history");
     history = fopen(path2, "a");
     char *toks = from_tok_toS(tokens);
