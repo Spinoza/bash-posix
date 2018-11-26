@@ -226,7 +226,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
             new2 = init_node("then", 10);
             add_node(new, new2);
             tok = build_aux(new2, tok);
-            tok = tok->next;
+
         }
         return tok;
 
