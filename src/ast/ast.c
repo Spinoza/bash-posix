@@ -169,7 +169,8 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
     {
         while ((tok->elem->type != ELIF)&&(tok->elem->type != ELSE)&&
               (tok->elem->type != DONE)&&(tok->elem->type != FI)&&
-              (tok->elem->type != TWO_SEMIC))
+              (tok->elem->type != TWO_SEMIC)&&(tok->elem->type != CLOSE_PAR)&&
+              (tok->elem->type != CLOSE_BRA))
         {
             while (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
                 tok = tok->next;
