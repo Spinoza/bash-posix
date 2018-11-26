@@ -199,29 +199,37 @@ int pipe_handling(char **command1, struct node *n)
     struct node *oper_node = get_oper_node(n);
     pid_t pid1;
     int status = 0;
-    int fd[2];
-
+    int fd_1[2];
+    int fd_2[2];
+    pipe(fd_1);
+    pipe(fd_2);
+    int current = 0;
     while (oper_node && oper_node->tokentype == PIPE)
     {
-        if (pipe(fd) == -1)
-        {
-            fprintf(stderr, "error pipe\n");
-            return -1;
-        }
         pid1 = fork();
         if (pid1 == -1)//error
         {
             fprintf(stderr,"42sh : fork : An error occured.\n");
             exit(1);
         }
-        if (pid1 == 0)//child want to execute command1
+        if (pid1 == 0)//child wants to execute command1
         {
             close(0);
             close(1);
-            int d1 = dup2(fd[1], 1);
-            int d2 = dup2(fd[0], 0);
-            if (d1 == -1 || d2 == -1)
-                err(1, "dup error\n");
+            if (!current % 2)
+            {
+                dup2(fd_1[1], 1);
+                close(fd_1[0]);
+                dup2(fd_2[0], 0);
+                close(fd_2[1]);
+            }
+            else
+            {
+                dup2(fd_2[1], 1);
+                close(fd_2[0]);
+                dup2(fd_1[0], 0);
+                close(fd_1[1]);
+            }
             int r = execvp(command1[0], command1);
             exit(r);
         }
@@ -236,6 +244,7 @@ int pipe_handling(char **command1, struct node *n)
         oper_node = get_oper_node(n);
         free_command(command1);
         command1 = to_execute(n, oper_node);
+        current++;
     }
     pid1 = fork();
     if (pid1 == -1)
@@ -246,8 +255,13 @@ int pipe_handling(char **command1, struct node *n)
     if (pid1 == 0)
     {
         close(0);
-        close(fd[1]);
-        dup2(fd[0], 0);
+        close(fd_1[1]);
+        close(fd_2[1]);
+        if (!current % 2)
+            dup2(fd_2[0], 0);
+        else
+            dup2(fd_1[0], 0);
+
         int re = execvp(command1[0], command1);
         exit(re);
     }
