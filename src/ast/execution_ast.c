@@ -74,6 +74,13 @@
  }
 */
 
+/*
+int function_execution(struct node *)
+{
+
+}*/
+
+
 char **to_execute(struct node *child, struct node *oper_node)
 {
     struct node *iter = child;
@@ -164,6 +171,7 @@ int if_cond(struct node *cond)
     return res;
 }
 
+//need to redo this function as recursive one
 int pipe_handling(char **command1, struct node *n)
 {
     struct node *oper_node = get_oper_node(n);
@@ -200,7 +208,7 @@ int pipe_handling(char **command1, struct node *n)
             waitpid(pid1,&status,0);
             if (status == 127)
                 fprintf(stderr,"42sh : %s : \
-                command not found.\n", command1[0]);
+                        command not found.\n", command1[0]);
         }
         n = oper_node->next;
         oper_node = get_oper_node(n);
@@ -227,7 +235,7 @@ int pipe_handling(char **command1, struct node *n)
         waitpid(pid1, &status, 0);
         if (status == 127)
             fprintf(stderr,"42sh : %s :\
-            command not found.\n", command1[0]);
+                    command not found.\n", command1[0]);
         free_command(command1);
         return status;
     }
@@ -251,7 +259,7 @@ struct node *instr_execution(struct node *n, int *res)
     if ((!strcmp(oper,"&&") && !(*res))
             || (!strcmp(oper,"||") && (*res)))
         return oper_node->next;
-    if (!strcmp(oper, ";") && oper_node->next)
+    if ((!strcmp(oper, ";") || !strcmp(oper, "&")) && oper_node->next)
         return oper_node->next;
     return NULL;
 }
