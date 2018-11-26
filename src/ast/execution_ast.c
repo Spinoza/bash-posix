@@ -349,7 +349,7 @@ struct node *for_execution(struct node *n, int *res, struct f_tab *f_tab)
         cond = cond->next;
         struct node *do_node = n->children->next->children;
         for ( ; cond && (cond->tokentype != SEMICOLON
-                    || cond->tokentype != AND); cond = cond->next)
+                    && cond->tokentype != AND); cond = cond->next)
         {
             *res = traversal_ast(do_node, res, f_tab);
         }
