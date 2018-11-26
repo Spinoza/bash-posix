@@ -193,89 +193,52 @@ int if_cond(struct node *cond)
     return res;
 }
 
-//need to redo this function as recursive one
-int pipe_handling(char **command1, struct node *n)
+int pipe_aux(char **command, struct node *n, int fd[2])
 {
     struct node *oper_node = get_oper_node(n);
-    pid_t pid1;
-    int status = 0;
-    int fd_1[2];
-    int fd_2[2];
-    pipe(fd_1);
-    pipe(fd_2);
-    int current = 0;
-    while (oper_node && oper_node->tokentype == PIPE)
+    int fd_next[2];
+    if (oper_node && oper_node->tokentype == PIPE)
     {
-        pid1 = fork();
-        if (pid1 == -1)//error
-        {
-            fprintf(stderr,"42sh : fork : An error occured.\n");
-            exit(1);
-        }
-        if (pid1 == 0)//child wants to execute command1
-        {
-            close(0);
-            close(1);
-            if (!current % 2)
-            {
-                dup2(fd_1[1], 1);
-                close(fd_1[0]);
-                dup2(fd_2[0], 0);
-                close(fd_2[1]);
-            }
-            else
-            {
-                dup2(fd_2[1], 1);
-                close(fd_2[0]);
-                dup2(fd_1[0], 0);
-                close(fd_1[1]);
-            }
-            int r = execvp(command1[0], command1);
-            exit(r);
-        }
-        else
-        {
-            waitpid(pid1,&status,0);
-            if (status == 127)
-                fprintf(stderr,"42sh : %s : \
-                        command not found.\n", command1[0]);
-        }
-        n = oper_node->next;
-        oper_node = get_oper_node(n);
-        free_command(command1);
-        command1 = to_execute(n, oper_node);
-        current++;
+        char **command_next = to_execute(n->next, oper_node);
+        pipe(fd_next);
+        pipe_aux(command_next, oper_node->next, fd_next);
     }
-    pid1 = fork();
-    if (pid1 == -1)
+    pid_t pid = fork();
+    int status = 0;
+    if (pid == -1)//error
     {
         fprintf(stderr,"42sh : fork : An error occured.\n");
         exit(1);
     }
-    if (pid1 == 0)
+    if (pid == 0)
     {
+        if (oper_node && oper_node->tokentype == PIPE)
+        {
+            close(1);
+            dup2(fd_next[1], 1);
+        }
         close(0);
-        close(fd_1[1]);
-        close(fd_2[1]);
-        if (!current % 2)
-            dup2(fd_2[0], 0);
-        else
-            dup2(fd_1[0], 0);
-
-        int re = execvp(command1[0], command1);
-        exit(re);
+        dup2(fd[0], 0);
+        int r = execvp(command[0], command);
+        exit(r);
     }
     else
     {
-        status = 0;
-        waitpid(pid1, &status, 0);
+        waitpid(pid,&status,0);
         if (status == 127)
-            fprintf(stderr,"42sh : %s :\
-                    command not found.\n", command1[0]);
-        free_command(command1);
-        return status;
+            fprintf(stderr,"42sh : %s : \
+                    command not found.\n", command[0]);
     }
+    free_command(command);
+    return status;
+}
 
+int pipe_handling(char **command1, struct node *n)
+{
+    struct node *oper_node = get_oper_node(n);
+    int fd[2];
+    pipe(fd);
+    return pipe_aux(command1, oper_node, fd);
 }
 
 struct node *is_a_function(struct node *n, struct f_tab *f_tab)
