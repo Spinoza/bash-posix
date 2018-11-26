@@ -96,4 +96,7 @@ add_custom_target(check
     )
 
 add_custom_target(check_sanity
+    COMMENT "Running tests with sanity.\n"
+    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c -s 42sh
+    DEPENDS 42sh
     )

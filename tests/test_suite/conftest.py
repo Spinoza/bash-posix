@@ -3,15 +3,20 @@ import subprocess
 import yaml
 
 @pytest.mark.unit
-def test_print_name(name):
-    print ("Displaying name: %s" % name)
+def test_print_valgrind(request):
+    print(request.param)
 
 def pytest_addoption(parser):
-    parser.addoption("--valgrind", action="append", default="false")
+    parser.addoption("--valgrind", action="store", default="false")
 
-def pytest_collect_file(parent, path):
+def pytest_collect_file(parent, path, *args, **kwargs):
     if path.ext == ".yml" and path.basename.startswith("test"):
         return YamlFile(path, parent)
+
+def pytest_collection_modifyitems(config, items):
+    print(config.getoption("--valgrind"))
+    for item in items:
+        item.add_option(config)
 
 class YamlFile(pytest.File):
     def collect(self):
@@ -38,17 +43,16 @@ class YamlItem(pytest.Item):
         if "expected" in self.spec:
             self.expected = self.spec["expected"]
 
-    def runtest(self):
+    def add_option(self, config):
+        self.config = config
+
+    def runtest(self, *args, **kwargs):
         tmp = self.command.decode()
         args = []
-        """
-        option_value = metafunc.config.option.valgrind
-        valgrind_b = 0
-        if 'valgrind' in metafunc.fixturenames and option_value is not None:
-            valgrind_b = 1
+        sanity = self.config.getoption("--valgrind")
+        if sanity == "1":
             args.append("valgrind")
-            args.append("--error-exitcode=1")}
-        """
+            args.append("--error-exitcode=1")
         if not type(self) is BashDiffItem and not type(self) is OutputDiffItem:
             tmp = tmp.split()
             if type(self) is LexerDiffItem:
@@ -68,23 +72,15 @@ class YamlItem(pytest.Item):
             args.append("-c")
             args.append(tmp)
 
+        print(args)
         process = subprocess.Popen(args,\
                 stdout=subprocess.PIPE,\
                 stderr=subprocess.PIPE,\
                 stdin=subprocess.PIPE)
-
         out, err = process.communicate(input=self.command)
         r = process.returncode
+        print(r)
         process.kill()
-        """
-        if valgrind_b == 1 and r == 1:
-            print("bad sanity")
-            raise YamlException("valgrind", "no memory leaks", out,
-                    self.command, self.name)
-        if valgrind_b == 1 and r == 0:
-            print("good sanity")
-            return
-        """
         if type(self) is FileDiffItem:
             dot_file = open('ast.dot', mode='r')
             all_of_it = dot_file.read()

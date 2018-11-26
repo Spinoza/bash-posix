@@ -51,9 +51,6 @@ if [ $all -eq 1 ]; then
 fi;
 
 if [ $lexer -eq 1 ]; then
-    #If sanity
-    #   call with valgrind
-    #else
     pytest "--timeout=10" "../tests/test_suite/unit_tests/test_lexer.yml"
 
 fi;
@@ -69,7 +66,12 @@ fi;
 
 
 if [ $main -eq 1 ]; then
-    pytest "--timeout=10" "../tests/test_suite/42sh_tests/"
+    if [ $sanity -eq 1 ]; then
+        echo "calling with valgrind"
+        pytest "-s" "--timeout=10" "../tests/test_suite/42sh_tests/" "--valgrind=1"
+    else
+        pytest "--timeout=10" "../tests/test_suite/42sh_tests/"
+    fi;
 fi;
 
 
