@@ -43,12 +43,13 @@ class YamlItem(pytest.Item):
         args = []
         """
         option_value = metafunc.config.option.valgrind
+        """
         valgrind_b = 0
         if 'valgrind' in metafunc.fixturenames and option_value is not None:
             valgrind_b = 1
             args.append("valgrind")
-            args.append("--error-exitcode=1")
             """
+            args.append("--error-exitcode=1")}"""
         if not type(self) is BashDiffItem and not type(self) is OutputDiffItem:
             tmp = tmp.split()
             if type(self) is LexerDiffItem:

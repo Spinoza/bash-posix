@@ -54,22 +54,22 @@ if [ $lexer -eq 1 ]; then
     #If sanity
     #   call with valgrind
     #else
-    pytest "--timeout=10" "--valgrind=true" "../tests/test_suite/unit_tests/test_lexer.yml"
+    pytest "--timeout=10" "../tests/test_suite/unit_tests/test_lexer.yml"
 
 fi;
 
 if [ $grammar -eq 1 ]; then
-    pytest "../tests/test_suite/unit_tests/test_grammar.yml"
+    pytest "--timeout=10" "../tests/test_suite/unit_tests/test_grammar.yml"
 fi;
 
 
 if [ $ast_print -eq 1 ]; then
-    pytest "../tests/test_suite/unit_tests/test_ast.yml"
+    pytest "--timeout=10" "../tests/test_suite/unit_tests/test_ast.yml"
 fi;
 
 
 if [ $main -eq 1 ]; then
-    pytest "--timeout=2" "../tests/test_suite/42sh_tests/"
+    pytest "--timeout=10" "../tests/test_suite/42sh_tests/"
 fi;
 
 
