@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
     int index = options_parser(argc, argv, options);
     if (options->version == TRUE)
     {
-        printf("Version 0.3\n");
+        printf("Version 0.5\n");
         free(options);
         return 0;
     }
