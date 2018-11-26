@@ -123,7 +123,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         }
         return tok;
     }
-    if (r->type == A_INSTRUCT || r->type == A_PIPE)
+    if (r->type == A_INSTRUCT || r->type == A_PIPE || r->type == A_IN)
     {
         return tok;
     }
