@@ -19,10 +19,19 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+static size_t mstrlen (char * string)
+{
+    return (*string ? 1 + mstrlen(string + 1) : 0);
+}
+
 static int norc_opt(void)
 {
-    char *arg1[] = {"../etc/42shrc", NULL};
-    char *arg2[] = {"../.42shrc", NULL};
+    char *arg1[] = {"/etc/42shrc", NULL};
+    char *home = getenv("HOME");
+    char *path = calloc(mstrlen(home) + 9, sizeof(char));
+    strcpy(path, home);
+    strcat(path, "/.42shrc");
+    char *arg2[] = {path, NULL};
     pid_t pid = fork();
     if (pid == -1)
     {
@@ -56,12 +65,9 @@ static int norc_opt(void)
     {
         int status = 0;
         waitpid(pid, &status, 0);
+        free(path);
         return status;
     }
-}
-static size_t mstrlen (char * string)
-{
-    return (*string ? 1 + mstrlen(string + 1) : 0);
 }
 
 static size_t fulllen(struct linked_list *tokens)
