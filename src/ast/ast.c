@@ -111,6 +111,8 @@ static struct node *new_node(struct nL *tok)
 
 static struct nL *build_aux(struct node *r, struct nL *tok)
 {
+    if (tok->elem->type == ENDOF)
+        return tok;
     if (r->type == A_ROOT)
     {
         while (tok->elem->type != ENDOF)
@@ -119,7 +121,8 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
             add_node(r, new);
             if(new->type != A_INSTRUCT && new->type != A_PIPE)
                 tok = build_aux(new, tok->next);
-            tok = tok->next;
+            else
+                tok = tok->next;
         }
         return tok;
     }
@@ -174,7 +177,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
             add_node(r, new);
             tok = build_aux(new, tok->next);
         }
-        return tok;
+        return tok->next;
     }
 
     if (r->type == A_WHILE || r->type == A_UNTIL)
