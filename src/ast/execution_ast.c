@@ -74,11 +74,33 @@
  }
 */
 
-/*
-int function_execution(struct node *)
-{
 
-}*/
+void function_store(struct node *n, struct f_tab *f_tab)
+{
+    if (!f_tab)
+    {
+        f_tab = calloc(1, sizeof(struct f_tab));
+        f_tab->capacity = 10;
+        f_tab->f = calloc(10, sizeof(struct function*));
+    }
+    struct function *new_f = calloc (1, sizeof(struct function));
+    new_f->name = n->children->instr;
+    new_f->function_start = n->children->next;
+    f_tab->nb ++;
+    if (f_tab->nb == f_tab->capacity)
+    {
+        f_tab->capacity *= 2;
+        void *tmp = realloc(f_tab->f, f_tab->capacity
+        * sizeof(struct function *));
+        if (!tmp)
+        {
+            f_tab->nb--;
+            return;
+        }
+        f_tab->f = tmp;
+    }
+    f_tab->f[f_tab->nb - 1] = new_f;
+}
 
 
 char **to_execute(struct node *child, struct node *oper_node)
@@ -242,20 +264,42 @@ int pipe_handling(char **command1, struct node *n)
 
 }
 
-struct node *instr_execution(struct node *n, int *res)
+struct node *is_a_function(struct node *n, struct f_tab *f_tab)
+{
+    if (!f_tab || !f_tab->nb)
+        return NULL;
+    for (size_t i = 0; i < f_tab->nb; i++)
+    {
+        if (!strcmp(n->instr, f_tab->f[i]->name))
+            return f_tab->f[i]->function_start;
+    }
+    return NULL;
+}
+
+struct node *instr_execution(struct node *n, int *res,
+        struct f_tab *f_tab)
 {
     /*check redirection*/
+    struct node *func = is_a_function(n, f_tab);
     struct node *oper_node = get_oper_node(n);
     char *oper = (oper_node ? oper_node->instr : "");
-    char **command_call = to_execute(n, oper_node);
-    if (oper_node && oper_node->tokentype == PIPE)
-        *res = pipe_handling(command_call, n);
+    if (!func)
+    {
+        char **command_call = to_execute(n, oper_node);
+        if (oper_node && oper_node->tokentype == PIPE)
+            *res = pipe_handling(command_call, n);
+        else
+            *res = exec_command(command_call);
+        free_command(command_call);
+        while (oper_node && oper_node->tokentype == PIPE)
+            oper_node = get_oper_node(oper_node->next);
+        oper = (oper_node ? oper_node->instr : "");
+    }
     else
-        *res = exec_command(command_call);
-    free_command(command_call);
-    while (oper_node && oper_node->tokentype == PIPE)
-        oper_node = get_oper_node(oper_node->next);
-    oper = (oper_node ? oper_node->instr : "");
+    {
+        //set the args table
+        *res = traversal_ast(func, res, f_tab);
+    }
     if ((!strcmp(oper,"&&") && !(*res))
             || (!strcmp(oper,"||") && (*res)))
         return oper_node->next;
@@ -278,7 +322,7 @@ struct node *if_execution(struct node *n, int *res)
     }
 }
 
-struct node *for_execution(struct node *n, int *res)
+struct node *for_execution(struct node *n, int *res, struct f_tab *f_tab)
 {
     struct node *cond = n->children->children;
     for ( ; cond; cond = cond->next)
@@ -293,7 +337,7 @@ struct node *for_execution(struct node *n, int *res)
         for ( ; cond && (cond->tokentype != SEMICOLON
                     || cond->tokentype != AND); cond = cond->next)
         {
-            *res = traversal_ast(do_node, res);
+            *res = traversal_ast(do_node, res, f_tab);
         }
     }
     return (n->next);
@@ -321,35 +365,39 @@ struct node *case_execution(struct node *n)
     return cases->children->next;
 }
 
-int traversal_ast(struct node *n, int *res)
+int traversal_ast(struct node *n, int *res, struct f_tab *f_tab)
 {
     if (!n)
         return *res;
     if ((n->type != A_BODY && n->type != A_ROOT))
     {
+        if (n->type == A_FUNCTION)
+        {
+            function_store(n, f_tab);
+        }
         if (n->type == A_INSTRUCT)
         {
-            return traversal_ast(instr_execution(n, res), res);
+            return traversal_ast(instr_execution(n, res, f_tab), res, f_tab);
         }
         if (n->type == A_IF)
-            *res = traversal_ast(if_execution(n, res), res);
+            *res = traversal_ast(if_execution(n, res), res, f_tab);
         if (n->type == A_CASE)
-            *res = traversal_ast(case_execution(n), res);
+            *res = traversal_ast(case_execution(n), res, f_tab);
         if (n->type == A_WHILE)
         {
             while (if_cond(n) == 0)
-                *res = traversal_ast(n->children->next, res);
+                *res = traversal_ast(n->children->next, res, f_tab);
         }
         if (n->type == A_UNTIL)
         {
             while (if_cond(n))
-                *res = traversal_ast(n->children->next, res);
+                *res = traversal_ast(n->children->next, res, f_tab);
         }
         if (n->type == A_FOR)
-            *res = traversal_ast(for_execution(n, res), res);
-        return traversal_ast(n->next,res);
+            *res = traversal_ast(for_execution(n, res, f_tab), res, f_tab);
+        return traversal_ast(n->next,res, f_tab);
     }
-    return traversal_ast(n->children, res);
+    return traversal_ast(n->children, res, f_tab);
 }
 
 int execution_ast(struct node *n)
@@ -360,5 +408,5 @@ int execution_ast(struct node *n)
      * capacity);
      tab->assignment = assignment;*/
     int r = 1;
-    return traversal_ast(n, &r);//call with tab;
+    return traversal_ast(n, &r, NULL);//call with tab;
 }

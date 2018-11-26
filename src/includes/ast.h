@@ -7,8 +7,8 @@
 
 /**
   *\file ast.h
-  *\brief 
-  *All information about the structur of a node of the 
+  *\brief
+  *All information about the structur of a node of the
   *ast and about the enum that gathers all the types of node.
   */
 
@@ -38,7 +38,7 @@ enum ntype
 };
 
 /**
-  *\struct node 
+  *\struct node
   *\brief Struct of the ast tree nodes
   *
   *This struct gathers information about the nodes created while building
@@ -72,7 +72,7 @@ void print_ast(struct node *ast);
 
 /**
   *\fn void free_node(struct node *n)
-  *\brief Free the ast tree 
+  *\brief Free the ast tree
   *\param n the root of the tree to free
   *\return void
   */
