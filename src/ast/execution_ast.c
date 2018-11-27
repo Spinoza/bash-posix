@@ -366,7 +366,7 @@ int traversal_ast(struct node *n, int *res, struct f_tab *f_tab)
         {
             return traversal_ast(instr_execution(n, res, f_tab), res, f_tab);
         }
-        if (n->type == A_IF)
+        if (n->type == A_IF || n->type == A_ELIF)
             *res = traversal_ast(if_execution(n, res), res, f_tab);
         if (n->type == A_CASE)
             *res = traversal_ast(case_execution(n), res, f_tab);
