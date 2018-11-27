@@ -130,12 +130,34 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
     {
         return tok;
     }
-    if ((r->type == A_IF)||(r->type == A_ELIF))
+    if (r->type == A_IF)
     {
         struct node *new = init_node("condition", 23);
         add_node(r, new);
         tok = build_aux(new, tok);
         new = init_node("then", THEN);
+        add_node(r, new);
+        tok = build_aux(new, tok->next);
+        if(tok->elem->type == ELIF)
+        {
+            new = init_node("elif", ELIF);
+            add_node(r, new);
+            tok = build_aux(new, tok->next);
+        }
+        else if(tok->elem->type == ELSE)
+        {
+            new = init_node("else", THEN);
+            add_node(r, new);
+            tok = build_aux(new, tok->next);
+        }
+        return tok;
+    }
+    if(r->type == A_ELIF)
+    {
+        struct node *new = init_node("condition", 23);
+        add_node(r, new);
+        tok = build_aux(new, tok);
+        new = init_node("then", ELSE);
         add_node(r, new);
         tok = build_aux(new, tok->next);
         if(tok->elem->type == ELIF)
@@ -165,7 +187,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         }
         return tok;
     }
-    if ((r->type == A_BODY)||(r->type == A_EBODY))
+    if (r->type == A_BODY)
     {
         while ((tok->elem->type != ELIF)&&(tok->elem->type != ELSE)&&
               (tok->elem->type != DONE)&&(tok->elem->type != FI)&&
@@ -178,8 +200,26 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
             add_node(r, new);
             tok = build_aux(new, tok->next);
         }
+        if((tok->elem->type == ELIF)||(tok->elem->type == ELSE))
+            return tok;
         return tok->next;
     }
+    if (r->type == A_EBODY)
+    {
+        while ((tok->elem->type != ELIF)&&(tok->elem->type != ELSE)&&
+              (tok->elem->type != DONE)&&(tok->elem->type != FI)&&
+              (tok->elem->type != TWO_SEMIC)&&(tok->elem->type != CLOSE_PAR)&&
+              (tok->elem->type != CLOSE_BRA))
+        {
+            while (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
+                tok = tok->next;
+            struct node *new = new_node(tok);
+            add_node(r, new);
+            tok = build_aux(new, tok->next);
+        }
+        return tok;
+    }
+
 
     if (r->type == A_WHILE || r->type == A_UNTIL)
     {
