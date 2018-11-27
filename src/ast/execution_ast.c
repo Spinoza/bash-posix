@@ -154,6 +154,7 @@ int exec_command(char **string)
         waitpid(pid, &status, 0);
         if (status == 127)
             fprintf(stderr,"42sh : %s : command not found.\n",string[0]);
+        free_command(string);
         return status;
     }
 }
@@ -199,12 +200,7 @@ int pipe_aux(char **command, struct node *n, int fd[2])
 {
     struct node *oper_node = get_oper_node(n);
     int fd_next[2];
-    if (oper_node && oper_node->tokentype == PIPE)
-    {
-        char **command_next = to_execute(n->next, oper_node);
-        pipe(fd_next);
-        pipe_aux(command_next, oper_node->next, fd_next);
-    }
+    pipe(fd_next);
     pid_t pid = fork();
     int status = 0;
     if (pid == -1)//error
@@ -214,23 +210,34 @@ int pipe_aux(char **command, struct node *n, int fd[2])
     }
     if (pid == 0)
     {
+        dup2(fd[0], 0);
+        close(fd[0]);
+        close(fd[1]);
         if (oper_node && oper_node->tokentype == PIPE)
         {
-            close(1);
+            close(fd_next[0]);
             dup2(fd_next[1], 1);
+            close(fd_next[1]);
         }
-        close(0);
-        dup2(fd[0], 0);
         int r = execvp(command[0], command);
         exit(r);
     }
     else
     {
         waitpid(pid,&status,0);
+        close(fd_next[1]);
         if (status == 127)
             fprintf(stderr,"42sh : %s : \
                     command not found.\n", command[0]);
     }
+
+    if (oper_node && oper_node->tokentype == PIPE)
+    {
+        struct node *next_oper_node = get_oper_node(oper_node->next);
+        char **command_next = to_execute(oper_node->next, next_oper_node);
+        pipe_aux(command_next, oper_node->next, fd_next);
+    }
+
     free_command(command);
     return status;
 }
@@ -266,13 +273,14 @@ struct node *instr_execution(struct node *n, int *res,
     {
         char **command_call = to_execute(n, oper_node);
         if (oper_node && oper_node->tokentype == PIPE)
+        {
             *res = pipe_handling(command_call, n);
+            while (oper_node && oper_node->tokentype == PIPE)
+                oper_node = get_oper_node(oper_node->next);
+            oper = (oper_node ? oper_node->instr : "");
+        }
         else
             *res = exec_command(command_call);
-        free_command(command_call);
-        while (oper_node && oper_node->tokentype == PIPE)
-            oper_node = get_oper_node(oper_node->next);
-        oper = (oper_node ? oper_node->instr : "");
     }
     else
     {
