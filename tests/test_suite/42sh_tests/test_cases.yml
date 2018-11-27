@@ -1,0 +1,64 @@
+case_easy:
+        type: "bash diff"
+        command: "case true in true) echo true; ;; esac"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+case_two_choices:
+        type: "bash diff"
+        command: "case true in false) echo false; ;; medium) echo medium; ;;true) echo true; esac"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+case_many_choices:
+        type: "bash diff"
+        command: "case last in false) echo false; ;; true) echo true; esac not) echo not; ;; here) echo here; ;; never) echo never; ;; last) echo last; ;; esac"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+case_default:
+        type: "bash diff"
+        command: "case true in *) echo everything; ;; esac"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+case_hard_default:
+        type: "bash diff"
+        command: "case word in true) echo true; ;; two) echo two; ;; three) echo three; ;; *) echo default; ;; esac"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+case_nothing:
+        type: "bash diff"
+        command: "case nothing in true) echo true; ;; false) echo false; ;; esac"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+case_pipes:
+        type: "bash diff"
+        command: "case word in word1 | word2 | word) echo word; ;; esac"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+case_hard_pipes:
+        type: "bash diff"
+        command: "case my_word in word1 | word2 | word) echo word; ;; my_nope | never | going | to | give | you | up) echo never; ;; everything | should | fall | here | *) echo everything; ;; esac"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
