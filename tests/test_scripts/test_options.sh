@@ -4,6 +4,7 @@ grammar=0
 ast_print=0
 main=0
 all=0
+timeout=0
 
 for (( i=1; i<=$#; i++))
 do
@@ -11,6 +12,9 @@ do
     if [ "${!i}" = "--list" -o "${!i}" = "-l" ]; then
         echo "List of test categories to call with -c <category> : \n,
             'lexer','grammar','ast-print','42sh'"
+    fi;
+    if [ "${!i}" = "--timeout" -o "${!i}" = "-t" ]; then
+        timeout=1
     fi;
     if [ "${!i}" = "--sanity" -o "${!i}" = "-s" ]; then
         sanity=1

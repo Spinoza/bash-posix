@@ -7,7 +7,7 @@ def test_print_valgrind(request):
     print(request.param)
 
 def pytest_addoption(parser):
-    parser.addoption("--valgrind", action="store", default="false")
+    parser.addoption("--valgrind", action="store", default="0")
 
 def pytest_collect_file(parent, path, *args, **kwargs):
     if path.ext == ".yml" and path.basename.startswith("test"):
@@ -72,14 +72,12 @@ class YamlItem(pytest.Item):
             args.append("-c")
             args.append(tmp)
 
-        print(args)
         process = subprocess.Popen(args,\
                 stdout=subprocess.PIPE,\
                 stderr=subprocess.PIPE,\
                 stdin=subprocess.PIPE)
         out, err = process.communicate(input=self.command)
         r = process.returncode
-        print(r)
         process.kill()
         if type(self) is FileDiffItem:
             dot_file = open('ast.dot', mode='r')
