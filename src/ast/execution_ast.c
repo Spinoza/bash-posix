@@ -75,7 +75,7 @@
 */
 
 
-void function_store(struct node *n, struct f_tab *f_tab)
+struct f_tab *function_store(struct node *n, struct f_tab *f_tab)
 {
     if (!f_tab)
     {
@@ -95,11 +95,13 @@ void function_store(struct node *n, struct f_tab *f_tab)
         if (!tmp)
         {
             f_tab->nb--;
-            return;
+            fprintf(stderr, "42sh: memory allocaton exausted");
+            return f_tab;
         }
         f_tab->f = tmp;
     }
     f_tab->f[f_tab->nb - 1] = new_f;
+    return f_tab;
 }
 
 
@@ -350,7 +352,7 @@ int traversal_ast(struct node *n, int *res, struct f_tab *f_tab)
     {
         if (n->type == A_FUNCTION)
         {
-            function_store(n, f_tab);
+            f_tab = function_store(n, f_tab);
         }
         if (n->type == A_INSTRUCT)
         {
