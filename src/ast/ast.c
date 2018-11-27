@@ -150,6 +150,8 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
             add_node(r, new);
             tok = build_aux(new, tok->next);
         }
+        if(tok->elem->type == FI)
+            return tok->next;
         return tok;
     }
     if(r->type == A_ELIF)
