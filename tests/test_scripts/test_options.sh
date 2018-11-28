@@ -46,8 +46,9 @@ done
 
 sanity_string=""
 timeout_string=""
-
-source ./env/bin/activate
+echo "here"
+source ../../build/env/bin/activate
+echo "after"
 if [ $sanity -eq 1 ]; then
     sanity_string="--valgrind=1"
 fi;
@@ -58,24 +59,21 @@ if [ $timeout -gt 0 ]; then
 fi;
 
 if [ $all -eq 1 ]; then
-    pytest "../tests/test_suite/"
+    pytest "../test_suite/"
 fi;
 
 if [ $commands -eq 1 ]; then
-    pytest $timeout_string \
-        "../tests/test_suite/test_files/test_simple_commands.yml" \
-        $sanity_string
+    echo "here"
+    pytest $timeout_string "../test_suite/test_files/test_simple_commands.yml" $sanity_string
 fi;
 
 
 if [ $loops -eq 1 ]; then
-    pytest $timeout_string "../tests/test_suite/test_files/test_loops.yml"\
-        $sanity_string
+    pytest $timeout_string "../tests/test_suite/test_files/test_loops.yml" $sanity_string
 fi;
 
 if [ $cases -eq 1 ]; then
-    pytest $timeout_string "../tests/test_suite/test_files/test_cases.yml"\
-        $sanity_string
+    pytest $timeout_string "../tests/test_suite/test_files/test_cases.yml" $sanity_string
 fi;
 
 

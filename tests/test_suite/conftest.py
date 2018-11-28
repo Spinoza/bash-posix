@@ -2,10 +2,6 @@ import pytest
 import subprocess
 import yaml
 
-@pytest.mark.unit
-def test_print_valgrind(request):
-    print(request.param)
-
 def pytest_addoption(parser):
     parser.addoption("--valgrind", action="store", default="0")
 
@@ -14,7 +10,6 @@ def pytest_collect_file(parent, path, *args, **kwargs):
         return YamlFile(path, parent)
 
 def pytest_collection_modifyitems(config, items):
-    print(config.getoption("--valgrind"))
     for item in items:
         item.add_option(config)
 
@@ -38,16 +33,17 @@ class YamlItem(pytest.Item):
     def add_option(self, config):
         self.config = config
 
-    def runtest(self, *args, **kwargs):
+    def runtest(self):
         tmp = self.command.decode()
         args = []
+
         sanity = self.config.getoption("--valgrind")
         if sanity == "1":
             args.append("valgrind")
             args.append("--error-exitcode=1")
 
         if type(self) is BashDiffItem or type(self) is OutputDiffItem:
-            args.append("./42sh")
+            args.append("./../../build/42sh")
             args.append("-c")
             args.append(tmp)
 
@@ -56,8 +52,14 @@ class YamlItem(pytest.Item):
                 stderr=subprocess.PIPE,\
                 stdin=subprocess.PIPE)
         out, err = process.communicate(input=self.command)
+        err = err.decode()
         r = process.returncode
         process.kill()
+        if sanity == '1':
+            if "All heap blocks were freed -- no leaks are possible" not in err:
+                raise ValgrindException(err,self.command,self.name)
+            if "ERROR SUMMARY: 0 errors from 0 contexts" not in err:
+                raise ValgrindException(err,self.command,self.name)
 
         if type(self) is OutputDiffItem:
             print("Failed test in lexer")
@@ -107,6 +109,17 @@ class YamlItem(pytest.Item):
                                 instance.output_value)
                     ]
             )
+        if isinstance(excinfo.value, ValgrindException):
+            instance = excinfo.value
+            return "\n".join(
+                    [
+                        "test : %s failed sanity check, called with [ %s ]\n"
+                        "valgrind returned : %s"\
+                                %(instance.name,\
+                                instance.command,\
+                                instance.err)
+                    ]
+            )
 
 class BashDiffItem(YamlItem):
     def __init__(self, name, parent, spec):
@@ -140,6 +153,12 @@ class OutputDiffItem(YamlItem):
             self.expected[item] = str.encode(self.expected[item])
 
 
+class ValgrindException(Exception):
+    """ custom exception for error reporting. """
+    def __init__(self,err, command,name):
+        self.command = command
+        self.name = name
+        self.err = err
 
 class YamlException(Exception):
     """ custom exception for error reporting. """
