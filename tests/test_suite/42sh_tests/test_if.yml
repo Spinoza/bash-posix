@@ -1,4 +1,4 @@
-case_two_choices:
+if_else_easy:
         type: "bash diff"
         command: "if true; then echo true; else echo false; fi;"
         expected:
@@ -6,16 +6,16 @@ case_two_choices:
                 stderr:
                 rvalue:
 
-case_many_choices:
+if_else_command:
         type: "bash diff"
-        command: "if true; then echo true; else echo false; fi; pwd;"
+        command: "if true; then echo true; else echo false; fi; ls;"
 
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-case_default:
+if_else_false_command:
         type: "bash diff"
         command: "if false; then echo true; else echo false; fi; ls;"
         expected:
@@ -23,7 +23,7 @@ case_default:
                 stderr:
                 rvalue:
 
-case_hard_default:
+elif_true:
         type: "bash diff"
         command: "if false; then echo true; elif true; then pwd; else ls; fi;"
         expected:
@@ -31,7 +31,7 @@ case_hard_default:
                 stderr:
                 rvalue:
 
-case_nothing:
+if_no_else:
         type: "bash diff"
         command: "if true; then ls; fi;"
         expected:
@@ -39,7 +39,7 @@ case_nothing:
                 stderr:
                 rvalue:
 
-case_pipes:
+if_false_no_else:
         type: "bash diff"
         command: "if false; then ls; fi;"
         expected:
@@ -47,7 +47,7 @@ case_pipes:
                 stderr:
                 rvalue:
 
-case_hard_pipes:
+starting_elif:
         type: "bash diff"
         command: "elif true; then ls; fi;"
         expected:
