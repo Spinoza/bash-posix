@@ -267,7 +267,7 @@ int check_list(struct token *new, char *string, char **list)
         {
             new->type = i;
             int len = strlen(list[i]);
-            if(!strcmp(list[i], "fi"))
+            if (!strcmp(list[i], "fi"))
                 new->name = calloc(10, sizeof(char));
             else
                 new->name = calloc(20, sizeof(char));
@@ -358,7 +358,7 @@ int split_tokens(struct token *new, char *string, struct linked_list *l_list,
             break;
     }
     string[index_sc] = '\0';
-    if(check_list(new,string,list))
+    if (check_list(new,string,list))
         return 1;
     new->name = calloc(index_sc + 1, sizeof(char));
     new->name = memcpy(new->name, string, index_sc);
@@ -386,7 +386,7 @@ void read_string(struct token *new, char *string, char **list,
             new->name[0] = string[index_sc];
         }
         else
-            if(!split_tokens(new,string,l_list,index_sc, list))
+            if (!split_tokens(new,string,l_list,index_sc, list))
                 new->type = check_word(string);
         read_string(next, string + index_sc + 1,list,l_list);
         return;
