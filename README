@@ -17,15 +17,18 @@ LAUNCHING TESTS
 
 In order to launch the test suite, go into the build directory created during the USAGE part and call :
 
-	make check_unit
+	make check
 
-As up to now, the test suite launches tests that are : lexer/parser testing, grammar testing, ast build testing.
+Options can also be given to the test suite when calling it manually. The script
+to start the test suite is located in tests/test_scripts/test_options.sh
+The available options are :
 
-Individual tests can also be done by calling :
+        -l or --list to list all the available test categories.
 
-        make check_[TEST]
+        -t <time> or --timeout <time> to set a timeout of <time> seconds for all
+        tests.
 
-Where [TEST] is either lexer,grammar,ast or 42sh. The results of testing 42sh will be printed in a file named "results.txt".
+        -c <categories> or --category <categories> to call the tests in <categories>
 
 FEATURES:
 

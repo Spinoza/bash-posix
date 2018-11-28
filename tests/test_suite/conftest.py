@@ -41,6 +41,8 @@ class YamlItem(pytest.Item):
 
         sanity = self.config.getoption("--valgrind")
         my_timeout = int(self.config.getoption("--timeout"))
+        if "timeout" in self.expected:
+            my_timeout = self.expected["timeout"]
         check = self.config.getoption("--check")
         if sanity == "1":
             args.append("valgrind")
@@ -62,6 +64,7 @@ class YamlItem(pytest.Item):
             out, err = process.communicate(input=self.command, timeout=my_timeout)
         except TimeoutExpired:
             process.kill()
+            print("here")
             raise TimeoutException(3,self.command,self.name)
         err = err.decode()
         r = process.returncode

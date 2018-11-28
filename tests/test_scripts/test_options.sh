@@ -12,8 +12,7 @@ for (( i=1; i<=$#; i++))
 do
 
     if [ "${!i}" = "--list" -o "${!i}" = "-l" ]; then
-        echo "List of test categories to call with -c <category> : \n,
-            'simple_commands','cases','loops','if','pipes','functions'"
+        echo -e "List of test categories to call with -c <category> : \n    commands\n    cases\n    loops\n    if\n    pipes\n    functions"
     fi;
     if [ "${!i}" = "--timeout" -o "${!i}" = "-t" ]; then
         x=$(($i + 1))
@@ -37,7 +36,7 @@ do
                 cases=1
             fi;
 
-            if [ "${!j}" = "simple_commands" ]; then
+            if [ "${!j}" = "commands" ]; then
                 commands=1
             fi;
         done
@@ -63,12 +62,12 @@ fi;
 
 if [ $commands -eq 1 ]; then
     echo "here"
-    pytest $timeout_string "../test_suite/test_files/test_simple_commands.yml" $sanity_string
+    pytest $timeout_string "../test_suite/test_files/test_commands.yml" $sanity_string
 fi;
 
 
 if [ $loops -eq 1 ]; then
-    pytest $timeout_string "../test_suite/test_files/test_loops.yml" $sanity_string
+    pytest -s $timeout_string "../test_suite/test_files/test_loops.yml" $sanity_string
 fi;
 
 if [ $cases -eq 1 ]; then

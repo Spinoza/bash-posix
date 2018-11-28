@@ -56,13 +56,7 @@ add_custom_target(set_env
     )
 
 add_custom_target(check
-    COMMENT "Running all tests.\n"
+    COMMENT "Running all tests with timeout of 5sc.\n"
     COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/check.sh
-    DEPENDS 42sh
-    )
-
-add_custom_target(check_sanity
-    COMMENT "Running tests with sanity.\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c -s all
     DEPENDS 42sh
     )

@@ -14,9 +14,9 @@ if_nested_for_nested_case_followed:
                 stderr:
                 rvalue:
 nothing_good:
-	type: "bash diff"
-	command: "case a in b) if false; then echo bonsoir; else echo bonjour; fi; ;; c) for v in 2 3 4 5 6; do echo nope; done; ;; esac; for a in 1 2 3 4; do if false; then echo bonsoir; elif false; then echo bonjour; elif false; then echo aha; else; echo ok; fi; done"
-	expected:
-		stdout:
-		stderr:
-		rvalue:
+        type: "bash diff"
+        command: "case a in b) if false; then echo bonsoir; else echo bonjour; fi; ;; c) for v in 2 3 4 5 6; do echo nope; done; ;; esac; for a in 1 2 3 4; do if false; then echo bonsoir; elif false; then echo bonjour; elif false; then echo aha; else; echo ok; fi; done"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
