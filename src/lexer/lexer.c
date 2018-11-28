@@ -259,13 +259,18 @@ enum type check_word(char *string)
 
 int check_list(struct token *new, char *string, char **list)
 {
+    /*if (new->name)
+        free(new->name);*/
     for (int i = 0; i < LIST_LENGTH; i++)
     {
         if (!strcmp(string, list[i]))
         {
             new->type = i;
             int len = strlen(list[i]);
-            new->name = calloc(20, sizeof(char));
+            if(!strcmp(list[i], "fi"))
+                new->name = calloc(10, sizeof(char));
+            else
+                new->name = calloc(20, sizeof(char));
             new->name = memcpy(new->name, list[i], len);
             return 1;
         }
@@ -279,11 +284,8 @@ int check_list(struct token *new, char *string, char **list)
     }
     return 0;
 }
-void split_ampersand(struct token *new, char *string,
-        struct linked_list *l_list, int index_sc)
+void split_ampersand(struct linked_list *l_list)
 {
-    new->name = calloc(index_sc + 1, sizeof(char));
-    new->name = memcpy(new->name, string, index_sc);
     struct token *ampersand = token_init();
     ampersand->type = AND;
     ampersand->name = calloc(5, sizeof(char));
@@ -292,11 +294,8 @@ void split_ampersand(struct token *new, char *string,
     return;
 }
 
-void split_semicolon(struct token *new, char *string,
-        struct linked_list *l_list, int index_sc)
+void split_semicolon(struct linked_list *l_list)
 {
-    new->name = calloc(index_sc + 1, sizeof(char));
-    new->name = memcpy(new->name, string, index_sc);
     struct token *semicolon = token_init();
     semicolon->type = SEMICOLON;
     semicolon->name = calloc(20, sizeof(char));
@@ -305,11 +304,8 @@ void split_semicolon(struct token *new, char *string,
     return;
 }
 
-void split_parenthesis(struct token *new, char *string,
-        struct linked_list *l_list, int index_sc)
+void split_parenthesis(struct linked_list *l_list, int index_sc, char *string)
 {
-    new->name = calloc(index_sc + 1, sizeof(char));
-    new->name = memcpy(new->name, string, index_sc);
     struct token *parenthesis = token_init();
     parenthesis->name = calloc(2, sizeof(char));
     parenthesis->name[0] = string[index_sc];
@@ -321,11 +317,8 @@ void split_parenthesis(struct token *new, char *string,
     return;
 }
 
-void split_bracket(struct token *new, char *string,
-        struct linked_list *l_list, int index_sc)
+void split_bracket(struct linked_list *l_list, int index_sc, char *string)
 {
-    new->name = calloc(index_sc + 1, sizeof(char));
-    new->name = memcpy(new->name, string, index_sc);
     struct token *bracket = token_init();
     bracket->name = calloc(2, sizeof(char));
     bracket->name[0] = string[index_sc];
@@ -337,30 +330,39 @@ void split_bracket(struct token *new, char *string,
     return;
 }
 
-void split_tokens(struct token *new, char *string, struct linked_list *l_list,
-        int index_sc)
+/*
+ * returns 1 if the name has already been set i.e the string is a special token
+*/
+int split_tokens(struct token *new, char *string, struct linked_list *l_list,
+        int index_sc, char **list)
 {
     switch (string[index_sc])
     {
         case ';':
-            split_semicolon(new,string,l_list,index_sc);
+            split_semicolon(l_list);
             break;
         case '&':
-            split_ampersand(new,string,l_list,index_sc);
+            split_ampersand(l_list);
             break;
         case '(':
-            split_parenthesis(new,string,l_list, index_sc);
+            split_parenthesis(l_list, index_sc, string);
             break;
         case ')':
-            split_parenthesis(new,string,l_list, index_sc);
+            split_parenthesis(l_list, index_sc, string);
             break;
         case '{':
-            split_bracket(new,string,l_list, index_sc);
+            split_bracket(l_list, index_sc, string);
             break;
         case '}':
-            split_bracket(new,string,l_list, index_sc);
+            split_bracket(l_list, index_sc, string);
             break;
     }
+    string[index_sc] = '\0';
+    if(check_list(new,string,list))
+        return 1;
+    new->name = calloc(index_sc + 1, sizeof(char));
+    new->name = memcpy(new->name, string, index_sc);
+    return 0;
 }
 
 void read_string(struct token *new, char *string, char **list,
@@ -384,11 +386,9 @@ void read_string(struct token *new, char *string, char **list,
             new->name[0] = string[index_sc];
         }
         else
-            split_tokens(new,string,l_list,index_sc);
+            if(!split_tokens(new,string,l_list,index_sc, list))
+                new->type = check_word(string);
         read_string(next, string + index_sc + 1,list,l_list);
-        if (check_list(new,new->name,list))
-            return;
-        new->type = check_word(string);
         return;
     }
     new->type = check_word(string);
