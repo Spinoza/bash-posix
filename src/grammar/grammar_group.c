@@ -108,6 +108,7 @@ struct nL *g_caseclause(struct nL *tok)
         }
 
         save = tok;
+        tok = tok->next;
     }
     tok = save;
     tok = tok->next;
