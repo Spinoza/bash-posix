@@ -129,7 +129,10 @@ static int interactive_mode(struct option *options)
             free(line);
             listadd = from_tok_toS(tokens);
             if (listadd)
-                 add_history(listadd);
+            {
+                add_history(listadd);
+                free(listadd);
+            }
             fprintf(stdout, "lexer error: Is your input conform to grammar ?\n");
             retcode = 2;
         }
@@ -151,12 +154,16 @@ static int interactive_mode(struct option *options)
                 fwrite(listadd, 1, mstrlen(listadd), history);
                 fwrite("\n", 1, 1, history);
                 fclose(history);
+                free(listadd);
             }
             struct node *ast = build_ast(tokens);
             if (options->ast_print == TRUE)
                 print_ast(ast);
             retcode = execution_ast(ast, &f_tab);
+            free_node(ast);
+            ast = NULL;
         }
+        free_list(tokens);
     }
     return retcode;
 }

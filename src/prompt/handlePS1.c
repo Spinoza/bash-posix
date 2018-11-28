@@ -22,6 +22,7 @@ struct nL *handletty(void)
         struct linked_list *tokens = lexer_c(line);
         struct nL *ret = tokens->head;
         free(tokens);
+        free(line);
         return ret;
     }
 
