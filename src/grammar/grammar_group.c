@@ -94,6 +94,7 @@ struct nL *g_caseclause(struct nL *tok)
             if (!tok)
             {
                 stock->prev->next = handletty();
+                stock->prev->next->prev = stock->prev;
                 tok = stock->prev;
             }
             stock = tok;
@@ -124,6 +125,7 @@ struct nL *g_caseclause(struct nL *tok)
         if(!tok)
         {
             save->prev->next = handletty();
+            save->prev->next->prev = save->prev;
             tok = save->prev;
         }
         save = tok;
@@ -204,6 +206,7 @@ struct nL *g_caseitem(struct nL *tok)
         if(!tok)
         {
             save->prev->next = handletty();
+            save->prev->next->prev = save->prev;
             tok=save->prev;
         }
         save = tok;

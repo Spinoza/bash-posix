@@ -39,6 +39,7 @@ struct nL *g_pipeline(struct nL *tok)
                 if(!tok)
                 {
                     stock->prev->next = handletty();
+                    stock->prev->next->prev = stock->prev;
                     tok = stock->prev;
                 }
                 tok = stock;
@@ -78,6 +79,7 @@ struct nL *g_andor(struct nL *tok)
                 if(!tok)
                 {
                     stock->prev->next = handletty();
+                    stock->prev->next->prev = stock->prev;
                     tok = stock->prev;
                 }
                 stock = tok;

@@ -118,6 +118,7 @@ struct nL *g_funcdec(struct nL *tok)
         if(!tok)
         {
             save->prev->next = handletty();
+            save->prev->next->prev = save->prev;
             tok = save->prev;
         }
         save = tok;
@@ -191,6 +192,7 @@ struct nL *g_compoundlist(struct nL *tok)
         if(!tok)
         {
             save->prev->next = handletty();
+            save->prev->next->prev = save->prev;
             tok = save->prev;
         }
         save = tok;
@@ -216,6 +218,7 @@ struct nL *g_compoundlist(struct nL *tok)
             if(!tok)
             {
                 stock->prev->next = handletty();
+                stock->prev->next->prev = save->prev;
                 tok = stock->prev;
             }
             stock = tok;
@@ -249,6 +252,7 @@ struct nL *g_compoundlist(struct nL *tok)
             if(!tok)
             {
                 save->prev->next = handletty();
+                save->prev->next->prev = save->prev;
                 tok = save->prev;
             }
             save = tok;
