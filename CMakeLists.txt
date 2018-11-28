@@ -43,16 +43,6 @@ add_library(options ${CMAKE_SOURCE_DIR}/src/utils/options.c)
 
 ##EXECUTABLES
 
-
-add_executable(lexer_main ${CMAKE_SOURCE_DIR}/tests/lexer_main.c)
-target_link_libraries(lexer_main PRIVATE lexer)
-
-add_executable(ast_main ${CMAKE_SOURCE_DIR}/tests/ast_main.c)
-target_link_libraries(ast_main ast)
-
-add_executable(grammar_main ${CMAKE_SOURCE_DIR}/tests/grammar_main.c)
-target_link_libraries(grammar_main ast)
-
 add_executable(42sh ${CMAKE_SOURCE_DIR}/src/42sh.c)
 target_link_libraries(42sh execution)
 target_link_libraries(42sh ast)
@@ -65,38 +55,14 @@ add_custom_target(set_env
     COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/set_env.sh
     )
 
-add_custom_target(check_lexer
-    COMMENT "Running tests on lexer, building token linked_list\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c lexer
-    DEPENDS lexer_main
-)
-add_custom_target(check_grammar
-    COMMENT "Running tests on grammar,checking the token list\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c grammar
-    DEPENDS grammar_main
-)
-add_custom_target(check_ast
-    COMMENT "Running tests on ast,checking that the dot file produced is
-    correct\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c ast-print
-    DEPENDS ast_main
-)
-add_custom_target(check_42sh
-    COMMENT "Running tests on 42sh, comparing with bash\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c 42sh
-    DEPENDS 42sh
-)
 add_custom_target(check
     COMMENT "Running all tests.\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c all
-    DEPENDS lexer_main
-    DEPENDS grammar_main
-    DEPENDS ast_main
+    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c -t 2 all
     DEPENDS 42sh
     )
 
 add_custom_target(check_sanity
     COMMENT "Running tests with sanity.\n"
-    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c -s 42sh
+    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c -s all
     DEPENDS 42sh
     )

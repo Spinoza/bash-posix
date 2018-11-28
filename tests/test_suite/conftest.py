@@ -22,18 +22,10 @@ class YamlFile(pytest.File):
     def collect(self):
         raw = yaml.safe_load(self.fspath.open())
         for name, spec in sorted(raw.items()):
-            if spec['type'] == "lexer diff":
-                yield LexerDiffItem(name, self, spec)
-            if spec['type'] == "grammar diff":
-                yield GrammarDiffItem(name,self,spec)
             if spec ['type'] == "bash diff":
                 yield BashDiffItem(name, self, spec)
-            if spec ['type'] == "ast print diff":
-                yield FileDiffItem(name, self, spec)
             if spec ['type'] == "output diff":
                 yield OutputDiffItem(name, self, spec)
-            if spec ['type'] == "infinite loop":
-                yield InfiniteLoopDiffItem(name, self, spec)
 
 class YamlItem(pytest.Item):
     def __init__(self, name, parent, spec):
@@ -53,19 +45,6 @@ class YamlItem(pytest.Item):
         if sanity == "1":
             args.append("valgrind")
             args.append("--error-exitcode=1")
-        if not type(self) is BashDiffItem and not type(self) is OutputDiffItem:
-            tmp = tmp.split()
-            if type(self) is LexerDiffItem:
-                args.append("./lexer_main")
-
-            if type(self) is GrammarDiffItem:
-                args.append("./grammar_main")
-
-            if type(self) is FileDiffItem:
-                args.append("./ast_main")
-
-            for string in tmp:
-                args.append(string)
 
         if type(self) is BashDiffItem or type(self) is OutputDiffItem:
             args.append("./42sh")
@@ -79,25 +58,6 @@ class YamlItem(pytest.Item):
         out, err = process.communicate(input=self.command)
         r = process.returncode
         process.kill()
-        if type(self) is FileDiffItem:
-            dot_file = open('ast.dot', mode='r')
-            all_of_it = dot_file.read()
-            self.expected["stdout"] = self.expected["stdout"].decode()
-            dot_file.close()
-            print("Failed test in ast_print")
-
-            if "stdout" in self.expected:
-                if self.expected["stdout"] != all_of_it:
-                    raise YamlException("stdout", self.expected['stdout'], \
-                            all_of_it, self.command, self.name)
-            return
-
-        if type(self) is GrammarDiffItem:
-            print("Failed test in grammar")
-            if self.expected['rvalue'] != r:
-                raise YamlException('return value', self.expected['rvalue'],\
-                        r, self.command, self.name)
-            return
 
         if type(self) is OutputDiffItem:
             print("Failed test in lexer")
@@ -169,41 +129,7 @@ class BashDiffItem(YamlItem):
             self.expected["rvalue"] = bash.returncode
         bash.kill()
 
-class FileDiffItem(YamlItem):
-    def __init__(self, name, parent, spec):
-        super().__init__(name,parent,spec)
-        self.name = name
-        for item in self.expected:
-            if item == "rvalue":
-                self.expected["rvalue"] = int(self.expected["rvalue"])
-                continue
-            self.expected[item] = str.encode(self.expected[item])
-
-class LexerDiffItem(YamlItem):
-    def __init__(self, name, parent, spec):
-        super().__init__(name,parent,spec)
-        self.name = name
-        for item in self.expected:
-            if item == "rvalue":
-                self.expected["rvalue"] = int(self.expected["rvalue"])
-                continue
-            self.expected[item] = str.encode(self.expected[item])
 class OutputDiffItem(YamlItem):
-    def __init__(self, name, parent, spec):
-        super().__init__(name,parent,spec)
-        self.name = name
-        for item in self.expected:
-            if item == "rvalue":
-                self.expected["rvalue"] = int(self.expected["rvalue"])
-                continue
-            self.expected[item] = str.encode(self.expected[item])
-
-class InfiniteLoopDiffItem(YamlItem):
-    def __init__(self, name, parent, spec):
-        super().__init__(name,parent,spec)
-        self.name = name
-
-class GrammarDiffItem(YamlItem):
     def __init__(self, name, parent, spec):
         super().__init__(name,parent,spec)
         self.name = name

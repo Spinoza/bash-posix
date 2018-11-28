@@ -1,0 +1,103 @@
+while_false:
+        type: "bash diff"
+        command: "while false; do echo false; done;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+while_false_followed:
+        type: "bash diff"
+        command: "while false; do echo false; done; ls;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+while_false_and_true:
+        type: "bash diff"
+        command: "while false && true; do echo false; done; ls;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+for_easy:
+        type: "bash diff"
+        command: "for i in 1; do echo easy_for; done;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+for_easy_followed:
+        type: "bash diff"
+        command: "for i in 1; do echo easy_for; done; echo easy"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+for_5:
+        type: "bash diff"
+        command: "for i in 1 2 3 4 5; do echo 1; done;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+for_5_followed:
+        type: "bash diff"
+        command: "for i in 1 2 3 4 5; do echo easy_for; done; echo finish"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+for_big_body:
+        type: "bash diff"
+        command: "for i in 1 2 3 4 5; do echo easy_for; ls; if true; then echo this is my test; else echo never; fi; done; echo finish"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+until_true:
+        type: "bash diff"
+        command: "until true; do echo never; echo false; done;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+until_true_followed:
+        type: "bash diff"
+        command: "until true; do echo never; echo false; done; echo finish"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+until_true_or_false:
+        type: "bash diff"
+        command: "until true || false; do echo never; echo false; done; echo finish"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+for_in_for:
+        type: "bash diff"
+        command: "for i in 1 2 3 4 5; do echo out; for j in 1 2 3; do echo in; done; echo after; done; echo finish"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+nested_for_in_for:
+        type: "bash diff"
+        command: "for i in 1 2 3 4 5; do echo out; for j in 1 2 3; do for k in a b c d; do echo nest; done; echo in; done; echo after; done; echo finish"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
