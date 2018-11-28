@@ -285,7 +285,7 @@ struct node *instr_execution(struct node *n, int *res,
     else
     {
         //set the args table
-        *res = traversal_ast(func, res, f_tab);
+        *res = traversal_ast(func, res, &f_tab);
     }
     if ((!strcmp(oper,"&&") && !(*res))
             || (!strcmp(oper,"||") && (*res)))
@@ -324,7 +324,7 @@ struct node *for_execution(struct node *n, int *res, struct f_tab *f_tab)
         for ( ; cond && (cond->tokentype != SEMICOLON
                     && cond->tokentype != AND); cond = cond->next)
         {
-            *res = traversal_ast(do_node, res, f_tab);
+            *res = traversal_ast(do_node, res, &f_tab);
         }
     }
     return (n->next);
@@ -352,7 +352,7 @@ struct node *case_execution(struct node *n)
     return cases->children->next;
 }
 
-int traversal_ast(struct node *n, int *res, struct f_tab *f_tab)
+int traversal_ast(struct node *n, int *res, struct f_tab **f_tab)
 {
     if (!n)
         return *res;
@@ -360,11 +360,11 @@ int traversal_ast(struct node *n, int *res, struct f_tab *f_tab)
     {
         if (n->type == A_FUNCTION)
         {
-            f_tab = function_store(n, f_tab);
+            *f_tab = function_store(n, *f_tab);
         }
         if (n->type == A_INSTRUCT)
         {
-            return traversal_ast(instr_execution(n, res, f_tab), res, f_tab);
+            return traversal_ast(instr_execution(n, res, *f_tab), res, f_tab);
         }
         if (n->type == A_IF || n->type == A_ELIF)
             *res = traversal_ast(if_execution(n, res), res, f_tab);
@@ -381,13 +381,13 @@ int traversal_ast(struct node *n, int *res, struct f_tab *f_tab)
                 *res = traversal_ast(n->children->next, res, f_tab);
         }
         if (n->type == A_FOR)
-            *res = traversal_ast(for_execution(n, res, f_tab), res, f_tab);
+            *res = traversal_ast(for_execution(n, res, *f_tab), res, f_tab);
         return traversal_ast(n->next,res, f_tab);
     }
     return traversal_ast(n->children, res, f_tab);
 }
 
-int execution_ast(struct node *n)
+int execution_ast(struct node *n, struct f_tab **f_tab)
 {
     /*struct tab_a *tab = calloc(1, sizeof(struct tab_a));
       tab->capacity = 10;
@@ -395,5 +395,5 @@ int execution_ast(struct node *n)
      * capacity);
      tab->assignment = assignment;*/
     int r = 1;
-    return traversal_ast(n, &r, NULL);//call with tab;
+    return traversal_ast(n, &r, f_tab);//call with tab;
 }

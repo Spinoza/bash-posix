@@ -118,6 +118,7 @@ static int interactive_mode(struct option *options)
     init_interact();
     int retcode = 0;
     char *listadd = NULL;
+    struct f_tab *f_tab = NULL;
     while (isatty(STDIN_FILENO))
     {
         char *line = readline("42sh$ ");
@@ -154,7 +155,7 @@ static int interactive_mode(struct option *options)
             struct node *ast = build_ast(tokens);
             if (options->ast_print == TRUE)
                 print_ast(ast);
-            retcode = execution_ast(ast);
+            retcode = execution_ast(ast, &f_tab);
         }
     }
     return retcode;
@@ -171,7 +172,7 @@ int main(int argc, char *argv[])
     {
         history = fopen(path, "w+");
     }
-    if(history)
+    if (history)
         fclose(history);
     free(path);
     path = NULL;
@@ -225,8 +226,8 @@ int main(int argc, char *argv[])
     struct node *ast = build_ast(tokens);
     if (options->ast_print == TRUE)
         print_ast(ast);
-
-    int res = execution_ast(ast);
+    struct f_tab *f_tab = NULL;
+    int res = execution_ast(ast, &f_tab);
     free(options);
     free_list(tokens);
     free_node(ast);

@@ -39,5 +39,5 @@ struct f_tab
     struct function **f;
 };
 
-int execution_ast(struct node *n);
-int traversal_ast(struct node *n, int *res, struct f_tab *f_tab);
+int execution_ast(struct node *n, struct f_tab **f_tab);
+int traversal_ast(struct node *n, int *res, struct f_tab **f_tab);
