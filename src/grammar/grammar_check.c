@@ -41,6 +41,9 @@ struct nL *g_pipeline(struct nL *tok)
                     stock->prev->next = handletty();
                     stock->prev->next->prev = stock->prev;
                     tok = stock->prev;
+                    free(stock->elem->name);
+                    free(stock->elem);
+                    free(stock);
                 }
                 tok = stock;
                 tok = tok->next;
@@ -81,6 +84,9 @@ struct nL *g_andor(struct nL *tok)
                     stock->prev->next = handletty();
                     stock->prev->next->prev = stock->prev;
                     tok = stock->prev;
+                    free(stock->elem->name);
+                    free(stock->elem);
+                    free(stock);
                 }
                 stock = tok;
                 tok = tok->next;

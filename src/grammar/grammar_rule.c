@@ -81,6 +81,9 @@ struct nL *g_rulecase(struct nL *tok)
             save->prev->next = handletty();
             save->prev->next->prev = save->prev;
             tok = save->prev;
+            free(save->elem->name);
+            free(save->elem);
+            free(save);
         }
         save = tok;
         tok = tok->next;
@@ -95,8 +98,12 @@ struct nL *g_rulecase(struct nL *tok)
     {
         if (!tok)
         {
-            save->next = handletty();
-            tok =save;
+            save->prev->next = handletty();
+            save->prev->next->prev = save->prev;
+            tok =save->prev;
+            free(save->elem->name);
+            free(save->elem);
+            free(save);
         }
         save =tok;
         tok = tok->next;
@@ -183,6 +190,9 @@ struct nL *g_rulefor(struct nL *tok)
                 save->prev->next = handletty();
                 save->prev->next->prev = save->prev;
                 tok = save->prev;
+                free(save->elem->name);
+                free(save->elem);
+                free(save);
             }
             save = tok;
             tok = tok->next;
@@ -222,6 +232,9 @@ struct nL *g_rulefor(struct nL *tok)
             stock->prev->next = handletty();
             stock->prev->next->prev = stock->prev;
             tok = stock->prev;
+            free(stock->elem->name);
+            free(stock->elem);
+            free(stock);
         }
         stock = tok;
         tok = tok->next;
