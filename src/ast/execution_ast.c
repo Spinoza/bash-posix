@@ -308,7 +308,7 @@ struct node *if_execution(struct node *n, int *res)
     }
 }
 
-struct node *for_execution(struct node *n, int *res, struct f_tab *f_tab)
+int for_execution(struct node *n, int *res, struct f_tab *f_tab)
 {
     struct node *cond = n->children->children;
     for ( ; cond; cond = cond->next)
@@ -326,7 +326,7 @@ struct node *for_execution(struct node *n, int *res, struct f_tab *f_tab)
             *res = traversal_ast(do_node, res, &f_tab);
         }
     }
-    return (n->next);
+    return *res;
 }
 
 struct node *case_execution(struct node *n)
@@ -380,7 +380,7 @@ int traversal_ast(struct node *n, int *res, struct f_tab **f_tab)
                 *res = traversal_ast(n->children->next, res, f_tab);
         }
         if (n->type == A_FOR)
-            *res = traversal_ast(for_execution(n, res, *f_tab), res, f_tab);
+            *res = for_execution(n, res, *f_tab);
         return traversal_ast(n->next,res, f_tab);
     }
     return traversal_ast(n->children, res, f_tab);

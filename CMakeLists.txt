@@ -57,9 +57,7 @@ add_custom_target(set_env
 
 add_custom_target(check
     COMMENT "Running all tests.\n"
-    COMMAND cd ${CMAKE_SOURCE_DIR}/tests/test_scripts
-    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/test_options.sh -c -t 2 all
-    COMMAND cd ${CMAKE_SOURCE_DIR}/build
+    COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/check.sh
     DEPENDS 42sh
     )
 

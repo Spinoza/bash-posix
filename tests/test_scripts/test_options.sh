@@ -16,8 +16,8 @@ do
             'simple_commands','cases','loops','if','pipes','functions'"
     fi;
     if [ "${!i}" = "--timeout" -o "${!i}" = "-t" ]; then
-        x= $(($i + 1))
-        timeout=${!x}
+        x=$(($i + 1))
+        timeout=$x
     fi;
     if [ "${!i}" = "--sanity" -o "${!i}" = "-s" ]; then
         sanity=1
@@ -46,9 +46,9 @@ done
 
 sanity_string=""
 timeout_string=""
-echo "here"
-source ../../build/env/bin/activate
-echo "after"
+
+source ~/afs/42sh/sarah.onfray-42sh/build/env/bin/activate
+
 if [ $sanity -eq 1 ]; then
     sanity_string="--valgrind=1"
 fi;
@@ -59,7 +59,7 @@ if [ $timeout -gt 0 ]; then
 fi;
 
 if [ $all -eq 1 ]; then
-    pytest "../test_suite/"
+    pytest $timeout_string ~/afs/42sh/sarah.onfray-42sh/tests/test_suite/ $sanity_string
 fi;
 
 if [ $commands -eq 1 ]; then
@@ -69,11 +69,11 @@ fi;
 
 
 if [ $loops -eq 1 ]; then
-    pytest $timeout_string "../tests/test_suite/test_files/test_loops.yml" $sanity_string
+    pytest $timeout_string "../test_suite/test_files/test_loops.yml" $sanity_string
 fi;
 
 if [ $cases -eq 1 ]; then
-    pytest $timeout_string "../tests/test_suite/test_files/test_cases.yml" $sanity_string
+    pytest $timeout_string "../test_suite/test_files/test_cases.yml" $sanity_string
 fi;
 
 

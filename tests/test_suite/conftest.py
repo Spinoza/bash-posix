@@ -3,7 +3,7 @@ import subprocess
 import yaml
 
 def pytest_addoption(parser):
-    parser.addoption("--valgrind", action="store", default="0")
+    parser.addoption("--valgrind", action="store", default="2")
 
 def pytest_collect_file(parent, path, *args, **kwargs):
     if path.ext == ".yml" and path.basename.startswith("test"):
@@ -43,7 +43,10 @@ class YamlItem(pytest.Item):
             args.append("--error-exitcode=1")
 
         if type(self) is BashDiffItem or type(self) is OutputDiffItem:
-            args.append("./../../build/42sh")
+            if sanity != "2":
+                args.append("./../../build/42sh")
+            else:
+                args.append("./42sh")
             args.append("-c")
             args.append(tmp)
 
@@ -51,7 +54,11 @@ class YamlItem(pytest.Item):
                 stdout=subprocess.PIPE,\
                 stderr=subprocess.PIPE,\
                 stdin=subprocess.PIPE)
-        out, err = process.communicate(input=self.command)
+        try:
+            out, err = process.communicate(input=self.command, timeout=3)
+        except TimeoutExpired:
+            process.kill()
+            raise TimeoutException(3,self.command,self.name)
         err = err.decode()
         r = process.returncode
         process.kill()
@@ -120,6 +127,17 @@ class YamlItem(pytest.Item):
                                 instance.err)
                     ]
             )
+        if isinstance(excinfo.value, TimeoutException):
+            instance = excinfo.value
+            return "\n".join(
+                    [
+                        "test : %s failed due to timeout, called with [ %s ]\n"
+                        "timed out after %s : %s"\
+                                %(instance.name,\
+                                instance.command,\
+                                instance.time)
+                    ]
+            )
 
 class BashDiffItem(YamlItem):
     def __init__(self, name, parent, spec):
@@ -152,6 +170,12 @@ class OutputDiffItem(YamlItem):
                 continue
             self.expected[item] = str.encode(self.expected[item])
 
+class TimeoutException(Exception):
+    """ custom exception for error reporting. """
+    def __init__(self, time, command,name):
+        self.command = command
+        self.name = name
+        self.time = time
 
 class ValgrindException(Exception):
     """ custom exception for error reporting. """
