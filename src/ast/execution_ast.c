@@ -1,4 +1,5 @@
 #define _GNU_SOURCE
+#include <err.h>
 #include "execution_ast.h"
 #include <string.h>
 #include <stdlib.h>
@@ -72,6 +73,37 @@
  return name;
  }
 */
+
+
+struct f_tab *function_store(struct node *n, struct f_tab *f_tab)
+{
+    if (!f_tab)
+    {
+        f_tab = calloc(1, sizeof(struct f_tab));
+        f_tab->capacity = 10;
+        f_tab->f = calloc(10, sizeof(struct function*));
+    }
+    struct function *new_f = calloc (1, sizeof(struct function));
+    new_f->name = n->children->instr;
+    new_f->function_start = n->children->next;
+    f_tab->nb ++;
+    if (f_tab->nb == f_tab->capacity)
+    {
+        f_tab->capacity *= 2;
+        void *tmp = realloc(f_tab->f, f_tab->capacity
+        * sizeof(struct function *));
+        if (!tmp)
+        {
+            f_tab->nb--;
+            fprintf(stderr, "42sh: memory allocaton exausted");
+            return f_tab;
+        }
+        f_tab->f = tmp;
+    }
+    f_tab->f[f_tab->nb - 1] = new_f;
+    return f_tab;
+}
+
 
 char **to_execute(struct node *child, struct node *oper_node)
 {
@@ -163,18 +195,19 @@ int if_cond(struct node *cond)
     return res;
 }
 
-int pipe_command(char **command1, struct node *n)
+int pipe_aux(char **command, struct node *n, int fd[2])
 {
     struct node *oper_node = get_oper_node(n);
     int fd_next[2];
     pipe(fd_next);
-   pid_t pid = fork();
+    pid_t pid = fork();
+    int status = 0;
     if (pid == -1)//error
     {
         fprintf(stderr,"42sh : fork : An error occured.\n");
         exit(1);
     }
-    if (pid == 0)//child want to execute command1
+    if (pid == 0)
     {
         dup2(fd[0], 0);
         close(fd[0]);
@@ -222,39 +255,17 @@ struct node *is_a_function(struct node *n, struct f_tab *f_tab)
         return NULL;
     for (size_t i = 0; i < f_tab->nb; i++)
     {
-        int status = 0;
-        waitpid(pid, &status, 0);
-        pid = fork();
-        if (pid == -1)
-        {
-            fprintf(stderr,"42sh : fork : An error occured.\n");
-            exit(1);
-        }
-        if (pid == 0)
-        {
-            close(fd[1]);
-            close(0);
-            int b = dup2(fd[0], 0);
-            if (b == -1)
-                return -1;
-            int re = execvp(command2[0], command2);
-            exit(re);
-        }
-        else
-        {
-            status = 0;
-            //waitpid(pid, &status, 0);
-            if (status == 127)
-                fprintf(stderr,"42sh : %s : command not found.\n", command2[0]);
-            free_command(command2);
-            return status;
-        }
+        if (!strcmp(n->instr, f_tab->f[i]->name))
+            return f_tab->f[i]->function_start;
     }
+    return NULL;
 }
 
-struct node *instr_execution(struct node *n, int *res)
+struct node *instr_execution(struct node *n, int *res,
+        struct f_tab *f_tab)
 {
     /*check redirection*/
+    struct node *func = is_a_function(n, f_tab);
     struct node *oper_node = get_oper_node(n);
     char *oper = (oper_node ? oper_node->instr : "");
     if (!func)
@@ -278,7 +289,7 @@ struct node *instr_execution(struct node *n, int *res)
     if ((!strcmp(oper,"&&") && !(*res))
             || (!strcmp(oper,"||") && (*res)))
         return oper_node->next;
-    if (!strcmp(oper, "semicolon") && oper_node->next)
+    if ((!strcmp(oper, ";") || !strcmp(oper, "&")) && oper_node->next)
         return oper_node->next;
     return NULL;
 }
@@ -297,7 +308,7 @@ struct node *if_execution(struct node *n, int *res)
     }
 }
 
-struct node *for_execution(struct node *n, int *res)
+struct node *for_execution(struct node *n, int *res, struct f_tab *f_tab)
 {
     struct node *cond = n->children->children;
     for ( ; cond; cond = cond->next)
@@ -310,7 +321,7 @@ struct node *for_execution(struct node *n, int *res)
         cond = cond->next;
         struct node *do_node = n->children->next->children;
         for ( ; cond && (cond->tokentype != SEMICOLON
-                    || cond->tokentype != AND); cond = cond->next)
+                    && cond->tokentype != AND); cond = cond->next)
         {
             *res = traversal_ast(do_node, res, &f_tab);
         }
@@ -325,8 +336,7 @@ struct node *case_execution(struct node *n)
     for ( ; cases; cases = cases->next)
     {
         struct node *condition = cases->children->children;
-        for ( ; condition && condition->next;
-                condition = condition->next->next)
+        for ( ; condition; condition = condition->next)
         {
             if (!strcmp(condition->instr, elt->instr))
                 break;
@@ -358,22 +368,22 @@ int traversal_ast(struct node *n, int *res, struct f_tab **f_tab)
         if (n->type == A_IF || n->type == A_ELIF)
             *res = traversal_ast(if_execution(n, res), res, f_tab);
         if (n->type == A_CASE)
-            return traversal_ast(case_execution(n), res);
+            *res = traversal_ast(case_execution(n), res, f_tab);
         if (n->type == A_WHILE)
         {
             while (if_cond(n) == 0)
-                *res = traversal_ast(n->children->next, res);
+                *res = traversal_ast(n->children->next, res, f_tab);
         }
         if (n->type == A_UNTIL)
         {
             while (if_cond(n))
-                *res = traversal_ast(n->children->next, res);
+                *res = traversal_ast(n->children->next, res, f_tab);
         }
         if (n->type == A_FOR)
             *res = traversal_ast(for_execution(n, res, *f_tab), res, f_tab);
         return traversal_ast(n->next,res, f_tab);
     }
-    return traversal_ast(n->children,res);
+    return traversal_ast(n->children, res, f_tab);
 }
 
 int execution_ast(struct node *n, struct f_tab **f_tab)
