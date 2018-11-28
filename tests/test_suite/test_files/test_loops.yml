@@ -101,3 +101,10 @@ nested_for_in_for:
                 stdout:
                 stderr:
                 rvalue:
+nested_if_in_for_with_elif:
+        type: "bash diff"
+        command: "for i in 1 2 3 4 5; do if false; then echo true; elif true; then echo false; fi; done."
+        expected:
+                stdout:
+                stderr:
+                rvalue:
