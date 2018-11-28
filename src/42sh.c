@@ -170,6 +170,9 @@ static int interactive_mode(struct option *options)
 
 int main(int argc, char *argv[])
 {
+    char str[40] = { "\0" };
+    fread(str ,1,40,stdin);
+    printf("%s\n", str);
     char *home = getenv("HOME");
     char *path = calloc(mstrlen(home) + 15, sizeof(char));
     strcpy(path, home);

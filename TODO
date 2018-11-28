@@ -26,6 +26,9 @@
 |-------------- Case commands [X]
 |
 |------- Resource files [X]
+|------- Taking files as input (redirection) []
+|--------- Check if stdin has some characs in it (read once and if NULL exit) []
+|--------- Keep reading, take lists of token, merge them []
 |
 |--------History [X]
 

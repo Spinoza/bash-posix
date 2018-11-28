@@ -62,6 +62,14 @@ for_big_body:
                 stderr:
                 rvalue:
 
+for_without_in:
+        type: "bash diff"
+        command: "for i; do echo bonsoir; done"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
 until_true:
         type: "bash diff"
         command: "until true; do echo never; echo false; done;"
