@@ -117,11 +117,13 @@ struct nL *g_caseclause(struct nL *tok)
     tok = save;
     tok = tok->next;
 
-    if (tok->elem->type == TWO_SEMIC)
+    if (tok->elem->type != TWO_SEMIC)
     {
-        save = tok;
-        tok = tok->next;
+        return NULL;
     }
+    save = tok;
+    tok = tok->next;
+
 
     while (!tok || (tok->elem->type == ENDOF))
     {
