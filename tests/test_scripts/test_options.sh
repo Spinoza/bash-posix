@@ -54,7 +54,6 @@ if [ $sanity -eq 1 ]; then
 fi;
 
 if [ $timeout -gt 0 ]; then
-    echo $timeout
     timeout_string="--timeout=$timeout"
 fi;
 

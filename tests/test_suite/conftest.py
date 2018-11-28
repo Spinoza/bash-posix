@@ -4,6 +4,8 @@ import yaml
 
 def pytest_addoption(parser):
     parser.addoption("--valgrind", action="store", default="2")
+    parser.addoption("--timeout", action="store", default="0")
+    parser.addoption("--check", action="store", default="0")
 
 def pytest_collect_file(parent, path, *args, **kwargs):
     if path.ext == ".yml" and path.basename.startswith("test"):
@@ -38,12 +40,14 @@ class YamlItem(pytest.Item):
         args = []
 
         sanity = self.config.getoption("--valgrind")
+        my_timeout = int(self.config.getoption("--timeout"))
+        check = self.config.getoption("--check")
         if sanity == "1":
             args.append("valgrind")
             args.append("--error-exitcode=1")
 
         if type(self) is BashDiffItem or type(self) is OutputDiffItem:
-            if sanity != "2":
+            if check == "0":
                 args.append("./../../build/42sh")
             else:
                 args.append("./42sh")
@@ -55,7 +59,7 @@ class YamlItem(pytest.Item):
                 stderr=subprocess.PIPE,\
                 stdin=subprocess.PIPE)
         try:
-            out, err = process.communicate(input=self.command, timeout=3)
+            out, err = process.communicate(input=self.command, timeout=my_timeout)
         except TimeoutExpired:
             process.kill()
             raise TimeoutException(3,self.command,self.name)
