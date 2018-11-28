@@ -355,7 +355,7 @@ int traversal_ast(struct node *n, int *res, struct f_tab **f_tab)
 {
     if (!n)
         return *res;
-    if ((n->type != A_BODY && n->type != A_ROOT))
+    if ((n->type != A_BODY && n->type != A_ROOT && n->type != A_EBODY))
     {
         if (n->type == A_FUNCTION)
         {
