@@ -76,8 +76,8 @@ void free_node_copy(struct node *n)
 {
     if (!n)
         return;
-    free_node(n->children);
-    free_node(n->next);
+    free_node_copy(n->children);
+    free_node_copy(n->next);
     free(n->instr);
     free(n);
 }
