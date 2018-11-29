@@ -77,4 +77,12 @@ void print_ast(struct node *ast);
   *\return void
   */
 void free_node(struct node *n);
+
+/**
+  *\fn struct node *copy_node(struct node *n)
+  *\brief copies a tree
+  *\param struct node *n the root of the tree to copy
+  *\return struct node if tree has been copied properly, NULL otherwise
+  */
+struct node *copy_node(struct node *n);
 #endif /* ! AST_H */

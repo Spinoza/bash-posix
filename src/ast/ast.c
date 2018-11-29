@@ -89,6 +89,24 @@ static struct node* init_node(char *instr, enum type type)
     return node;
 }
 
+struct node *copy_node(struct node *n)
+{
+    if(n)
+    {
+        char *in = calloc(strlen(n->instr)+1, sizeof(char));
+        strcpy(in, n->instr);
+        struct node *new = init_node(in, n->tokentype);
+        struct node *child = n->children;
+        while(child)
+        {
+            add_node(new, copy_node(child));
+            child = child->next;
+        }
+        return new
+    }
+    return NULL;
+}
+
 static struct node *new_node(struct nL *tok)
 {
     int t = 0;
