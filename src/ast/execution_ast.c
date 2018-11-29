@@ -8,72 +8,17 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-//TO IMPLEMENT LATER
-/*
-   struct assignment *to_assign(char *string)
-   {
-   struct assignment *new = malloc(sizeof(struct assignment));
-   int i = 0;
-   int len = strlen(string);
-   for (; *(string + i) && *(string + i) != '='; i++);
-   new->name = malloc(sizeof(char) * i);
-   new->name = memcpy(new->name, string, i);
-   new->name[i] = '\0';
-   new->value = memcpy(new->value, string + i + 1, len - i);
-   new->value[len - i] = '\0';
-   return new;
-   }
-   int already_exists(struct assignment *to_assign, struct tab_a *tab)
-   {
-   char *string = to_assign->name;
-   int name_len = strlen(string) + 1;
-   int value_len = strlen(to_assign->name) +1;
-   for (int i =0; i < nb; i++) //Value already present
-   {
-   if (!strcmp(string, tab->assignment->name))
-   {
-   free(tab->value);
-   tab->value = malloc(sizeof(char) * value_len);
-   tab->value = memcpy(tab->value, to_assign->value, value_len);
-   free(to_assign);
-   return 1;
-   }
-   }
-   return 0;
-   }
-   void add_assignment(struct assignment *to_assign, struct tab_a *tab)
-   {
-   char *string = to_assign->name;
-   int name_len = strlen(string) + 1;
-
-   if (already_exists(to_assign, tab)) //just change the value field
-   return;
-   if (tab->nb == tab->capacity)
-   {
-   capacity *=2;
-   void *tmp = realloc(tab->assignment,sizeof(struct assignment)
- * capacity);
- if (!tmp)
- {
- capacity /=2;
- fprintf(stderr,"42sh : Out of memory");
- return;
- }
- tab->assignment = tmp;
- }
- tab->assignment[tab->nb++] = to_assign;
- }
- char *get_assign(char *name, struct tab_a **tab)
- {
- for (int i = 0; i < la->nb; i++)
- {
- if (!strcmp(name, tab->assignment[i]->name))
- return tab->assignment[i]->value;
- }
- return name;
- }
-*/
-
+struct node *is_a_function(struct node *n, struct f_tab *f_tab)
+{
+    if (!f_tab || !f_tab->nb)
+        return NULL;
+    for (size_t i = 0; i < f_tab->nb; i++)
+    {
+        if (!strcmp(n->instr, f_tab->f[i]->name))
+            return f_tab->f[i]->function_start;
+    }
+    return NULL;
+}
 
 struct f_tab *function_store(struct node *n, struct f_tab *f_tab)
 {
@@ -83,24 +28,32 @@ struct f_tab *function_store(struct node *n, struct f_tab *f_tab)
         f_tab->capacity = 10;
         f_tab->f = calloc(10, sizeof(struct function*));
     }
-    struct function *new_f = calloc (1, sizeof(struct function));
-    new_f->name = n->children->instr;
-    new_f->function_start = n->children->next;
-    f_tab->nb ++;
-    if (f_tab->nb == f_tab->capacity)
+    /*struct node *func = is_a_function(n. f_tab);
+    if (func)
     {
-        f_tab->capacity *= 2;
-        void *tmp = realloc(f_tab->f, f_tab->capacity
-        * sizeof(struct function *));
-        if (!tmp)
+
+    }*/
+    else
+    {
+        struct function *new_f = calloc (1, sizeof(struct function));
+        new_f->name = n->children->instr;
+        new_f->function_start = node_copy(n->children->next);
+        f_tab->nb ++;
+        if (f_tab->nb == f_tab->capacity)
         {
-            f_tab->nb--;
-            fprintf(stderr, "42sh: memory allocaton exausted");
-            return f_tab;
+            f_tab->capacity *= 2;
+            void *tmp = realloc(f_tab->f, f_tab->capacity
+                    * sizeof(struct function *));
+            if (!tmp)
+            {
+                f_tab->nb--;
+                fprintf(stderr, "42sh: memory allocaton exausted");
+                return f_tab;
+            }
+            f_tab->f = tmp;
         }
-        f_tab->f = tmp;
+        f_tab->f[f_tab->nb - 1] = new_f;
     }
-    f_tab->f[f_tab->nb - 1] = new_f;
     return f_tab;
 }
 
@@ -249,17 +202,6 @@ int pipe_handling(char **command1, struct node *n)
     return pipe_aux(command1, oper_node, fd);
 }
 
-struct node *is_a_function(struct node *n, struct f_tab *f_tab)
-{
-    if (!f_tab || !f_tab->nb)
-        return NULL;
-    for (size_t i = 0; i < f_tab->nb; i++)
-    {
-        if (!strcmp(n->instr, f_tab->f[i]->name))
-            return f_tab->f[i]->function_start;
-    }
-    return NULL;
-}
 
 struct node *instr_execution(struct node *n, int *res,
         struct f_tab *f_tab)
