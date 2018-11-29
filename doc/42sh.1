@@ -1,35 +1,9 @@
-.TH "42sh" 1 "Fri Nov 16 2018" "42sh" \" -*- nroff -*-
+.TH "42sh" 1 "Thu Nov 29 2018" "42sh" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
 42sh
 .SH "SYNOPSIS"
-.PP
-#include <stdlib\&.h>
-.br
- #include <string\&.h>
-.br
- #include 'lexer\&.h'
-.br
- #include 'options\&.h'
-.br
- #include 'grammar_check\&.h'
-.br
- #include 'linked_list\&.h'
-.br
- #include 'ast\&.h'
-.br
- #include 'execution_ast\&.h'
-.PP
-struct linked_list *lexer(char *input[], int argc);
-.br
-int grammar_check(struct linked_list *tokens);
-.br
- struct node *build_ast(struct linked_list *tokens);
-.br
- void print_ast(struct node *ast);
-.br
- int execution_ast(struct node *n);
 .PP
 The program 42sh remains a project and, as thus, needs to be compiled before being used\&.
 .br
@@ -47,16 +21,12 @@ The 42sh project is a command language interpreter base on the sh(1p) interp ert
 .br
  To execute the command line, all the token are organized in an AST tree\&. To create the tree the function build_ast() is called\&. Then the the print_ast() function can be called to print the AST created\&.
 .br
- Finally the execution_ast() function goes through the AST tree and interprete each node to execute the line command\&. 
+ Finally the execution_ast() function goes through the AST tree and interprete each node to execute the line command\&.
 .SH "OPTIONS"
 .PP
-.PP
-.nf
-The 42sh program can be called with several options, all conforming to the s
-tandard options of the shell language.\n
-.fi
-.PP
- The command to call 42sh would be : \&./42sh [options] [inputs]
+The 42sh program can be called with several options, all conforming to the s tandard options of the shell language\&.
+.br
+The command to call 42sh would be : \&./42sh [options] [inputs]
 .br
 The currently supported functions are:
 .br
@@ -67,15 +37,34 @@ The currently supported functions are:
 -c Followed by an argument string\&. Sets the special parameter 0 to the first parameter after command line\&. Then, sets all positionnal param eters and executes the command given in argument\&. No command shall be read f rom standard input\&.
 .br
 -/+o Sets or unsets the option given as parameter\&. Calling -o [op tion] shall set the option for the bash and calling +o [option] shall unset it\&. --version Prints the actual version of the 42sh program\&.
+.SH "EXAMPLES"
+.PP
+.IP "1." 4
+To execute a command from a string:
+.br
+ \&./42sh -c 'echo Hello World!;'
+.br
+
+.IP "2." 4
+To execute the 42sh in interactive mode:
+.br
+ \&./42sh //press enter to lunch the PS1 then enter your command after the name the program
+.br
+ 42sh$ echo Hello;
+.br
+
+.IP "3." 4
+To execute a command from a file:
+.br
+ \&./42sh path_to-file
+.br
+ 
+.PP
 .SH "RETURN VALUES"
 .PP
-.PP
-.nf
-On successful completion, grammar_check() shall return 1. 0 otherwise and in
-any case of error.\n
-.fi
-.PP
- On successful completion, lexer() shall return a linked_list containing all t okens of the input line, correctly parsed\&. On error, which is basically when a fail of malloc(3) occurs, it returns NULL\&.
+On successful completion, grammar_check() shall return 1\&. 0 otherwise and in any case of error\&.
+.br
+On successful completion, lexer() shall return a linked_list containing all t okens of the input line, correctly parsed\&. On error, which is basically when a fail of malloc(3) occurs, it returns NULL\&.
 .br
  
 .SH "AUTHORS"
