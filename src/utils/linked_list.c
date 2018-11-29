@@ -1,6 +1,12 @@
 #include <stddef.h>
+#include <string.h>
 #include <stdlib.h>
 #include "linked_list.h"
+
+static size_t mstrlen(char *string)
+{
+    return *string ? 1 + mstrlen(string + 1) : 0;
+}
 
 struct linked_list *init_link(void)
 {
@@ -64,4 +70,16 @@ void free_list(struct linked_list *l)
     }
 
     free(l);
+}
+
+struct token *token_copy(struct token *tok)
+{
+    struct token *copy = calloc(1, sizeof(struct token));
+    copy->type = tok->type;
+    copy->name = calloc(mstrlen(tok->name) + 1, sizeof(char));
+    strcpy(copy->name, tok->name);
+
+    return copy;
+
+
 }
