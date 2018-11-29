@@ -32,7 +32,7 @@ struct f_tab *function_store(struct node *n, struct f_tab *f_tab)
     struct function *func = is_a_function(n, f_tab);
     if (func)
     {
-        free_node(func->function_start);
+        free_node_copy(func->function_start);
         func->function_start = copy_node(n->children->next);
     }
     else

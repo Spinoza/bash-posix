@@ -85,4 +85,6 @@ void free_node(struct node *n);
   *\return struct node if tree has been copied properly, NULL otherwise
   */
 struct node *copy_node(struct node *n);
+
+void free_node_copy(struct node *n);
 #endif /* ! AST_H */

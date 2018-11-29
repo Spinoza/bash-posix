@@ -169,6 +169,20 @@ static int interactive_mode(struct option *options)
     return retcode;
 }
 
+void free_ftab(struct f_tab *f_tab)
+{
+    if (!f_tab || !f_tab->nb)
+        return;
+    for (size_t i = 0; i < f_tab->nb; i++)
+    {
+        free_node_copy(f_tab->f[i]->function_start);
+        free(f_tab->f[i]->name);
+        free(f_tab->f[i]);
+    }
+    free(f_tab->f);
+    free(f_tab);
+}
+
 int main(int argc, char *argv[])
 {
     char *home = getenv("HOME");
@@ -205,31 +219,31 @@ int main(int argc, char *argv[])
     struct linked_list *tokens;
     if (!isatty(STDIN_FILENO))
     {
-       char *line;
-       size_t i = 0;
-       int res = 0;
-       getline(&line, &i, stdin);
-       if (res == -1)
-           errx(1, "incoherent input.");
-       if(line[mstrlen(line) - 1] == '\n')
-       {
-           line[mstrlen(line) - 1] = '\0';
-       }
+        char *line;
+        size_t i = 0;
+        int res = 0;
+        getline(&line, &i, stdin);
+        if (res == -1)
+            errx(1, "incoherent input.");
+        if (line[mstrlen(line) - 1] == '\n')
+        {
+            line[mstrlen(line) - 1] = '\0';
+        }
 
-       tokens = lexer_c(line);
-       free(line);
-       line = NULL;
-       while ( (res = getline(&line, &i, stdin)) != -1)
-       {
-           if(line[mstrlen(line) - 1] == '\n')
-           {
-               line[mstrlen(line) - 1] = '\0';
-           }
-           fuse_lists(tokens, line);
-           free(line);
-           line = NULL;
-       }
-       free(line);
+        tokens = lexer_c(line);
+        free(line);
+        line = NULL;
+        while ( (res = getline(&line, &i, stdin)) != -1)
+        {
+            if (line[mstrlen(line) - 1] == '\n')
+            {
+                line[mstrlen(line) - 1] = '\0';
+            }
+            fuse_lists(tokens, line);
+            free(line);
+            line = NULL;
+        }
+        free(line);
     }
     else if (options->c == TRUE)
     {
@@ -267,5 +281,6 @@ int main(int argc, char *argv[])
     free(options);
     free_list(tokens);
     free_node(ast);
+    free_ftab(f_tab);
     return res;
 }
