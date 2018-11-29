@@ -146,6 +146,9 @@ class YamlItem(pytest.Item):
                     ]
             )
 
+    def reportinfo(self):
+        return self.fspath,0,"usecase : %s" % self.name
+
 class BashDiffItem(YamlItem):
     def __init__(self, name, parent, spec):
         super().__init__(name,parent,spec)
