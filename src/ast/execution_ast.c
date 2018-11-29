@@ -38,7 +38,9 @@ struct f_tab *function_store(struct node *n, struct f_tab *f_tab)
     else
     {
         struct function *new_f = calloc (1, sizeof(struct function));
-        new_f->name = n->children->instr;
+        size_t len = strlen(n->children->instr) + 1;
+        new_f->name = calloc (1, len);
+        strcpy(new_f->name, n->children->instr);
         new_f->function_start = copy_node(n->children->next);
         f_tab->nb ++;
         if (f_tab->nb == f_tab->capacity)
