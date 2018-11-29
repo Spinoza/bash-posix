@@ -36,7 +36,7 @@ static int norc_opt(void)
     pid_t pid = fork();
     if (pid == -1)
     {
-        errx(1, "oopsie: error in forking ! -_('_')_-");
+        errx(1, "error in forking\n");
     }
 
     if (pid == 0)
@@ -44,7 +44,7 @@ static int norc_opt(void)
         pid_t pid2 = fork();
         if (pid2 == -1)
         {
-            errx(1, "oopsie: error in forking in child !");
+            errx(1, "error in forking\n");
         }
 
         if (pid2 == 0)
