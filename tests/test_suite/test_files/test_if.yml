@@ -25,7 +25,7 @@ if_else_false_command:
 
 elif_true:
         type: "bash diff"
-        command: "if false; then echo true; elif true; then pwd; else ls; fi;"
+        command: "if false; then echo true; elif true; then echo wow; else ls; fi;"
         expected:
                 stdout:
                 stderr:
@@ -57,7 +57,7 @@ starting_elif:
 
 if_inside_if:
         type: "bash diff"
-        command: "if true; then if pwd; then echo true; fi; else echo false; fi;"
+        command: "if true; then if ls; then echo true; fi; else echo false; fi;"
         expected:
                 stdout:
                 stderr:
@@ -74,7 +74,7 @@ multiple_if:
 
 if_wrong_syntax:
         type: "bash diff"
-        command: "if false; else pwd; fi"
+        command: "if false; else ls; fi"
         expected:
                 stdout:
                 stderr:
@@ -82,7 +82,7 @@ if_wrong_syntax:
 
 elif_wrong_syntax:
         type: "bash diff"
-        command: "if false; elif true; then pwd; else ls; fi;"
+        command: "if false; elif true; then ls; else ls; fi;"
         expected:
                 stdout:
                 stderr:
@@ -131,7 +131,7 @@ if_operators_multiples_and:
 
 elif_operators_and:
         type: "bash diff"
-        command: "if true && false; then ls; elif true || false; then pwd; fi;"
+        command: "if true && false; then ls; elif true || false; then ls; fi;"
         expected:
                 stdout:
                 stderr:
@@ -139,7 +139,7 @@ elif_operators_and:
 
 elif_inside_elif:
         type: "bash diff"
-        command: "if false; then echo true; elif true; then if false; then pwd; elif true; then pwd; else echo false; fi;"
+        command: "if false; then echo true; elif true; then if false; then echo wow; elif true; then ls; else echo false; fi;"
         expected:
                 stdout:
                 stderr:
