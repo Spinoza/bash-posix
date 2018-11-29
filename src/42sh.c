@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
     int isgramm = grammar_check(tokens);
     if (!isgramm)
     {
-        errx(2, "Lexer error. Is your input conform to grammar ?");
+        errx(1, "Lexer error. Is your input conform to grammar ?");
     }
     char *home2 = getenv("HOME");
     char *path2 = calloc(mstrlen(home2) + 15, sizeof(char));

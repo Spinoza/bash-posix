@@ -342,6 +342,6 @@ int execution_ast(struct node *n, struct f_tab **f_tab)
       struct assignment **assignment = malloc(sizeof(struct assignment *)
      * capacity);
      tab->assignment = assignment;*/
-    int r = 1;
+    int r = 0;
     return traversal_ast(n, &r, f_tab);//call with tab;
 }

@@ -76,7 +76,6 @@ class YamlItem(pytest.Item):
                 raise ValgrindException(err,self.command,self.name)
 
         if type(self) is OutputDiffItem:
-            print("Failed test in lexer")
             if "stdout" in self.expected:
                 if self.expected["stdout"] != out:
                         raise YamlException("stdout", self.expected['stdout'],\
@@ -154,14 +153,13 @@ class BashDiffItem(YamlItem):
         super().__init__(name,parent,spec)
         self.name = name
         tmp = self.command.decode()
-        args = ["bash"]
-        args.append("-c")
+        args = ["bash", "--posix", "-c"]
         args.append(tmp)
         bash = subprocess.Popen(args,\
                 stdout=subprocess.PIPE,\
                 stderr=subprocess.PIPE,\
                 stdin=subprocess.PIPE)
-        out, err = bash.communicate(input=self.command)
+        out, err = bash.communicate()
         if "stdout" in self.expected:
             self.expected["stdout"] = out
         if "stderr" in self.expected:

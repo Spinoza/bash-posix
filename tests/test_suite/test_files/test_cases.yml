@@ -8,7 +8,7 @@ case_easy:
 
 case_two_choices:
         type: "bash diff"
-        command: "case true in false) echo false; ;; medium) echo medium; ;;true) echo true; esac"
+        command: "case true in false) echo false; ;; medium) echo medium; ;; true) echo true; ;; esac"
         expected:
                 stdout:
                 stderr:
@@ -16,7 +16,7 @@ case_two_choices:
 
 case_many_choices:
         type: "bash diff"
-        command: "case last in false) echo false; ;; true) echo true; esac not) echo not; ;; here) echo here; ;; never) echo never; ;; last) echo last; ;; esac"
+        command: "case last in false) echo false; ;; true) echo true; ;; esac not) echo not; ;; here) echo here; ;; never) echo never; ;; last) echo last; ;; esac"
         expected:
                 stdout:
                 stderr:
@@ -62,3 +62,25 @@ case_hard_pipes:
                 stderr:
                 rvalue:
 
+case_nested_case_if_echo:
+        type: "bash diff"
+        command: "case a in a ) case a in a ) if false; then echo bonsoir; elif true; then echo test succeeded; fi; ;; esac; ;; esac"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+if_nested_for_nested_case_followed:
+        type: "bash diff"
+        command: "if ls; then for a in 1 2 3; do case r in r) echo bonsoir; ;; c) echo osef; ;; esac; echo case done; if true; then for a in 1; do echo for; done; fi; done; fi; echo succeess"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+nothing_good:
+        type: "bash diff"
+        command: "case a in b) if false; then echo bonsoir; else echo bonjour; fi; ;; c) for v in 2 3 4 5 6; do echo nope; done; ;; esac; for a in 1 2 3 4; do if false; then echo bonsoir; elif false; then echo bonjour; elif false; then echo aha; else; echo ok; fi; done"
+        expected:
+                stdout:
+                stderr:
+                rvalue:

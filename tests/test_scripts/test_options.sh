@@ -39,6 +39,9 @@ do
             if [ "${!j}" = "commands" ]; then
                 commands=1
             fi;
+            if [ "${!j}" = "if" ]; then
+                ifs=1
+            fi;
         done
     fi;
 done
@@ -46,7 +49,7 @@ done
 sanity_string=""
 timeout_string=""
 
-source ~/afs/42sh/sarah.onfray-42sh/build/env/bin/activate
+source ../../../build/env/bin/activate
 
 if [ $sanity -eq 1 ]; then
     sanity_string="--valgrind=1"
@@ -69,6 +72,11 @@ fi;
 if [ $loops -eq 1 ]; then
     pytest -s $timeout_string "../test_suite/test_files/test_loops.yml" $sanity_string
 fi;
+
+if [ $ifs -eq 1 ]; then
+    pytest $timeout_string "../test_suite/test_files/test_if.yml" $sanity_string
+fi;
+
 
 if [ $cases -eq 1 ]; then
     pytest $timeout_string "../test_suite/test_files/test_cases.yml" $sanity_string

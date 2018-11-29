@@ -333,6 +333,7 @@ void splitted_tokens(struct token *new, char c, char **list)
     char *string = calloc(2, sizeof(char));
     string[0] = c;
     check_list(new, string, list);
+    free(string);
 }
 
 /*
