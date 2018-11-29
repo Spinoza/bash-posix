@@ -1,3 +1,6 @@
+#ifndef EXECUTION_AST_H
+#define EXECUTION_AST_H
+
 #include "ast.h"
 
 /**
@@ -6,20 +9,6 @@
   *All information needed in order to execute the AST created by ast.h,
   *including the particular structures and enumerations.
   */
-
-
-/**
-  *\struct assignment
-  *\brief structure aiming to help handling assignment word.
-  *
-  *This struct has to represent an assignment word, 
-  *by storing its name and value.
-  */
-struct assignment
-{
-    char *name; /**< The name of the variable*/
-    char *value;/**< The value of the variable*/
-};
 
 /**
   *\enum operators
@@ -85,7 +74,7 @@ struct f_tab
 /**
   *\fn int execution_ast(struct node *n, struct f_tab **f_tab)
   *\brief starts the execution of the tree, from node *n.
-  *\param n is the root of the tree to execute, 
+  *\param n is the root of the tree to execute,
   *f_tab is the matrix of functions encountered.
   *\return an int representing the return value of the exeuction.
   */
@@ -100,3 +89,4 @@ int execution_ast(struct node *n, struct f_tab **f_tab);
   *\return an int representing the return value of the exeuction.
   */
 int traversal_ast(struct node *n, int *res, struct f_tab **f_tab);
+#endif /* ! EXECUTION_AST_H */
