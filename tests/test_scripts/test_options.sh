@@ -8,9 +8,9 @@ func=0
 all=0
 timeout=5
 
+
 for (( i=1; i<=$#; i++))
 do
-
     if [ "${!i}" = "--list" -o "${!i}" = "-l" ]; then
         echo -e "List of test categories to call with -c <category> : \n    commands\n    cases\n    loops\n    if\n    pipes\n    functions"
     fi;
@@ -39,9 +39,25 @@ do
             if [ "${!j}" = "commands" ]; then
                 commands=1
             fi;
+
+            if [ "${!j}" = "if" ]; then
+                ifs=1
+            fi;
+
+            if [ "${!j}" = "functions" ]; then
+                func=1
+            fi;
+
+            if [ "${!j}" = "pipes" ]; then
+                pipes=1
+            fi;
         done
     fi;
 done
+
+if [ $# -eq 0 ]; then
+    all=1
+fi;
 
 sanity_string=""
 timeout_string=""
@@ -57,7 +73,6 @@ if [ $all -eq 1 ]; then
 fi;
 
 if [ $commands -eq 1 ]; then
-    echo "here"
     pytest $timeout_string "../test_suite/test_files/test_commands.yml" $sanity_string
 fi;
 
@@ -70,5 +85,16 @@ if [ $cases -eq 1 ]; then
     pytest $timeout_string "../test_suite/test_files/test_cases.yml" $sanity_string
 fi;
 
+if [ $ifs -eq 1 ]; then
+    pytest $timeout_string "../test_suite/test_files/test_if.yml" $sanity_string
+fi;
+
+if [ $func -eq 1 ]; then
+    pytest $timeout_string "../test_suite/test_files/test_func.yml" $sanity_string
+fi;
+
+if [ $pipes -eq 1 ]; then
+    pytest $timeout_string "../test_suite/test_files/test_pipes.yml" $sanity_string
+fi;
 
 deactivate

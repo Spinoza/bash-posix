@@ -39,15 +39,23 @@ lot_of_pipes:
 
 pipe_command:
         type: "bash diff"
-        command: "ls | cat -e; pwd;"
+        command: "ls | cat -e; echo wow;"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-pipe_command:
+bad_2ndcommand:
         type: "bash diff"
-        command: "ls | cat -e; echo wow; ls -la | rev | cat -e; ls;"
+        command: "ls | mdr"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+bad_2ndcommand:
+        type: "bash diff"
+        command: "mdr | ls"
         expected:
                 stdout:
                 stderr:
