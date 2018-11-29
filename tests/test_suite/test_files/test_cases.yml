@@ -16,7 +16,7 @@ case_two_choices:
 
 case_many_choices:
         type: "bash diff"
-        command: "case last in false) echo false; ;; true) echo true; ;; esac not) echo not; ;; here) echo here; ;; never) echo never; ;; last) echo last; ;; esac"
+        command: "case last in false) echo false; ;; true) echo true; esac not) echo not; ;; here) echo here; ;; never) echo never; ;; last) echo last; ;; esac"
         expected:
                 stdout:
                 stderr:

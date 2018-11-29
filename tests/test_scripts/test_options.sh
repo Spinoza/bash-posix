@@ -6,7 +6,7 @@ ifs=0
 pipes=0
 func=0
 all=0
-timeout=0
+timeout=5
 
 for (( i=1; i<=$#; i++))
 do
@@ -39,9 +39,6 @@ do
             if [ "${!j}" = "commands" ]; then
                 commands=1
             fi;
-            if [ "${!j}" = "if" ]; then
-                ifs=1
-            fi;
         done
     fi;
 done
@@ -49,18 +46,14 @@ done
 sanity_string=""
 timeout_string=""
 
-source ../../../build/env/bin/activate
+source "env/bin/activate"
 
-if [ $sanity -eq 1 ]; then
-    sanity_string="--valgrind=1"
-fi;
+sanity_string="--valgrind=$sanity"
 
-if [ $timeout -gt 0 ]; then
-    timeout_string="--timeout=$timeout"
-fi;
+timeout_string="--timeout=$timeout"
 
 if [ $all -eq 1 ]; then
-    pytest $timeout_string ~/afs/42sh/sarah.onfray-42sh/tests/test_suite/ $sanity_string
+    pytest "../test_suite/test_files/" $sanity_string $timeout_string
 fi;
 
 if [ $commands -eq 1 ]; then
@@ -72,11 +65,6 @@ fi;
 if [ $loops -eq 1 ]; then
     pytest -s $timeout_string "../test_suite/test_files/test_loops.yml" $sanity_string
 fi;
-
-if [ $ifs -eq 1 ]; then
-    pytest $timeout_string "../test_suite/test_files/test_if.yml" $sanity_string
-fi;
-
 
 if [ $cases -eq 1 ]; then
     pytest $timeout_string "../test_suite/test_files/test_cases.yml" $sanity_string

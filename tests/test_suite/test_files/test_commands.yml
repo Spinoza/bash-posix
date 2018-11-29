@@ -108,30 +108,13 @@ echo_if_then_else_fi:
                 stderr:
                 rvalue:
 
-less:
+less_no_param:
         type: "bash diff"
-        command: "less"
+        command: "less;"
         expected:
                 stdout:
                 stderr:
                 rvalue:
-
-bad_command:
-        type: "bash diff"
-        command: "blablablabla"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
-good_and_bad_command:
-        type: "bash diff"
-        command: "blablablabla; echo test"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
 
 less_param:
         type: "bash diff"

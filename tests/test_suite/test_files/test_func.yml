@@ -13,6 +13,7 @@ func_multiple_statements:
                 stdout:
                 stderr:
                 rvalue:
+
 func_multiple_calls:
         type: "bash diff"
         command: "func() { echo wow; } ; func; func; func; func;"
@@ -31,7 +32,7 @@ while_true_func_calls:
 
 func_multiple_definition:
         type: "bash diff"
-        command: "func() { echo oups; } ; func () { echo wow; } ; func (); "
+        command: "func() { echo oups; } ; func () { echo wow; } ; func ();"
         expected:
                 stdout:
                 stderr:

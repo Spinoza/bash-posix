@@ -1,10 +1,10 @@
 import pytest
 import subprocess
 import yaml
-
+import os
 def pytest_addoption(parser):
     parser.addoption("--valgrind", action="store", default="2")
-    parser.addoption("--timeout", action="store", default="0")
+    parser.addoption("--timeout", action="store", default="1")
     parser.addoption("--check", action="store", default="0")
 
 def pytest_collect_file(parent, path, *args, **kwargs):
@@ -48,11 +48,9 @@ class YamlItem(pytest.Item):
             args.append("valgrind")
             args.append("--error-exitcode=1")
 
+        cwd = os.getcwd()
         if type(self) is BashDiffItem or type(self) is OutputDiffItem:
-            if check == "0":
-                args.append("./../../build/42sh")
-            else:
-                args.append("./42sh")
+            args.append("./../../build/42sh")
             args.append("-c")
             args.append(tmp)
 
@@ -64,7 +62,6 @@ class YamlItem(pytest.Item):
             out, err = process.communicate(input=self.command, timeout=my_timeout)
         except TimeoutExpired:
             process.kill()
-            print("here")
             raise TimeoutException(3,self.command,self.name)
         err = err.decode()
         r = process.returncode
