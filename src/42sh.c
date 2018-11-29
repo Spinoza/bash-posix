@@ -211,13 +211,20 @@ int main(int argc, char *argv[])
        getline(&line, &i, stdin);
        if (res == -1)
            errx(1, "incoherent input.");
-       line[mstrlen(line) - 1] = '\0';
+       if(line[mstrlen(line) - 1] == '\n')
+       {
+           line[mstrlen(line) - 1] = '\0';
+       }
+
        tokens = lexer_c(line);
        free(line);
        line = NULL;
        while ( (res = getline(&line, &i, stdin)) != -1)
        {
-           line[mstrlen(line) - 1] = '\0';
+           if(line[mstrlen(line) - 1] == '\n')
+           {
+               line[mstrlen(line) - 1] = '\0';
+           }
            fuse_lists(tokens, line);
            free(line);
            line = NULL;
