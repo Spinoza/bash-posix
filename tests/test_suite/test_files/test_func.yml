@@ -1,0 +1,47 @@
+func:
+        type: "bash diff"
+        command: "bla () { ls -la; }; bla;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+func_multiple_statements:
+        type: "bash diff"
+        command: "func() { ls -la; echo wow;} func;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+func_multiple_calls:
+        type: "bash diff"
+        command: "func() { echo wow; } ; func; func; func; func;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+while_true_func_calls:
+        type: "bash diff"
+        command: "func() { echo oups; } ; while true; do func; done;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+func_multiple_definition:
+        type: "bash diff"
+        command: "func() { echo oups; } ; func () { echo wow; } ; func (); "
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+
+func_multiple_definition:
+        type: "bash diff"
+        command: "func() { echo oups; } ; bla () { echo wow; } ; func (); bla ();"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
