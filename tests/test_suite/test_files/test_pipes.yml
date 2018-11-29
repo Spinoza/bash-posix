@@ -1,0 +1,55 @@
+pipe_easy:
+        type: "bash diff"
+        command: "ls | cat -e"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+pipe_easy:
+        type: "bash diff"
+        command: " ls | less"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+three_pipe:
+        type: "bash diff"
+        command: "ls | cat -e | less"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+four_pipe:
+        type: "bash diff"
+        command: "ls | cat -e | rev | less"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+lot_of_pipes:
+        type: "bash diff"
+        command: "ls | cat -e | rev | less | more | cat | rev"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+pipe_command:
+        type: "bash diff"
+        command: "ls | cat -e; pwd;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+pipe_command:
+        type: "bash diff"
+        command: "ls | cat -e; echo wow; ls -la | rev | cat -e; ls;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
