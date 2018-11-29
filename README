@@ -42,6 +42,16 @@ Thus, it can handle :
 
 Moreover, even if it is not fully usable yet, its parser is able to check for the grammar-compliance of any sequence of token given as an input.
 
+CREATING DOC  IN HTML
+
+In order to create the documentation here is what to do:
+
+	doxygen configure
+
+After doing that the directory "html/" will be created. You can access the doc with command:
+
+	firefox html/index.html
+
 
 AUTHORS:
 
