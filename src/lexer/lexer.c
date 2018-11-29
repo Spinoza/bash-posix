@@ -299,7 +299,7 @@ void split_semicolon(struct linked_list *l_list)
     struct token *semicolon = token_init();
     semicolon->type = SEMICOLON;
     semicolon->name = calloc(20, sizeof(char));
-    memcpy(semicolon->name, ";", 10);
+    memcpy(semicolon->name, ";", 1);
     add(l_list,semicolon);
     return;
 }

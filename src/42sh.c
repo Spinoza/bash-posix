@@ -222,6 +222,7 @@ int main(int argc, char *argv[])
            free(line);
            line = NULL;
        }
+       free(line);
     }
     else if (options->c == TRUE)
     {
