@@ -45,6 +45,23 @@ int is_file(char *path)
     return 1;
 }
 
+void fuse_lists(struct linked_list *ll, char *string)
+{
+    struct linked_list *temp = lexer_c(string);
+    struct nL *head = ll->head;
+    while (head->next->next)
+    {
+        head = head->next;
+    }
+
+    free(head->next->elem->name);
+    free(head->next->elem);
+    free(head->next);
+
+    head->next = temp->head;
+    free(temp);
+}
+
 struct linked_list *read_fil(char *path)
 {
     char *copy = calloc(mstrlen(path) + 1, sizeof(char));

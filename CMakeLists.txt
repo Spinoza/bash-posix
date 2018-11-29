@@ -39,6 +39,8 @@ add_library(ast ${CMAKE_SOURCE_DIR}/src/ast/ast.c
     ${CMAKE_SOURCE_DIR}/src/ast/ast_print.c)
 target_link_libraries(ast grammar)
 
+add_library(handle ${CMAKE_SOURCE_DIR}/src/utils/file_handle.c)
+
 add_library(options ${CMAKE_SOURCE_DIR}/src/utils/options.c)
 
 ##EXECUTABLES
@@ -50,6 +52,7 @@ target_link_libraries(42sh options)
 target_link_libraries(42sh tty)
 target_link_libraries(42sh readline)
 target_link_libraries(42sh history)
+target_link_libraries(42sh handle)
 
 add_custom_target(set_env
     COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/set_env.sh
