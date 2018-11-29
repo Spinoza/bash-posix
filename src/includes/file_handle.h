@@ -24,6 +24,12 @@ int is_file(char *path);
   *\return a struct linked_list if everything works properly, NULL otherwise
   */
 struct linked_list *read_fil(char *path);
+
+/**
+  *\fn void fuse_lists(struct linked_list *ll, char *string)
+  *\brief creates list of token form string and append it to a list
+  *\param char *string is the string to transform in token list, and then append it to struct linked_list *ll
+  */
 void fuse_lists(struct linked_list *ll, char *string);
 
 #endif /* ! FILE_H */
