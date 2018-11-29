@@ -12,6 +12,14 @@ Then, once the binary is created, the 42sh can be used with :
 
 	./42sh [options] [arguments]
 
+The tty mode can be launched with:
+
+        ./42sh [options]
+
+The 42sh can be launched with a file by doing:
+
+        ./42sh < file
+
 
 LAUNCHING TESTS
 
@@ -32,13 +40,20 @@ The available options are :
 
 FEATURES:
 
-To this point, our 42sh should be compliant with the 0.3 version asked.
+To this point, our 42sh should be compliant with the 0.5 version asked.
 Thus, it can handle :
 
 	- execution of simple commands
 	- "if" statements
 	- "while" and "until" statements
 	- "for" statements
+        - "case" statements
+        - function declarations and use
+        - tty with PS1 and PS2 variables.
+        - pipe commands, operator handling (&& and ||)
+        - take a file as input with redirection
+        - creates a ~/.42sh_history file and reads from it
+	- loads /etc/.42shrc and ~/.42shrc
 
 Moreover, even if it is not fully usable yet, its parser is able to check for the grammar-compliance of any sequence of token given as an input.
 
