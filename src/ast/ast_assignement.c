@@ -1,7 +1,24 @@
 #define _GNU_SOURCE
+#define "linked_list.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+struct a_tab *init_assignment(void)
+{
+    struct a_tab *a_tab = malloc(sizeof(struct a_tab));
+    a_tab->a_list = malloc(HASH_TAB_SIZE * sizeof(struct assignement *));
+    return a_tab;
+}
+
+int hash_function(char *string)
+{
+    float r = 0;
+    int i = 0;
+    for ( ; *(string + i); i++)
+        r+= ((float)string[i] * TETA ) % HASH_TAB_SIZE;
+    return (int)(r / i);
+}
 
 struct assignment *to_assign(char *string)
 {
@@ -56,6 +73,7 @@ void add_assignment(struct assignment *to_assign, struct tab_a *tab)
     }
     tab->assignment[tab->nb++] = to_assign;
 }
+
 char *get_assign(char *name, struct tab_a **tab)
 {
     for (int i = 0; i < la->nb; i++)

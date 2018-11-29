@@ -54,3 +54,86 @@ starting_elif:
                 stdout:
                 stderr:
                 rvalue:
+
+if_inside_if:
+        type: "bash diff"
+        command: "if true; then if pwd; then echo true; fi; else echo false; fi;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+multiple_if:
+        type: "bash diff"
+        command: "if true; then echo true; else echo false; fi; ls; if true; then echo true; else echo false; fi; ls; if false; then echo true; else echo false; fi; ls; if false; then echo true; else echo false; fi; ls;"
+
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+if_wrong_syntax:
+        type: "bash diff"
+        command: "if false; else pwd; fi"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+elif_wrong_syntax:
+        type: "bash diff"
+        command: "if false; elif true; then pwd; else ls; fi;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+if_operators_or:
+        type: "bash diff"
+        command: "if true || true; then ls; fi;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+if_operators_or:
+        type: "bash diff"
+        command: "if false || true; then ls; fi;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+if_operators_and:
+        type: "bash diff"
+        command: "if true && false; then ls; fi;"i
+
+if_operators_and:
+        type: "bash diff"
+        command: "if true && ls; then echo true; else echo false; fi;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+if_operators_multiples_and:
+        type: "bash diff"
+        command: "if true && true && false || false; then echo true; else echo false; fi; ls;"
+
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+
+elif_operators_and:
+        type: "bash diff"
+        command: "if true && false; then ls; elif true || false; then pwd; fi;"i
+
+elif_inside_elif:
+        type: "bash diff"
+        command: "if false; then echo true; elif true; then if false; then pwd; elif true; then pwd; else echo false; fi;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:

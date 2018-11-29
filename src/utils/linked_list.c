@@ -10,15 +10,13 @@ static size_t mstrlen(char *string)
 
 struct linked_list *init_link(void)
 {
-    struct linked_list *l = malloc(sizeof (struct linked_list));
+    struct linked_list *l = malloc(sizeof(struct linked_list));
     if (!l)
     {
         return NULL;
     }
-
     l->head = NULL;
     l->size = 0;
-
     return l;
 }
 

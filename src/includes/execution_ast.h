@@ -37,20 +37,6 @@ enum operators
   *This struct is basically a matrix containing each assignment word encountered,
   *stored as an assignment structure.
   */
-struct tab_a
-{
-    size_t nb;/**< Is the size of the table.*/
-    size_t capacity;/**< Is the maximum capacity of the table.*/
-    struct assignment **assignment; /*< A table containing every assignment structure.*/
-    //to implemen0t with hashmap
-};
-
-/**
-  *\struct function
-  *\brief structure aiming to represent a function.
-  *
-  *This structure is storing a function as a name and an AST for its execution.
-  */
 struct function
 {
     char *name;/**< The name by witch the function si called.*/
