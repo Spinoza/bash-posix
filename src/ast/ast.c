@@ -102,7 +102,7 @@ struct node *copy_node(struct node *n)
             add_node(new, copy_node(child));
             child = child->next;
         }
-        return new
+        return new;
     }
     return NULL;
 }
