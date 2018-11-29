@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
     struct linked_list *tokens;
     if (!isatty(STDIN_FILENO))
     {
-        char *line;
+        char *line = NULL;
         size_t i = 0;
         int res = 0;
         getline(&line, &i, stdin);
