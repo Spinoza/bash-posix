@@ -14,6 +14,7 @@
 #include "token.h"
 #include "linked_list.h"
 #include "ast.h"
+#include "file_handle.h"
 #include "execution_ast.h"
 #include "err.h"
 #include <sys/types.h>
@@ -119,7 +120,7 @@ static int interactive_mode(struct option *options)
     int retcode = 0;
     char *listadd = NULL;
     struct f_tab *f_tab = NULL;
-    while (isatty(STDIN_FILENO))
+    while (1)
     {
         char *line = readline("42sh$ ");
         struct linked_list *tokens = lexer_c(line);
@@ -170,9 +171,6 @@ static int interactive_mode(struct option *options)
 
 int main(int argc, char *argv[])
 {
-    char str[40] = { "\0" };
-    fread(str ,1,40,stdin);
-    printf("%s\n", str);
     char *home = getenv("HOME");
     char *path = calloc(mstrlen(home) + 15, sizeof(char));
     strcpy(path, home);
@@ -200,12 +198,32 @@ int main(int argc, char *argv[])
     {
         norc_opt();
     }
-    if (index >= argc && options->c == FALS)
+    if (index >= argc && options->c == FALS && isatty(STDIN_FILENO))
     {
         return interactive_mode(options);
     }
     struct linked_list *tokens;
-    if (options->c == TRUE)
+    if (!isatty(STDIN_FILENO))
+    {
+       char *line;
+       size_t i = 0;
+       int res = 0;
+       getline(&line, &i, stdin);
+       if (res == -1)
+           errx(1, "incoherent input.");
+       line[mstrlen(line) - 1] = '\0';
+       tokens = lexer_c(line);
+       free(line);
+       line = NULL;
+       while ( (res = getline(&line, &i, stdin)) != -1)
+       {
+           line[mstrlen(line) - 1] = '\0';
+           fuse_lists(tokens, line);
+           free(line);
+           line = NULL;
+       }
+    }
+    else if (options->c == TRUE)
     {
         tokens = lexer_c(options->arg_c);
     }
