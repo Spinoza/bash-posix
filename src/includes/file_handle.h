@@ -4,7 +4,7 @@
 #include "linked_list.h"
 
 /**
-  *\file filehandle.h
+  *\file file_handle.h
   *\brief
   *Handle loading, opening and closing of files
   */
