@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 #include <err.h>
 #include "execution_ast.h"
+#include "ast.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -8,14 +9,14 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-struct node *is_a_function(struct node *n, struct f_tab *f_tab)
+struct function *is_a_function(struct node *n, struct f_tab *f_tab)
 {
     if (!f_tab || !f_tab->nb)
         return NULL;
     for (size_t i = 0; i < f_tab->nb; i++)
     {
         if (!strcmp(n->instr, f_tab->f[i]->name))
-            return f_tab->f[i]->function_start;
+            return f_tab->f[i];
     }
     return NULL;
 }
@@ -28,16 +29,17 @@ struct f_tab *function_store(struct node *n, struct f_tab *f_tab)
         f_tab->capacity = 10;
         f_tab->f = calloc(10, sizeof(struct function*));
     }
-    /*struct node *func = is_a_function(n. f_tab);
+    struct function *func = is_a_function(n, f_tab);
     if (func)
     {
-
-    }*/
+        free_node(func->function_start);
+        func->function_start = copy_node(n->children->next);
+    }
     else
     {
         struct function *new_f = calloc (1, sizeof(struct function));
         new_f->name = n->children->instr;
-        new_f->function_start = node_copy(n->children->next);
+        new_f->function_start = copy_node(n->children->next);
         f_tab->nb ++;
         if (f_tab->nb == f_tab->capacity)
         {
@@ -207,7 +209,10 @@ struct node *instr_execution(struct node *n, int *res,
         struct f_tab *f_tab)
 {
     /*check redirection*/
-    struct node *func = is_a_function(n, f_tab);
+    struct function *f = is_a_function(n, f_tab);
+    struct node *func = NULL;
+    if (f)
+        func = f->function_start;
     struct node *oper_node = get_oper_node(n);
     char *oper = (oper_node ? oper_node->instr : "");
     if (!func)
