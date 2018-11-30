@@ -167,13 +167,12 @@ int pipe_aux(char **command, struct node *n, int fd[2], struct stored_data *data
     }
     if (pid == 0)
     {
-        dup2(fd[0], 0);
-        close(fd[0]);
+        dup2(fd[0], STDIN_FILENO);
         close(fd[1]);
         if (oper_node && oper_node->tokentype == PIPE)
         {
             close(fd_next[0]);
-            dup2(fd_next[1], 1);
+            dup2(fd_next[1], STDOUT_FILENO);
             close(fd_next[1]);
         }
         int r = execvp(command[0], command);
@@ -181,7 +180,6 @@ int pipe_aux(char **command, struct node *n, int fd[2], struct stored_data *data
     }
     else
     {
-        waitpid(pid,&status,0);
         close(fd_next[1]);
         if (oper_node && oper_node->tokentype == PIPE)
         {
@@ -189,6 +187,7 @@ int pipe_aux(char **command, struct node *n, int fd[2], struct stored_data *data
             char **command_next = to_execute(oper_node->next, next_oper_node, data);
             status = pipe_aux(command_next, oper_node->next, fd_next, data);
         }
+        waitpid(pid,&status,0);
         if (status == 127)
             fprintf(stderr,"42sh : %s : \
                     command not found.\n", command[0]);
@@ -201,7 +200,8 @@ int pipe_handling(char **command1, struct node *n, struct stored_data *data)
 {
     struct node *oper_node = get_oper_node(n);
     int fd[2];
-    pipe(fd);
+    fd[0] = 0;
+    fd[1] = 1;
     return pipe_aux(command1, oper_node, fd, data);
 }
 
