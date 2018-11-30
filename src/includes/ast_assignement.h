@@ -1,6 +1,6 @@
 #ifndef AST_ASSIGNEMENT_H
 #define AST_ASSIGNEMENT_H
-#define HASH_TAB_SIZE 1
+#define HASH_TAB_SIZE 20
 #define TETA 0.5987526325
 /**
   *\struct assignment
