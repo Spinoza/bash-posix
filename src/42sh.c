@@ -184,6 +184,7 @@ void free_data(struct stored_data *data)
         free(f_tab->f);
         free(f_tab);
     }
+    free_assignments(data->var_tab);
     free(data);
 }
 
@@ -191,6 +192,7 @@ struct stored_data *stored_data_init(void)
 {
     struct stored_data *new = malloc(sizeof(struct stored_data));
     new->f_tab = NULL;
+    new->var_tab = init_assignment();
     return new;
 }
 

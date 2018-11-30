@@ -6,13 +6,36 @@
 
 struct assignment **init_assignment(void)
 {
-    struct assignment **a_tab = calloc(HASH_TAB_SIZE, sizeof(struct assignment *));
+    struct assignment **a_tab = calloc(HASH_TAB_SIZE,
+            sizeof(struct assignment *));
+    for (int i = 0; i < HASH_TAB_SIZE; i++)
+    {
+        a_tab[i] = calloc(1, sizeof(struct assignment));
+    }
     return a_tab;
 }
 
-//return the position in the hash table
-int hash_function(char *string)
+void free_assignments(struct assignment **tab)
 {
+    for (size_t i = 0; i < HASH_TAB_SIZE; i++)
+    {
+        struct assignment *to_free = tab[i];
+        struct assignment *next = tab[i];
+        for (; next;)
+        {
+            to_free = next;
+            free(to_free->value);
+            free(to_free->name);
+            next = next->next;
+            free(to_free);
+        }
+    }
+    free(tab);
+}
+//return the position in the hash table
+static int hash_function(char *string)
+{
+
     float r = 0;
     int i = 0;
     for ( ; *(string + i) && *(string + i) != '='; i++)
@@ -20,23 +43,26 @@ int hash_function(char *string)
     return (int)(r / i) % HASH_TAB_SIZE;
 }
 
-struct assignment *to_assign(char *string)
+static struct assignment *to_assign(char *string)
 {
     struct assignment *new = calloc(1, sizeof(struct assignment));
     int i = 0;
     int len = strlen(string);
     for (; *(string + i) && *(string + i) != '='; i++)
         continue;
-    new->name = malloc(sizeof(char) * i);
+    new->name = malloc(sizeof(char) * (i + 1));
     new->name = memcpy(new->name, string, i);
     new->name[i] = '\0';
-    new->value = memcpy(new->value, string + i + 1, len - i);
+    new->value = malloc(sizeof(char) * (len - i + 1));
+    new->value = memcpy(new->value, string + i, len - i);
     new->value[len - i] = '\0';
     return new;
 }
 
-int same_name(char *a, char *b)
+static int same_name(char *a, char *b)
 {
+    if (!b)
+        return 0;
     int i = 0;
     for ( ;  a[i] && a[i] != '=' && b[i] && a[i] == b[i]; i++)
         continue;
@@ -45,7 +71,7 @@ int same_name(char *a, char *b)
     return 0;
 }
 
-int already_exists(char *string, struct assignment **a_tab, int pos)
+static int already_exists(char *string, struct assignment **a_tab, int pos)
 {
     struct assignment *a = a_tab[pos];
     for (; a; a = a->next)
@@ -71,8 +97,9 @@ void add_assignment(char *string,
         return;
     struct assignment *new = to_assign(string);
     struct assignment *a = a_tab[pos];
-    if (a == NULL)
+    if (a->name == NULL)
     {
+        free(a);
         a_tab[pos] = new;
         return;
     }

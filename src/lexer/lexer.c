@@ -271,7 +271,7 @@ void splitted_tokens(struct token *new, char c, char **list)
 int split_tokens(struct token *new, char *string, struct linked_list *l_list,
         int index_sc, char **list)
 {
-    if(index_sc == 0)
+    if (index_sc == 0)
     {
         splitted_tokens(new, string[index_sc], list);
         return 0;
@@ -360,7 +360,7 @@ void check_context(struct linked_list *l_list, struct token *new)
         if (type_oper(iter->elem))
             context = ENDOF;
     }
-    if (context == WORD)
+    if (context == WORD && new->type != EXPAND_W)
         new->type = WORD;
 }
 struct linked_list *lexer_c(char *input)
@@ -378,7 +378,7 @@ struct linked_list *lexer_c(char *input)
                     break;
                 string = strtok(NULL," ");
             }
-            if(!string)
+            if (!string)
                 break;
         }
         struct token *new = token_init();
@@ -411,7 +411,7 @@ struct linked_list *lexer (char *input[], int argc, int begin)
                     break;
                 i++;
             }
-            if(i < argc)
+            if (i < argc)
                 break;
         }
         struct token *new = token_init();

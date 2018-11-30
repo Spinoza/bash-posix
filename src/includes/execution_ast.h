@@ -41,7 +41,7 @@ enum operators
 
 struct function
 {
-    char *name;/**< The name by witch the function si called.*/
+    char *name;/**< The name by wich the function is called.*/
     struct node *function_start;/**< The first node of the AST representing the func.*/
 };
 
@@ -63,7 +63,7 @@ struct f_tab
 struct stored_data
 {
     struct f_tab *f_tab;
-    struct assignment *var_tab;
+    struct assignment **var_tab;
     //struct builtins *builtins;
 };
 
