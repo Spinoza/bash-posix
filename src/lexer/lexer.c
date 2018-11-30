@@ -444,6 +444,17 @@ struct linked_list *lexer_c(char *input)
     char *string = strtok(input, " ");
     while (string)
     {
+        if (string[0] == '#') //Currently in a comment
+        {
+            while (string)
+            {
+                if (!strcmp(string, "\n"))
+                    break;
+                string = strtok(NULL," ");
+            }
+            if(!string)
+                break;
+        }
         struct token *new = token_init();
         read_string(new, string, list, l_list);
         check_context(l_list,new);
@@ -466,6 +477,17 @@ struct linked_list *lexer (char *input[], int argc, int begin)
     struct linked_list *l_list = init_link();
     for (int i = begin; i < argc; i++)
     {
+        if (string[0] == '#') //Currently in a comment
+        {
+            while (string)
+            {
+                if (!strcmp(string, "\n"))
+                    break;
+                string = strtok(NULL," ");
+            }
+            if(!string)
+                break;
+        }
         struct token *new = token_init();
         read_string(new, input[i], list, l_list);
         check_context(l_list,new);//, redir_list);
