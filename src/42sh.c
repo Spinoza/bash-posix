@@ -265,6 +265,7 @@ int main(int argc, char *argv[])
     {
         tokens = lexer(argv, argc, index);
     }
+    print_list(tokens);
     int isgramm = grammar_check(tokens);
     if (!isgramm)
     {

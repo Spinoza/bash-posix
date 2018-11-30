@@ -60,16 +60,12 @@ void function_store(struct node *n, struct stored_data *data)
     }
 }
 
-
 char **to_execute(struct node *child, struct node *oper_node)
 {
     struct node *iter = child;
     size_t len = strlen(iter->instr) + 1;
     char **result = calloc(1, sizeof(char *));
     int i = 0;
-    result[i] = calloc(len, sizeof(char));
-    result[i++] = memcpy(result[0], iter->instr, len);
-    iter = iter->next;
     for (; iter && iter != oper_node; i++, iter = iter->next)
     {
         len = strlen(iter->instr) + 1;
@@ -205,7 +201,6 @@ int pipe_handling(char **command1, struct node *n)
     return pipe_aux(command1, oper_node, fd);
 }
 
-
 struct node *instr_execution(struct node *n, int *res,
         struct stored_data *data)
 {
@@ -313,6 +308,10 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
         {
             return traversal_ast(instr_execution(n, res, data), res, data);
         }
+        /*if (n->type == ASSIGNMENT_W)
+        {
+            add_assignment(n->instr, data->var_tab);
+        }*/
         if (n->type == A_IF || n->type == A_ELIF)
             *res = traversal_ast(if_execution(n, res), res, data);
         if (n->type == A_CASE)

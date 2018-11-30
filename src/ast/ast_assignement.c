@@ -63,23 +63,23 @@ int already_exists(char *string, struct assignment **a_tab, int pos)
     }
     return 0;
 }
-struct assignment **add_assignment(char *string,
+void add_assignment(char *string,
         struct assignment **a_tab)
 {
     int pos = hash_function(string);
     if (already_exists(string, a_tab, pos))
-        return a_tab;
+        return;
     struct assignment *new = to_assign(string);
     struct assignment *a = a_tab[pos];
     if (a == NULL)
     {
         a_tab[pos] = new;
-        return a_tab;
+        return;
     }
     for (; a && a->next; a = a ->next)
         continue;
     a->next = new;
-    return a_tab;
+    return;
 }
 
 char *get_assign(char *name, struct assignment **a_tab)

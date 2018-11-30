@@ -38,6 +38,7 @@ enum operators
   *This struct is basically a matrix containing each assignment word encountered,
   *stored as an assignment structure.
   */
+
 struct function
 {
     char *name;/**< The name by witch the function si called.*/
@@ -62,9 +63,10 @@ struct f_tab
 struct stored_data
 {
     struct f_tab *f_tab;
-    //struct assigned_words *var;
+    struct assignment *var_tab;
     //struct builtins *builtins;
 };
+
 /**
   *\fn int execution_ast(struct node *n, struct f_tab **f_tab)
   *\brief starts the execution of the tree, from node *n.
@@ -72,6 +74,7 @@ struct stored_data
   *f_tab is the matrix of functions encountered.
   *\return an int representing the return value of the exeuction.
   */
+
 int execution_ast(struct node *n, struct stored_data *data);
 
 /**
