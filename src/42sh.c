@@ -113,13 +113,12 @@ static char * from_tok_toS(struct linked_list *tokens)
     return final;
 }
 
-static int interactive_mode(struct option *options)
+static int interactive_mode(struct option *options, struct stored_data *data)
 {
     using_history();
     init_interact();
     int retcode = 0;
     char *listadd = NULL;
-    struct f_tab *f_tab = NULL;
     while (1)
     {
         char *line = readline("42sh$ ");
@@ -160,7 +159,7 @@ static int interactive_mode(struct option *options)
             struct node *ast = build_ast(tokens);
             if (options->ast_print == TRUE)
                 print_ast(ast);
-            retcode = execution_ast(ast, &f_tab);
+            retcode = execution_ast(ast, data);
             free_node(ast);
             ast = NULL;
         }
@@ -169,24 +168,37 @@ static int interactive_mode(struct option *options)
     return retcode;
 }
 
-void free_ftab(struct f_tab *f_tab)
+void free_data(struct stored_data *data)
 {
-    if (!f_tab || !f_tab->nb)
+    if (!data)
         return;
-    for (size_t i = 0; i < f_tab->nb; i++)
+    struct f_tab *f_tab = data->f_tab;
+    if (f_tab)
     {
-        free_node_copy(f_tab->f[i]->function_start);
-        free(f_tab->f[i]->name);
-        free(f_tab->f[i]);
+        for (size_t i = 0;i < f_tab->nb; i++)
+        {
+            free_node_copy(f_tab->f[i]->function_start);
+            free(f_tab->f[i]->name);
+            free(f_tab->f[i]);
+        }
+        free(f_tab->f);
+        free(f_tab);
     }
-    free(f_tab->f);
-    free(f_tab);
+    free(data);
+}
+
+struct stored_data *stored_data_init(void)
+{
+    struct stored_data *new = malloc(sizeof(struct stored_data));
+    new->f_tab = NULL;
+    return new;
 }
 
 int main(int argc, char *argv[])
 {
     char *home = getenv("HOME");
     char *path = calloc(mstrlen(home) + 15, sizeof(char));
+    struct stored_data *data = stored_data_init();
     strcpy(path, home);
     strcat(path, "/.42sh_history");
     FILE *history = fopen(path, "r+");
@@ -214,7 +226,7 @@ int main(int argc, char *argv[])
     }
     if (index >= argc && options->c == FALS && isatty(STDIN_FILENO))
     {
-        return interactive_mode(options);
+        return interactive_mode(options, data);
     }
     struct linked_list *tokens;
     if (!isatty(STDIN_FILENO))
@@ -276,11 +288,10 @@ int main(int argc, char *argv[])
     struct node *ast = build_ast(tokens);
     if (options->ast_print == TRUE)
         print_ast(ast);
-    struct f_tab *f_tab = NULL;
-    int res = execution_ast(ast, &f_tab);
+    int res = execution_ast(ast, data);
     free(options);
     free_list(tokens);
     free_node(ast);
-    free_ftab(f_tab);
+    free_data(data);
     return res;
 }

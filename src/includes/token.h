@@ -2,8 +2,8 @@
 #define TOKEN_H
 /**
   *\file token.h
-  *\brief 
-  *All information about the structures of the tokens 
+  *\brief
+  *All information about the structures of the tokens
   *and about the enum that gathers all the types a token can be.
   */
 
@@ -47,7 +47,8 @@ enum type
     OPEN_BRA = 28, /**< The string parsed is an opening bracket. */
     CLOSE_BRA = 29, /**< The string parsed is a closing bracket. */
     TWO_SEMIC = 30, /**< The string parsed is a double semicolon. */
-    FUNCTION = 31 /**< Used to build the ast tree*/
+    FUNCTION = 31, /**< Used to build the ast tree. */
+    EXPAND_W = 32 /**< The string parsed starts with & '$'. */
 };
 
 /**

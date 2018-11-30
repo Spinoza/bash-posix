@@ -21,15 +21,15 @@ struct function *is_a_function(struct node *n, struct f_tab *f_tab)
     return NULL;
 }
 
-struct f_tab *function_store(struct node *n, struct f_tab *f_tab)
+void function_store(struct node *n, struct stored_data *data)
 {
-    if (!f_tab)
+    if (!data->f_tab)
     {
-        f_tab = calloc(1, sizeof(struct f_tab));
-        f_tab->capacity = 10;
-        f_tab->f = calloc(10, sizeof(struct function*));
+        data->f_tab = calloc(1, sizeof(struct f_tab));
+        data->f_tab->capacity = 10;
+        data->f_tab->f = calloc(10, sizeof(struct function*));
     }
-    struct function *func = is_a_function(n, f_tab);
+    struct function *func = is_a_function(n, data->f_tab);
     if (func)
     {
         free_node_copy(func->function_start);
@@ -42,23 +42,22 @@ struct f_tab *function_store(struct node *n, struct f_tab *f_tab)
         new_f->name = calloc (1, len);
         strcpy(new_f->name, n->children->instr);
         new_f->function_start = copy_node(n->children->next);
-        f_tab->nb ++;
-        if (f_tab->nb == f_tab->capacity)
+        data->f_tab->nb ++;
+        if (data->f_tab->nb == data->f_tab->capacity)
         {
-            f_tab->capacity *= 2;
-            void *tmp = realloc(f_tab->f, f_tab->capacity
+            data->f_tab->capacity *= 2;
+            void *tmp = realloc(data->f_tab->f, data->f_tab->capacity
                     * sizeof(struct function *));
             if (!tmp)
             {
-                f_tab->nb--;
+                data->f_tab->nb--;
                 fprintf(stderr, "42sh: memory allocaton exausted");
-                return f_tab;
+                return;
             }
-            f_tab->f = tmp;
+            data->f_tab->f = tmp;
         }
-        f_tab->f[f_tab->nb - 1] = new_f;
+        data->f_tab->f[data->f_tab->nb - 1] = new_f;
     }
-    return f_tab;
 }
 
 
@@ -208,10 +207,10 @@ int pipe_handling(char **command1, struct node *n)
 
 
 struct node *instr_execution(struct node *n, int *res,
-        struct f_tab *f_tab)
+        struct stored_data *data)
 {
     /*check redirection*/
-    struct function *f = is_a_function(n, f_tab);
+    struct function *f = is_a_function(n, data->f_tab);
     struct node *func = NULL;
     if (f)
         func = f->function_start;
@@ -233,7 +232,7 @@ struct node *instr_execution(struct node *n, int *res,
     else
     {
         //set the args table
-        *res = traversal_ast(func, res, &f_tab);
+        *res = traversal_ast(func, res, data);
     }
     if ((!strcmp(oper,"&&") && !(*res))
             || (!strcmp(oper,"||") && (*res)))
@@ -257,7 +256,7 @@ struct node *if_execution(struct node *n, int *res)
     }
 }
 
-int for_execution(struct node *n, int *res, struct f_tab *f_tab)
+int for_execution(struct node *n, int *res, struct stored_data *data)
 {
     struct node *cond = n->children->children;
     for ( ; cond; cond = cond->next)
@@ -272,7 +271,7 @@ int for_execution(struct node *n, int *res, struct f_tab *f_tab)
         for ( ; cond && (cond->tokentype != SEMICOLON
                     && cond->tokentype != AND); cond = cond->next)
         {
-            *res = traversal_ast(do_node, res, &f_tab);
+            *res = traversal_ast(do_node, res, data);
         }
     }
     return *res;
@@ -300,7 +299,7 @@ struct node *case_execution(struct node *n)
     return cases->children->next;
 }
 
-int traversal_ast(struct node *n, int *res, struct f_tab **f_tab)
+int traversal_ast(struct node *n, int *res, struct stored_data *data)
 {
     if (!n)
         return *res;
@@ -308,34 +307,34 @@ int traversal_ast(struct node *n, int *res, struct f_tab **f_tab)
     {
         if (n->type == A_FUNCTION)
         {
-            *f_tab = function_store(n, *f_tab);
+            function_store(n, data);
         }
         if (n->type == A_INSTRUCT)
         {
-            return traversal_ast(instr_execution(n, res, *f_tab), res, f_tab);
+            return traversal_ast(instr_execution(n, res, data), res, data);
         }
         if (n->type == A_IF || n->type == A_ELIF)
-            *res = traversal_ast(if_execution(n, res), res, f_tab);
+            *res = traversal_ast(if_execution(n, res), res, data);
         if (n->type == A_CASE)
-            *res = traversal_ast(case_execution(n), res, f_tab);
+            *res = traversal_ast(case_execution(n), res, data);
         if (n->type == A_WHILE)
         {
             while (if_cond(n) == 0)
-                *res = traversal_ast(n->children->next, res, f_tab);
+                *res = traversal_ast(n->children->next, res, data);
         }
         if (n->type == A_UNTIL)
         {
             while (if_cond(n))
-                *res = traversal_ast(n->children->next, res, f_tab);
+                *res = traversal_ast(n->children->next, res, data);
         }
         if (n->type == A_FOR)
-            *res = for_execution(n, res, *f_tab);
-        return traversal_ast(n->next,res, f_tab);
+            *res = for_execution(n, res, data);
+        return traversal_ast(n->next,res, data);
     }
-    return traversal_ast(n->children, res, f_tab);
+    return traversal_ast(n->children, res, data);
 }
 
-int execution_ast(struct node *n, struct f_tab **f_tab)
+int execution_ast(struct node *n, struct stored_data *data)
 {
     /*struct tab_a *tab = calloc(1, sizeof(struct tab_a));
       tab->capacity = 10;
@@ -343,5 +342,5 @@ int execution_ast(struct node *n, struct f_tab **f_tab)
      * capacity);
      tab->assignment = assignment;*/
     int r = 0;
-    return traversal_ast(n, &r, f_tab);//call with tab;
+    return traversal_ast(n, &r, data);//call with tab;
 }

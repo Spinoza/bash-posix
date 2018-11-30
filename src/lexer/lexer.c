@@ -114,7 +114,9 @@ void print_enum(enum type type)
         case 31:
                 printf("FUNCTION");
                 break;
-
+        case 32:
+                printf("EXPAND_W");
+                break;
     }
 }
 void print_list(struct linked_list *l_list)
@@ -188,6 +190,7 @@ int check_specials(char *string) //checks for & and ;
     for (int i = 0; *(string + i); i++)
     {
         if (*(string + i) == ';'
+                || *(string + i) == '='
                 || *(string + i) == '('
                 || *(string + i) == ')'
                 || *(string + i) == '{'
@@ -200,62 +203,23 @@ int check_specials(char *string) //checks for & and ;
     }
     return -1;
 }
-enum type check_word(char *string)
+
+void check_word(struct token *new, char *string)
 {
+    if (string[0] == '$')
+    {
+        new->type = EXPAND_W;
+        return;
+    }
     for (int i = 1; *(string + i); i++)
     {
         if (*(string + i) == '=')
-            return ASSIGNMENT_W;
+            new->type = ASSIGNMENT_W;
         if (*(string + i) == '<' || *(string + i) == '>')
-            return IONUMBER;
+            new->type = IONUMBER;
     }
-    return WORD;
+    new->type = WORD;
 }
-/*
-   enum type check_ionumber(char *string)
-   {
-   int b = 0;
-   int i = 0;
-   while (*(string + i) >= '0' && *(string +i) <= '9')
-   i++;
-   if (*(string + i) == '<' || *(string + i) == '>')
-   {
-
-   }
-   for (int i = 0; *(string + i); i++)
-   {
-   if (isanumber(*(string + i)))
-   b++;
-   else
-   {
-   if (b)
-   {
-   if (isaredirection(*(string + i)))
-   return IONUMBER;
-   }
-   }
-   }
-   return WORD;
-   }
-
-   int pos_redirection(char *string)
-   {
-   for (int i = 0; *(string + i); i++)
-   {
-   if (*(string + i) == '<' || *(string + i) == '>')
-   return i;
-   }
-   return 0;
-   }*/
-/*
-   void split_redirection(struct token *new, char *string,
-   struct linked_list *l_list, int index)
-   {
-   int len = strlen(string);
-   new->name = malloc(sizeof(char)
-   return;
-   }*/
-
 
 int check_list(struct token *new, char *string, char **list)
 {
@@ -281,51 +245,6 @@ int check_list(struct token *new, char *string, char **list)
         return 1;
     }
     return 0;
-}
-void split_ampersand(struct linked_list *l_list)
-{
-    struct token *ampersand = token_init();
-    ampersand->type = AND;
-    ampersand->name = calloc(5, sizeof(char));
-    memcpy(ampersand->name, "&", 4);
-    add(l_list,ampersand);
-    return;
-}
-
-void split_semicolon(struct linked_list *l_list)
-{
-    struct token *semicolon = token_init();
-    semicolon->type = SEMICOLON;
-    semicolon->name = calloc(20, sizeof(char));
-    memcpy(semicolon->name, ";", 10);
-    add(l_list,semicolon);
-    return;
-}
-
-void split_parenthesis(struct linked_list *l_list, int index_sc, char *string)
-{
-    struct token *parenthesis = token_init();
-    parenthesis->name = calloc(2, sizeof(char));
-    parenthesis->name[0] = string[index_sc];
-    if (parenthesis->name[0] == '(')
-        parenthesis->type = OPEN_PAR;
-    else
-        parenthesis->type = CLOSE_PAR;
-    add(l_list,parenthesis);
-    return;
-}
-
-void split_bracket(struct linked_list *l_list, int index_sc, char *string)
-{
-    struct token *bracket = token_init();
-    bracket->name = calloc(2, sizeof(char));
-    bracket->name[0] = string[index_sc];
-    if (bracket->name[0] == '{')
-        bracket->type = OPEN_BRA;
-    else
-        bracket->type = CLOSE_BRA;
-    add(l_list, bracket);
-    return;
 }
 
 void splitted_tokens(struct token *new, char c, char **list)
@@ -378,11 +297,11 @@ void read_string(struct token *new, char *string, char **list,
     {
         struct token *next = token_init();
         if (split_tokens(new,string,l_list,index_sc, list))
-            new->type = check_word(string);
+            check_word(new, string);
         read_string(next, string + index_sc + 1,list,l_list);
         return;
     }
-    new->type = check_word(string);
+    check_word(new, string); //Set the type of the token
     int string_len = strlen(string) + 1;
     new->name = calloc(sizeof(char), string_len);
     memcpy(new->name, string, string_len);
@@ -477,15 +396,15 @@ struct linked_list *lexer (char *input[], int argc, int begin)
     struct linked_list *l_list = init_link();
     for (int i = begin; i < argc; i++)
     {
-        if (string[0] == '#') //Currently in a comment
+        if (input[i][0] == '#') //Currently in a comment
         {
-            while (string)
+            while (i < argc)
             {
-                if (!strcmp(string, "\n"))
+                if (!strcmp(input[i], "\n"))
                     break;
-                string = strtok(NULL," ");
+                i++;
             }
-            if(!string)
+            if(i < argc)
                 break;
         }
         struct token *new = token_init();

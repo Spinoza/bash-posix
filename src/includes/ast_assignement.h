@@ -14,7 +14,7 @@ struct assignment
     char *name; /**< The name of the variable*/
     char *value;/**< The value of the variable*/
     struct assignment *next;
-}
+};
 
 /**
   *\struct tab_a
@@ -26,7 +26,7 @@ struct assignment
 struct tab_a
 {
     struct assignment **assignment_list; /*< A table containing every assignment structure.*/
-    //to implemen0t with hashmap
+    //to implement with hashmap
 };
 
 #endif /* ! ASSIGNEMENT_AST_H */

@@ -2,6 +2,7 @@
 #define EXECUTION_AST_H
 
 #include "ast.h"
+#include "ast_assignement.h"
 
 /**
   *\file execution_ast.h
@@ -50,6 +51,7 @@ struct function
   *This structure is basically a matrix containing every function structure created in
   *execution.
   */
+
 struct f_tab
 {
     size_t nb; /**< The number of functions in the matrix.*/
@@ -57,6 +59,12 @@ struct f_tab
     struct function **f;/**< The matrix containing every function structure.*/
 };
 
+struct stored_data
+{
+    struct f_tab *f_tab;
+    //struct assigned_words *var;
+    //struct builtins *builtins;
+};
 /**
   *\fn int execution_ast(struct node *n, struct f_tab **f_tab)
   *\brief starts the execution of the tree, from node *n.
@@ -64,7 +72,7 @@ struct f_tab
   *f_tab is the matrix of functions encountered.
   *\return an int representing the return value of the exeuction.
   */
-int execution_ast(struct node *n, struct f_tab **f_tab);
+int execution_ast(struct node *n, struct stored_data *data);
 
 /**
   *\fn int traversal_ast(struct node *n, int *res, struct f_tab **f_tab)
@@ -74,5 +82,5 @@ int execution_ast(struct node *n, struct f_tab **f_tab);
   *res is the return value, f_tab is the matrix of functions encountered.
   *\return an int representing the return value of the exeuction.
   */
-int traversal_ast(struct node *n, int *res, struct f_tab **f_tab);
+int traversal_ast(struct node *n, int *res, struct stored_data *data);
 #endif /* ! EXECUTION_AST_H */
