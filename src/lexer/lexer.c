@@ -190,7 +190,6 @@ int check_specials(char *string) //checks for & and ;
     for (int i = 0; *(string + i); i++)
     {
         if (*(string + i) == ';'
-                || *(string + i) == '='
                 || *(string + i) == '('
                 || *(string + i) == ')'
                 || *(string + i) == '{'
@@ -206,17 +205,26 @@ int check_specials(char *string) //checks for & and ;
 
 void check_word(struct token *new, char *string)
 {
+    int string_len = strlen(string) + 1;
+    new->name = calloc(sizeof(char), string_len);
+    memcpy(new->name, string, string_len);
     if (string[0] == '$')
     {
         new->type = EXPAND_W;
         return;
     }
-    for (int i = 1; *(string + i); i++)
+    for (int i = 0; *(string + i); i++)
     {
-        if (*(string + i) == '=')
+        if (*(string + i) == '=' && i != 0)
+        {
             new->type = ASSIGNMENT_W;
+            return;
+        }
         if (*(string + i) == '<' || *(string + i) == '>')
+        {
             new->type = IONUMBER;
+            return;
+        }
     }
     new->type = WORD;
 }
@@ -235,6 +243,7 @@ int check_list(struct token *new, char *string, char **list)
                 new->name = calloc(20, sizeof(char));
             new->name = memcpy(new->name, list[i], len);
             return 1;
+
         }
     }
     if (!strcmp(string, "\n"))
@@ -255,9 +264,9 @@ void splitted_tokens(struct token *new, char c, char **list)
     free(string);
 }
 
-/*
- * returns 1 if the name has already been set i.e the string is a special token
-*/
+/**
+  * returns 1 if the name has already been set i.e the string is a special token
+  */
 
 int split_tokens(struct token *new, char *string, struct linked_list *l_list,
         int index_sc, char **list)
@@ -270,8 +279,8 @@ int split_tokens(struct token *new, char *string, struct linked_list *l_list,
     else
     {
         struct token *to_add = token_init();
-        splitted_tokens(to_add, string[index_sc], list);
         add(l_list, to_add);
+        splitted_tokens(to_add, string[index_sc], list);
     }
     string[index_sc] = '\0';
     if (check_list(new,string,list))
@@ -296,15 +305,13 @@ void read_string(struct token *new, char *string, char **list,
     if (index_sc != -1)
     {
         struct token *next = token_init();
-        if (split_tokens(new,string,l_list,index_sc, list))
+        int is_word = split_tokens(new, string, l_list, index_sc, list);
+        if (is_word) //token type was not assigned
             check_word(new, string);
         read_string(next, string + index_sc + 1,list,l_list);
         return;
     }
     check_word(new, string); //Set the type of the token
-    int string_len = strlen(string) + 1;
-    new->name = calloc(sizeof(char), string_len);
-    memcpy(new->name, string, string_len);
 }
 
 int type_oper(struct token *new)
