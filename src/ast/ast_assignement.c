@@ -38,64 +38,74 @@ static int hash_function(char *string)
 
     float r = 0;
     int i = 0;
-    for ( ; *(string + i) && *(string + i) != '='; i++)
+    for ( ; *(string + i); i++)
         r+= ((double)string[i] * TETA );
     return (int)(r / i) % HASH_TAB_SIZE;
 }
 
-static struct assignment *to_assign(char *string)
+static struct assignment *to_assign(char *name, char *value)
 {
     struct assignment *new = calloc(1, sizeof(struct assignment));
-    int i = 0;
-    int len = strlen(string);
-    for (; *(string + i) && *(string + i) != '='; i++)
-        continue;
-    new->name = malloc(sizeof(char) * (i + 1));
-    new->name = memcpy(new->name, string, i);
-    new->name[i] = '\0';
-    new->value = malloc(sizeof(char) * (len - i + 1));
-    new->value = memcpy(new->value, string + i + 1, len - i);
-    new->value[len - i] = '\0';
+    new->name = name;
+    new->value = value;
     return new;
 }
 
-static int same_name(char *a, char *b)
-{
-    if (!b)
-        return 0;
-    int i = 0;
-    for ( ;  a[i] && a[i] != '=' && b[i] && a[i] == b[i]; i++)
-        continue;
-    if (!b[i] && a[i] == '=')
-        return 1;
-    return 0;
-}
-
-static int already_exists(char *string, struct assignment **a_tab, int pos)
+static int already_exists(char *name, char *value,
+        struct assignment **a_tab, int pos)
 {
     struct assignment *a = a_tab[pos];
     for (; a; a = a->next)
     {
-        if (same_name(string, a->name))
+        if (!a->name)
+            return 0;
+        if (!strcmp(name, a->name))
         {
             free(a->value);
-            int i = 0;
-            for (; *(string + i) && *(string + i) != '='; i++);
-            size_t value_len = strlen(string + i) + 1;
-            a->value = calloc(sizeof(char), value_len);
-            a->value = memcpy(a->value, string + i + 1, value_len);
+            a->value = value;
             return 1;
         }
     }
     return 0;
 }
-void add_assignment(char *string,
-        struct assignment **a_tab)
+
+void split_string(char *name, char *value, char *string)
 {
-    int pos = hash_function(string);
-    if (already_exists(string, a_tab, pos))
+    int len = strlen(string);
+    int i = 0;
+    for (; *(string + i) && *(string + i) != '='; i++);
+    memcpy(name, string, i);
+    memcpy(value, string + i + 1, len - i);
+}
+void add_assignment_split(char *name, char *value, struct assignment **a_tab)
+{
+    int pos = hash_function(name);
+    if (already_exists(name, value, a_tab, pos))
         return;
-    struct assignment *new = to_assign(string);
+    struct assignment *new = to_assign(name, value);
+    struct assignment *a = a_tab[pos];
+    if (a->name == NULL)
+    {
+        free(a);
+        a_tab[pos] = new;
+        return;
+    }
+    for (; a && a->next; a = a ->next)
+        continue;
+    a->next = new;
+    return;
+}
+
+void add_assignment(char *string, struct assignment **a_tab)
+{
+    int len = strlen(string);
+    char *name = calloc(len, sizeof(char));
+    char *value = calloc(len, sizeof(char));
+    split_string(name, value, string);
+    int pos = hash_function(name);
+    if (already_exists(name, value, a_tab, pos))
+        return;
+    struct assignment *new = to_assign(name, value);
     struct assignment *a = a_tab[pos];
     if (a->name == NULL)
     {

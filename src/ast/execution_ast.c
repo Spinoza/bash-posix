@@ -183,18 +183,16 @@ int pipe_aux(char **command, struct node *n, int fd[2], struct stored_data *data
     {
         waitpid(pid,&status,0);
         close(fd_next[1]);
+        if (oper_node && oper_node->tokentype == PIPE)
+        {
+            struct node *next_oper_node = get_oper_node(oper_node->next);
+            char **command_next = to_execute(oper_node->next, next_oper_node, data);
+            status = pipe_aux(command_next, oper_node->next, fd_next, data);
+        }
         if (status == 127)
             fprintf(stderr,"42sh : %s : \
                     command not found.\n", command[0]);
     }
-
-    if (oper_node && oper_node->tokentype == PIPE)
-    {
-        struct node *next_oper_node = get_oper_node(oper_node->next);
-        char **command_next = to_execute(oper_node->next, next_oper_node, data);
-        status = pipe_aux(command_next, oper_node->next, fd_next, data);
-    }
-
     free_command(command);
     return status;
 }
@@ -259,12 +257,8 @@ struct node *if_execution(struct node *n, int *res, struct stored_data *data)
 
 int for_execution(struct node *n, int *res, struct stored_data *data)
 {
-    struct node *cond = n->children->children;
-    for ( ; cond; cond = cond->next)
-    {
-        if (cond->type == A_IN)
-            break;
-    }
+    struct node *elem = n->children->children;
+    struct node *cond = elem->next;
     if (cond)
     {
         cond = cond->next;
@@ -272,6 +266,7 @@ int for_execution(struct node *n, int *res, struct stored_data *data)
         for ( ; cond && (cond->tokentype != SEMICOLON
                     && cond->tokentype != AND); cond = cond->next)
         {
+            add_assignment_split(elem->instr, cond->instr, data->var_tab);
             *res = traversal_ast(do_node, res, data);
         }
     }

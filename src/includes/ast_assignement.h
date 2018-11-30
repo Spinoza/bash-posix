@@ -20,6 +20,8 @@ void free_assignments(struct assignment **tab);
 
 struct assignment **init_assignment(void);
 
+void add_assignment_split(char *name, char *value, struct assignment **a_tab);
+
 void add_assignment(char *string, struct assignment **a_tab);
 
 char *get_assign(char *name, struct assignment **a_tab);
