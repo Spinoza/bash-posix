@@ -13,20 +13,7 @@ struct assignment
 {
     char *name; /**< The name of the variable*/
     char *value;/**< The value of the variable*/
-    struct assignment *next;
-};
-
-/**
-  *\struct tab_a
-  *\brief structure aiming to store every assignment word encountered.
-  *
-  *This struct is basically a matrix containing each assignment word encountered,
-  *stored as an assignment structure.
-  */
-struct tab_a
-{
-    struct assignment **assignment_list; /*< A table containing every assignment structure.*/
-    //to implement with hashmap
+    struct assignment *next;/**< The next assignement*/
 };
 
 #endif /* ! ASSIGNEMENT_AST_H */
