@@ -33,7 +33,7 @@ static struct nL *g_redirection(struct nL *tok)
         tok = tok->next;
         if (!tok)
             return NULL;
-        if (tok->elem->type == WORD)
+        if (tok->elem->type == WORD || tok->elem->type == EXPAND_W)
             return tok;
         return NULL;
     }
@@ -68,7 +68,7 @@ static struct nL *g_element(struct nL *tok)
     if (conf == 1 || conf == 2)
         return NULL;
 
-    if (tok->elem->type == WORD)
+    if (tok->elem->type == WORD || tok->elem->type == EXPAND_W)
         return tok;
 
     return g_redirection(tok);
@@ -85,7 +85,7 @@ static struct nL *g_prefix(struct nL *tok)
 
 struct nL *g_funcdec(struct nL *tok)
 {
-    if (tok->elem->type != WORD)
+    if (tok->elem->type != WORD || tok->elem->type == EXPAND_W)
         return NULL;
 
     if (!strcmp(tok->elem->name, "function"))
@@ -95,7 +95,7 @@ struct nL *g_funcdec(struct nL *tok)
             return NULL;
     }
 
-    if (tok->elem->type != WORD)
+    if (tok->elem->type != WORD || tok->elem->type == EXPAND_W)
         return NULL;
 
     tok = tok->next;
@@ -115,7 +115,7 @@ struct nL *g_funcdec(struct nL *tok)
     struct nL *save = tok;
     while (!tok || tok->elem->type == ENDOF)
     {
-        if(!tok)
+        if (!tok)
         {
             save->prev->next = handletty();
             save->prev->next->prev = save->prev;
@@ -192,7 +192,7 @@ struct nL *g_compoundlist(struct nL *tok)
     struct nL *save = tok;
     while (!tok || tok->elem->type == ENDOF)
     {
-        if(!tok)
+        if (!tok)
         {
             save->prev->next = handletty();
             save->prev->next->prev = save->prev;
@@ -221,7 +221,7 @@ struct nL *g_compoundlist(struct nL *tok)
         tok = tok->next;
         while (!tok || tok->elem->type == ENDOF)
         {
-            if(!tok)
+            if (!tok)
             {
                 stock->prev->next = handletty();
                 stock->prev->next->prev = stock->prev;
@@ -258,7 +258,7 @@ struct nL *g_compoundlist(struct nL *tok)
         tok = tok->next;
         while (!tok || tok->elem->type == ENDOF)
         {
-            if(!tok)
+            if (!tok)
             {
                 save->prev->next = handletty();
                 save->prev->next->prev = save->prev;
@@ -278,83 +278,83 @@ struct nL *g_compoundlist(struct nL *tok)
 struct nL *g_shellcommand(struct nL *tok)
 {
     struct nL *new = tok;
-    if(tok->elem->type == OPEN_BRA)
+    if (tok->elem->type == OPEN_BRA)
     {
         new =new->next;
-        if(!new)
+        if (!new)
             return NULL;
         new = g_compoundlist(new);
-        if(new)
+        if (new)
         {
             new = new->next;
-            if(!new)
+            if (!new)
                 return NULL;
-            if(new->elem->type == CLOSE_BRA)
+            if (new->elem->type == CLOSE_BRA)
                 return new;
         }
     }
 
     new = tok;
-    if(tok->elem->type == OPEN_PAR)
+    if (tok->elem->type == OPEN_PAR)
     {
         new =new->next;
-        if(!new)
+        if (!new)
             return NULL;
         new = g_compoundlist(new);
-        if(new)
+        if (new)
         {
             new = new->next;
-            if(!new)
+            if (!new)
                 return NULL;
-            if(new->elem->type == CLOSE_PAR)
+            if (new->elem->type == CLOSE_PAR)
                 return new;
         }
     }
 
-    new = g_rulefor(tok);
-    if(new)
+    new = g_rulefor (tok);
+    if (new)
         return new;
 
-    new = g_rulewhile(tok);
-    if(new)
+    new = g_rulewhile (tok);
+    if (new)
         return new;
 
     new = g_ruleuntil(tok);
-    if(new)
+    if (new)
         return new;
 
     new = g_rulecase(tok);
-    if(new)
+    if (new)
         return new;
 
-    return g_ruleif(tok);
+    return g_ruleif (tok);
 
 }
 
 struct nL *g_command(struct nL *tok)
 {
     struct nL *new = g_funcdec(tok);
-    if(new)
+    if (new)
     {
-        while(1)
+        while (1)
         {
             tok = new;
             new = g_redirection(new->next);
-            if(!new)
+            if (!new)
                 return tok;
         }
     }
     new = g_simplecommand(tok);
-    if(new)
+    if (new)
         return new;
     new = g_shellcommand(tok);
-    if(new)
+    if (new)
     {
-        while(1)
+        while (1)
         {
             tok = new;
             new = g_redirection(new->next);
-            if(!new)
+            if (!new)
                 return tok;
         }
     }

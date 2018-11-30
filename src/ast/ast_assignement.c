@@ -54,7 +54,7 @@ static struct assignment *to_assign(char *string)
     new->name = memcpy(new->name, string, i);
     new->name[i] = '\0';
     new->value = malloc(sizeof(char) * (len - i + 1));
-    new->value = memcpy(new->value, string + i, len - i);
+    new->value = memcpy(new->value, string + i + 1, len - i);
     new->value[len - i] = '\0';
     return new;
 }
@@ -79,11 +79,11 @@ static int already_exists(char *string, struct assignment **a_tab, int pos)
         if (same_name(string, a->name))
         {
             free(a->value);
-            for (int i = 0; *(string + i) && *(string + i) != '='; i++)
-                continue;
-            size_t value_len = strlen(string) + 1;
+            int i = 0;
+            for (; *(string + i) && *(string + i) != '='; i++);
+            size_t value_len = strlen(string + i) + 1;
             a->value = calloc(sizeof(char), value_len);
-            a->value = memcpy(a->value, string, value_len);
+            a->value = memcpy(a->value, string + i + 1, value_len);
             return 1;
         }
     }
@@ -115,6 +115,8 @@ char *get_assign(char *name, struct assignment **a_tab)
     struct assignment *a = a_tab[pos];
     for ( ; a ; a = a ->next)
     {
+        if (!a->name)
+            return "";
         if (!strcmp(name, a->name))
             return a->value;
     }

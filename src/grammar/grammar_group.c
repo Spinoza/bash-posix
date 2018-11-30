@@ -83,7 +83,7 @@ struct nL *g_caseclause(struct nL *tok)
 
     struct nL *save = tok;
     tok = tok->next;
-    if(!tok)
+    if (!tok)
         return NULL;
     while (tok->elem->type == TWO_SEMIC)
     {
@@ -127,7 +127,7 @@ struct nL *g_caseclause(struct nL *tok)
 
     while (!tok || (tok->elem->type == ENDOF))
     {
-        if(!tok)
+        if (!tok)
         {
             save->prev->next = handletty();
             save->prev->next->prev = save->prev;
@@ -171,14 +171,14 @@ struct nL *g_caseitem(struct nL *tok)
         if (!tok)
             return NULL;
     }
-    if(tok->elem->type != WORD)
+    if (tok->elem->type != WORD || tok->elem->type == EXPAND_W)
     {
         return NULL;
     }
 
     struct nL *save = tok;
     tok = tok->next;
-    if(!tok)
+    if (!tok)
         return NULL;
 
     while (tok->elem->type == PIPE)
@@ -188,14 +188,14 @@ struct nL *g_caseitem(struct nL *tok)
             return tok;
 
         int conf = is_conform(tok);
-        if (tok->elem->type != WORD || conf != 0)
+        if (tok->elem->type != WORD || tok->elem->type == EXPAND_W || conf != 0)
         {
             tok = save;
             break;
         }
         save = tok;
         tok = tok->next;
-        if(!tok)
+        if (!tok)
             return NULL;
     }
     tok = save;
@@ -211,7 +211,7 @@ struct nL *g_caseitem(struct nL *tok)
     while (!tok ||(tok->elem->type == ENDOF &&
                   !strcmp(tok->elem->name, "\n")))
     {
-        if(!tok)
+        if (!tok)
         {
             save->prev->next = handletty();
             save->prev->next->prev = save->prev;

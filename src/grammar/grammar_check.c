@@ -36,7 +36,7 @@ struct nL *g_pipeline(struct nL *tok)
             tok = tok->next;
             while (!tok || tok->elem->type == ENDOF)
             {
-                if(!tok)
+                if (!tok)
                 {
                     stock->prev->next = handletty();
                     stock->prev->next->prev = stock->prev;
@@ -79,7 +79,7 @@ struct nL *g_andor(struct nL *tok)
             tok = tok->next;
             while (!tok || tok->elem->type == ENDOF)
             {
-                if(!tok)
+                if (!tok)
                 {
                     stock->prev->next = handletty();
                     stock->prev->next->prev = stock->prev;

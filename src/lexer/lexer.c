@@ -207,12 +207,13 @@ void check_word(struct token *new, char *string)
 {
     int string_len = strlen(string) + 1;
     new->name = calloc(sizeof(char), string_len);
-    memcpy(new->name, string, string_len);
     if (string[0] == '$')
     {
         new->type = EXPAND_W;
+        memcpy(new->name, string + 1, string_len - 1);
         return;
     }
+    memcpy(new->name, string, string_len);
     for (int i = 0; *(string + i); i++)
     {
         if (*(string + i) == '=' && i != 0)

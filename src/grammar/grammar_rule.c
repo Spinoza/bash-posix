@@ -23,38 +23,38 @@ static int is_conform(struct nL *tok)
     return 0;
 }
 
-struct nL *g_ruleif(struct nL *tok)
+struct nL *g_ruleif (struct nL *tok)
 {
-    if(tok->elem->type != IF)
+    if (tok->elem->type != IF)
         return NULL;
     tok = tok->next;
-    if(!tok)
+    if (!tok)
         return NULL;
     tok = g_compoundlist(tok);
-    if(!tok)
+    if (!tok)
         return NULL;
     tok = tok->next;
-    if(!tok)
+    if (!tok)
         return NULL;
-    if(tok->elem->type != THEN)
+    if (tok->elem->type != THEN)
         return NULL;
     tok = tok->next;
-    if(!tok)
+    if (!tok)
         return NULL;
     tok = g_compoundlist(tok);
-    if(!tok)
+    if (!tok)
         return NULL;
     tok = tok->next;
-    if(!tok)
+    if (!tok)
         return NULL;
     struct nL *save = g_elseclause(tok);
-    if(save)
+    if (save)
     {
         tok = save->next;
-        if(!tok)
+        if (!tok)
             return NULL;
     }
-    if(tok->elem->type == FI)
+    if (tok->elem->type == FI)
         return tok;
     return NULL;
 }
@@ -70,7 +70,8 @@ struct nL *g_rulecase(struct nL *tok)
         return NULL;
 
     int conf = is_conform(tok);
-    if (tok->elem->type != WORD || conf == 1 || conf == 2)
+    if (tok->elem->type != WORD || tok->elem->type == EXPAND_W || conf == 1 || conf == 2)
+
         return NULL;
     struct nL *save = tok;
     tok = tok->next;
@@ -113,7 +114,7 @@ struct nL *g_rulecase(struct nL *tok)
     tok = (new ? new : tok);
 
     tok = tok->next;
-    if(!tok)
+    if (!tok)
         return NULL;
 
     return tok->elem->type == ESAC ? tok : NULL;
@@ -140,7 +141,7 @@ struct nL *g_ruleuntil(struct nL *tok)
     return tok;
 }
 
-struct nL *g_rulewhile(struct nL *tok)
+struct nL *g_rulewhile (struct nL *tok)
 {
     if (tok->elem->type != WHILE)
         return NULL;
@@ -161,31 +162,32 @@ struct nL *g_rulewhile(struct nL *tok)
 }
 
 
-struct nL *g_rulefor(struct nL *tok)
+struct nL *g_rulefor (struct nL *tok)
 {
-    if(tok->elem->type != FOR)
+    if (tok->elem->type != FOR)
         return NULL;
     tok = tok->next;
-    if(!tok)
+    if (!tok)
         return NULL;
-    if((tok->elem->type != WORD)||(is_conform(tok)!= 0))
+    if (!(tok->elem->type == WORD && tok->elem->type == EXPAND_W)
+        ||(is_conform(tok)!= 0))
         return NULL;
     tok = tok->next;
-    if(!tok)
+    if (!tok)
         return NULL;
 
-    if(tok->elem->type == SEMICOLON)
+    if (tok->elem->type == SEMICOLON)
     {
         tok = tok->next;
-        if(!tok)
+        if (!tok)
             return NULL;
     }
     else
     {
         struct nL *save = tok;
-        while(!tok || tok->elem->type == ENDOF)
+        while (!tok || tok->elem->type == ENDOF)
         {
-            if(!tok)
+            if (!tok)
             {
                 save->prev->next = handletty();
                 save->prev->next->prev = save->prev;
@@ -197,18 +199,19 @@ struct nL *g_rulefor(struct nL *tok)
             save = tok;
             tok = tok->next;
         }
-        if(tok->elem->type == IN)
+        if (tok->elem->type == IN)
         {
             tok = tok->next;
-            if(!tok)
+            if (!tok)
                 return NULL;
-            while((tok->elem->type == WORD)&&(is_conform(tok) == 0))
+            while ((tok->elem->type == WORD || tok->elem->type == EXPAND_W)
+                &&(is_conform(tok) == 0))
             {
                 tok = tok->next;
-                if(!tok)
+                if (!tok)
                     return NULL;
             }
-            if((tok->elem->type == SEMICOLON)||(tok->elem->type == ENDOF))
+            if ((tok->elem->type == SEMICOLON)||(tok->elem->type == ENDOF))
             {
                 tok = tok->next;
                 if (!tok)
@@ -225,9 +228,9 @@ struct nL *g_rulefor(struct nL *tok)
         }
     }
     struct nL *stock = tok;
-    while(!tok || tok->elem->type == ENDOF)
+    while (!tok || tok->elem->type == ENDOF)
     {
-        if(!tok)
+        if (!tok)
         {
             stock->prev->next = handletty();
             stock->prev->next->prev = stock->prev;
