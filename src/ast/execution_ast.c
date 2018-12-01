@@ -40,6 +40,8 @@ struct stored_data *stored_data_init(void)
     new->f_tab = NULL;
     new->var_tab = init_assignment();
     new->builtins = init_builts();
+    add_assignment_split("IFS"," ", new->var_tab);
+    add_assignment_split("#","0", new->var_tab);
     return new;
 }
 
@@ -213,6 +215,9 @@ void get_function_param(struct node *child, struct node *oper_node
     result = realloc(result, (i + 1) * sizeof(char *));
     result[i] = NULL;
     data->nbparam = i;
+    char *p = inttochar(i);
+    add_assignment_split("#", p, data->var_tab);
+    free(p);
     data->param = result;
 }
 

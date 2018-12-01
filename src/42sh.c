@@ -271,6 +271,6 @@ int main(int argc, char *argv[])
     free(global.options);
     free_list(tokens);
     free_node(ast);
-    free_data(global.data);
+    //free_data(global.data);
     return res;
 }
