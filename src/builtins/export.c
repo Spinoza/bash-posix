@@ -1,7 +1,9 @@
 #include "builtins.h"
+#include <string.h>
 
 int my_export(int number, char *args[], ...)
 {
+    number = number;
     int i = 1;
     int p = 0;
     int n = 0;
@@ -34,6 +36,9 @@ int my_export(int number, char *args[], ...)
     if(file == 0)
     {
         //FIXME: PRINT EXPORT TABLE
+        if(n && p)
+            return 0;
         return 0;
     }
+    return 0;
 }
