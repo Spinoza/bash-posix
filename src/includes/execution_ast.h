@@ -62,10 +62,11 @@ struct f_tab
 
 struct stored_data
 {
-    struct f_tab *f_tab;
-    struct assignment **var_tab;
     char **param;
     int nbparam;
+    struct f_tab *f_tab;
+    struct assignment **var_tab;
+    struct assignment **export_tab;
     //struct builtins *builtins;
 };
 

@@ -80,7 +80,6 @@ static size_t fulllen(struct linked_list *tokens)
         len += mstrlen(start->elem->name) + 2;
         start = start->next;
     }
-
     return len;
 }
 
@@ -188,7 +187,7 @@ void free_data(struct stored_data *data)
     free(data);
 }
 
-struct stored_data *stored_data_init(void)
+static struct stored_data *stored_data_init(void)
 {
     struct stored_data *new = malloc(sizeof(struct stored_data));
     new->f_tab = NULL;

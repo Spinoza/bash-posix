@@ -23,21 +23,30 @@ char *get_param(char *name, struct stored_data *data)
         if (nb < data->nbparam)
             return data->param[nb];
     }
-    return "";
+    char *empty = calloc(sizeof(char), 2);
+    empty[0] = '\0';
+    return empty;
 }
 
 char *get_assign_var(char *name, struct assignment **a_tab)
 {
     int pos = hash_function(name);
     struct assignment *a = a_tab[pos];
+    char *empty = calloc(sizeof(char), 2);
+    empty[0] = '\0';
     for ( ; a ; a = a ->next)
     {
         if (!a->name)
-            return "";
+        {
+            return empty;
+        }
         if (!strcmp(name, a->name))
+        {
+            free(empty);
             return a->value;
+        }
     }
-    return "";
+    return empty;
 }
 
 char *get_assign(char *name, struct stored_data *data)

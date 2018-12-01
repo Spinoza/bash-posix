@@ -60,17 +60,23 @@ void function_stored(struct node *n, struct stored_data *data)
     }
 }
 
-void copy_string(char *source, char *dest, int *start_index, int *capacity)
+int copy_string(char *source, char **dest, int start_index, int *capacity)
 {
-    for (int j = 0; *(source + j); j++, *start_index++)
+    int len = strlen(source);
+    if (start_index + len >= *capacity)
     {
-        if (*start_index >= *capacity)
+        *capacity += 2 * len;
+        void *tmp = realloc(*dest, sizeof(char) * *capacity);
+        if (tmp)
+            *dest = tmp;
+        else
         {
-            *capacity *=2;
-            dest = realloc(dest, sizeof(char) * *capacity);
+            free(dest);
+            return 0;
         }
-        dest[*start_index] = source[j];
     }
+    memcpy(*dest + start_index, source, len);
+    return start_index + len;
 }
 
 /*
@@ -81,9 +87,10 @@ void copy_string(char *source, char *dest, int *start_index, int *capacity)
 
 char *set_string(char *instr, struct node *node, struct stored_data *data)
 {
-    int capacity = strlen(instr);
-    int len = capacity;
-    char *string = malloc(capacity * sizeof(char));
+    int len = strlen(instr);
+    int *capacity = malloc(sizeof(int));;
+    *capacity = len;
+    char *string = calloc(*capacity, sizeof(char));
     int after_dollar = 0;
     if (node->tokentype == EXPAND_W)
         after_dollar = 1;
@@ -95,10 +102,10 @@ char *set_string(char *instr, struct node *node, struct stored_data *data)
             after_dollar = 1;
             continue;
         }
-        if (k >= capacity)
+        if (k + 1 >= *capacity)
         {
-            capacity *=2;
-            string = realloc(string, sizeof(char) * capacity);
+            *capacity *=2;
+            string = realloc(string, sizeof(char) * *capacity);
         }
         if (after_dollar)
         {
@@ -108,19 +115,19 @@ char *set_string(char *instr, struct node *node, struct stored_data *data)
             {
                 name = calloc(2, sizeof(char));
                 name[0] = instr[i];
-                assigned_value = get_assign(name, data->var_tab);
+                assigned_value = get_assign(name, data);
             }
             else
             {
                 name = calloc(len, sizeof(char));
-                for (int j = 0; *(instr + i+ j)
-                        && *(instr + i+ j) != '$'; j++)
-                    name[j] = instr[i+ j];
-                assigned_value = get_assign(name, data->var_tab);
+                for (int j = 0; *(instr + i) && *(instr + i) != '$';
+                        i++, j++)
+                    name[j] = instr[i];
+                i--;
+                assigned_value = get_assign(name, data);
             }
-            copy_string(assigned_value, string, &k, &capacity);
+            k = copy_string(assigned_value, &string, k, capacity);
             free(name);
-            free(assigned_value);
         }
         else
         {
@@ -128,23 +135,22 @@ char *set_string(char *instr, struct node *node, struct stored_data *data)
         }
         after_dollar = 0;
     }
+    string[k + 1] = '\0';
     return string;
 }
+
 char **to_execute(struct node *child, struct node *oper_node
         , struct stored_data *data)
 {
     struct node *iter = child;
-    size_t len = 0;
     char **result = calloc(1, sizeof(char *));
     int i = 0;
     char *instr = NULL;
     for (; iter && iter != oper_node; i++, iter = iter->next)
     {
         instr = set_string(iter->instr, iter, data);
-        len = strlen(instr) + 1;
         result = realloc(result, (i + 1) * sizeof(char *));
-        result[i] = calloc(len, sizeof(char));
-        memcpy(result[i], instr, len);
+        result[i] = instr;
     }
     result = realloc(result, (i + 1) * sizeof(char *));
     result[i] = NULL;
