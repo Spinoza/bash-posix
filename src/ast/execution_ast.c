@@ -84,6 +84,30 @@ char **to_execute(struct node *child, struct node *oper_node
     return result;
 }
 
+void get_function_param(struct node *child, struct node *oper_node
+        , struct stored_data *data)
+{
+    struct node *iter = child;
+    size_t len = 0;
+    char **result = calloc(1, sizeof(char *));
+    int i = 0;
+    char *instr = NULL;
+    for (; iter && iter != oper_node; i++, iter = iter->next)
+    {
+        if (iter->tokentype == EXPAND_W)
+            instr = get_assign(iter->instr, data->var_tab);
+        else
+            instr = iter->instr;
+        len = strlen(instr) + 1;
+        result = realloc(result, (i + 1) * sizeof(char *));
+        result[i] = calloc(len, sizeof(char));
+        memcpy(result[i], instr, len);
+    }
+    result = realloc(result, (i + 1) * sizeof(char *));
+    result[i] = NULL;
+    return result;
+}
+
 void free_command(char **string)
 {
     int i = 0;
