@@ -10,9 +10,9 @@ static void update_encount(enum type tokentype, int *encountered)
 
 static void print_aux(FILE *f, struct node *ast, int* encountered, int act)
 {
-    char *args[32] = { "IF", "THEN", "ELSE", "FI", "LOGICAND", "SEMI", "WHILE", "FOR",
+    char *args[33] = { "IF", "THEN", "ELSE", "FI", "LOGICAND", "SEMI", "WHILE", "FOR",
     "UNTIL", "CASE", "DO", "DONE", "WORD", "ASSIGNW", "ENDOF", "PIPE", "LOGOR", "AND",
-    "IN", "ESAC", "ELIF", "HERED", "IONUM", "COND", "ROOT", "REDIR", "OPENPAR", "CLOSEPAR", "OPENBRA", "CLOSEBRA", "DOUBLESEM", "FUNC" };
+    "IN", "ESAC", "ELIF", "HERED", "IONUM", "COND", "ROOT", "REDIR", "OPENPAR", "CLOSEPAR", "OPENBRA", "CLOSEBRA", "DOUBLESEM", "FUNC", "EXPANDW" };
     struct node *as = ast->children;
     while (as)
     {
