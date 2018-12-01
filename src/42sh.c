@@ -17,8 +17,11 @@
 #include "file_handle.h"
 #include "execution_ast.h"
 #include "err.h"
+#include "globals.h"
 #include <sys/types.h>
 #include <sys/wait.h>
+
+struct globv global;
 
 static size_t mstrlen (char * string)
 {
@@ -112,7 +115,7 @@ static char * from_tok_toS(struct linked_list *tokens)
     return final;
 }
 
-static int interactive_mode(struct option *options, struct stored_data *data)
+static int interactive_mode(struct globv global)
 {
     using_history();
     init_interact();
@@ -156,9 +159,9 @@ static int interactive_mode(struct option *options, struct stored_data *data)
                 free(listadd);
             }
             struct node *ast = build_ast(tokens);
-            if (options->ast_print == TRUE)
+            if (global.options->ast_print == TRUE)
                 print_ast(ast);
-            retcode = execution_ast(ast, data);
+            retcode = execution_ast(ast, global.data);
             free_node(ast);
             ast = NULL;
         }
@@ -167,39 +170,11 @@ static int interactive_mode(struct option *options, struct stored_data *data)
     return retcode;
 }
 
-void free_data(struct stored_data *data)
-{
-    if (!data)
-        return;
-    struct f_tab *f_tab = data->f_tab;
-    if (f_tab)
-    {
-        for (size_t i = 0;i < f_tab->nb; i++)
-        {
-            free_node_copy(f_tab->f[i]->function_start);
-            free(f_tab->f[i]->name);
-            free(f_tab->f[i]);
-        }
-        free(f_tab->f);
-        free(f_tab);
-    }
-    free_assignments(data->var_tab);
-    free(data);
-}
-
-static struct stored_data *stored_data_init(void)
-{
-    struct stored_data *new = malloc(sizeof(struct stored_data));
-    new->f_tab = NULL;
-    new->var_tab = init_assignment();
-    return new;
-}
-
 int main(int argc, char *argv[])
 {
+    init_globv();
     char *home = getenv("HOME");
     char *path = calloc(mstrlen(home) + 15, sizeof(char));
-    struct stored_data *data = stored_data_init();
     strcpy(path, home);
     strcat(path, "/.42sh_history");
     FILE *history = fopen(path, "r+");
@@ -211,23 +186,22 @@ int main(int argc, char *argv[])
         fclose(history);
     free(path);
     path = NULL;
-    struct option *options = option_init();
-    if (!options)
+    if (!global.options)
         errx(1, "Parsing error: memory full.");
-    int index = options_parser(argc, argv, options);
-    if (options->version == TRUE)
+    int index = options_parser(argc, argv, global.options);
+    if (global.options->version == TRUE)
     {
         printf("Version 0.5\n");
-        free(options);
+        free_glob();
         return 0;
     }
-    if (options->norc == FALS)
+    if (global.options->norc == FALS)
     {
         norc_opt();
     }
-    if (index >= argc && options->c == FALS && isatty(STDIN_FILENO))
+    if (index >= argc && global.options->c == FALS && isatty(STDIN_FILENO))
     {
-        return interactive_mode(options, data);
+        return interactive_mode(global);
     }
     struct linked_list *tokens;
     if (!isatty(STDIN_FILENO))
@@ -258,9 +232,9 @@ int main(int argc, char *argv[])
         }
         free(line);
     }
-    else if (options->c == TRUE)
+    else if (global.options->c == TRUE)
     {
-        tokens = lexer_c(options->arg_c);
+        tokens = lexer_c(global.options->arg_c);
     }
     else
     {
@@ -288,12 +262,12 @@ int main(int argc, char *argv[])
     path2 = NULL;
     free(toks);
     struct node *ast = build_ast(tokens);
-    if (options->ast_print == TRUE)
+    if (global.options->ast_print == TRUE)
         print_ast(ast);
-    int res = execution_ast(ast, data);
-    free(options);
+    int res = execution_ast(ast, global.data);
+    free(global.options);
     free_list(tokens);
     free_node(ast);
-    free_data(data);
+    free_data(global.data);
     return res;
 }
