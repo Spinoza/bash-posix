@@ -42,3 +42,38 @@
 |---------- Position of the files [X]
 |---------AST build function [X]
 |---------- STOP condition [X]
+|
+|----v0.8[]
+|--------Tilde Expansion[]
+|------------ ~[]
+|------------ ~+[]
+|------------ ~~[]
+|
+|--------Builtins[]
+|------------ exit[]
+|------------ cd[]
+|------------ shopt[]
+|------------ export[]
+|------------ alias[]
+|------------ unalias[]
+|------------ echo[]
+|------------ continue[]
+|------------ break[]
+|------------ source[]
+|------------ history[]
+|
+|--------Advance Prompt[]
+|
+|--------Variable Substitution[]
+|
+|--------Quoting[]
+|
+|--------Path Expansion[]
+|
+|--------Arithmetic Expansion[]
+|
+|--------Readline[]
+|
+|--------Aliases[]
+|
+|--------Path Expansion, challenge mode[]
