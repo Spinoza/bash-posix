@@ -3,10 +3,14 @@
 
 #include <stdarg.h>
 
-struct builtin
+struct builtins
 {
     char *name;
-    int (*builtin)(int numb, struct node *ast, ...);
-}
+    //FIXME: potentiellement enlever l'int numb, peu utile ?
+    int (*builtin)(int numb, char *args[], ...);
+};
 
+struct builtins *init_builts(void);
+int my_exit(int number, char *args[], ...);
+int my_shopt(int number, char *args[], ...);
 #endif /* ! BUILTIN_H */

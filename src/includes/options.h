@@ -26,6 +26,13 @@ struct option
     int plus_O; /**< Set to 1 if option +0 activated */
     int norc; /**< Set to 1 if option --norc activated */
     int ast_print; /**< Set to 1 if option --ast-print activated */
+    int dotglob;
+    int expand_aliases;
+    int extglob;
+    int nocaseglob;
+    int nullglob;
+    int sourcepath;
+    int xpg_echo;
     int version; /**< Set to 1 if option --vesrion activated */
 
     char *arg_c; /**< Keeps arg for option -c */

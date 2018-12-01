@@ -15,6 +15,13 @@ struct option *option_init(void)
     new->norc = FALS;
     new->ast_print = FALS;
     new->version = FALS;
+    new->dotglob = FALS;
+    new->expand_aliases = FALS;
+    new->extglob = FALS;
+    new->nocaseglob = FALS;
+    new->nullglob = FALS;
+    new->sourcepath = FALS;
+    new->xpg_echo = FALS;
 
     new->arg_pO = NULL;
     new->arg_mO = NULL;
