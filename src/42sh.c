@@ -8,6 +8,7 @@
 #include <readline/history.h>
 #include <libgen.h>
 #include "lexer.h"
+#include "builtins.h"
 #include "history.h"
 #include "grammar_check.h"
 #include "options.h"

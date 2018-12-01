@@ -285,7 +285,7 @@ int my_shopt(int number, char *args[], ...)
 
     va_list ap;
     va_start(ap, args);
-    struct option *opt = va_arg(ap, struct option *);
+    struct option *opt = global.options;
 
     int s = 0;
     int q = 0;
@@ -316,7 +316,10 @@ int my_shopt(int number, char *args[], ...)
         if (vuO == 0)
             continue;
         else if (vuO == 1)
+        {
+            va_end(ap);
             return 1;
+        }
         else
         {
             if (!is_opt(args[i]))
@@ -337,5 +340,6 @@ int my_shopt(int number, char *args[], ...)
     if (q)
         retcode = qres;
 
+    va_end(ap);
     return retcode;
 }

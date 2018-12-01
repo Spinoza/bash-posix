@@ -2,6 +2,7 @@
 #define BUILTIN_H
 
 #include <stdarg.h>
+#include "globals.h"
 
 struct builtins
 {

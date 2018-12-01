@@ -48,29 +48,23 @@ int my_exit(int number, char *args[],  ...)
     {
         if (found)
         {
-            fprintf(stderr, "exit: too many arguments.");
+            fprintf(stderr, "42sh: exit: too many arguments.\n");
             va_end(ap);
             return 1;
         }
 
         if (!isdig(args[i]))
         {
-            fprintf(stderr, "exit: %s is a non-numeric arg.", args[i]);
-            struct node *fre = va_arg(ap, struct node *);
-            //FIXME ajouter les extractions d'args à free
-            free_node(fre);
+            fprintf(stderr, "42sh: exit: %s is a non-numeric arg.\n", args[i]);
             va_end(ap);
             exit(2);
         }
 
-        i++;
-        found = 1;
         retcode = atoi(args[i]);
+        found = 1;
+        i++;
     }
 
-    struct node *fre = va_arg(ap, struct node *);
-    //FIXME ajouter les extractions d'args à free
-    free_node(fre);
     va_end(ap);
     exit(retcode);
     return retcode;
