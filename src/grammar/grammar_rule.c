@@ -169,7 +169,7 @@ struct nL *g_rulefor (struct nL *tok)
     tok = tok->next;
     if (!tok)
         return NULL;
-    if (!(tok->elem->type == WORD && tok->elem->type == EXPAND_W)
+    if (!(tok->elem->type == WORD || tok->elem->type == EXPAND_W)
         ||(is_conform(tok)!= 0))
         return NULL;
     tok = tok->next;
