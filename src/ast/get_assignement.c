@@ -7,14 +7,12 @@
 
 int isanumber(char *name)
 {
-    int n = 0;
     for (int i = 0; *(name + 1); i++)
     {
         if ( *(name + 1) <= '0' || *(name + 1) >= '9')
             return -1;
-        n += *(name + 1) - '0';
     }
-    return n;
+    return atoi(name);
 }
 
 char *get_param(char *name, struct stored_data *data)

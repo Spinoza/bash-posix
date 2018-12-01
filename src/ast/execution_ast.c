@@ -236,9 +236,13 @@ struct node *instr_execution(struct node *n, int *res,
     /*check redirection*/
     struct function *f = is_a_function(n, data->f_tab);
     struct node *func = NULL;
-    if (f)
-        func = f->function_start;
+
     struct node *oper_node = get_oper_node(n);
+    if (f)
+    {
+        func = f->function_start;
+        get_function_param(n, oper_node, data);
+    }
     char *oper = (oper_node ? oper_node->instr : "");
     if (!func)
     {
