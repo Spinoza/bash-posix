@@ -79,6 +79,8 @@ struct stored_data
   */
 char *get_assign(char *name, struct stored_data *data);
 int execution_ast(struct node *n, struct stored_data *data);
+struct stored_data *stored_data_init(void);
+void free_data(struct stored_data *data);
 
 /**
   *\fn int traversal_ast(struct node *n, int *res, struct f_tab **f_tab)

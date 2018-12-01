@@ -9,6 +9,34 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+void free_data(struct stored_data *data)
+{
+    if (!data)
+        return;
+    struct f_tab *f_tab = data->f_tab;
+    if (f_tab)
+    {
+        for (size_t i = 0;i < f_tab->nb; i++)
+        {
+            free_node_copy(f_tab->f[i]->function_start);
+            free(f_tab->f[i]->name);
+            free(f_tab->f[i]);
+        }
+        free(f_tab->f);
+        free(f_tab);
+    }
+    free_assignments(data->var_tab);
+    free(data);
+}
+
+struct stored_data *stored_data_init(void)
+{
+    struct stored_data *new = malloc(sizeof(struct stored_data));
+    new->f_tab = NULL;
+    new->var_tab = init_assignment();
+    return new;
+}
+
 struct function *is_a_function(struct node *n, struct f_tab *f_tab)
 {
     if (!f_tab || !f_tab->nb)
