@@ -60,6 +60,76 @@ void function_stored(struct node *n, struct stored_data *data)
     }
 }
 
+void copy_string(char *source, char *dest, int *start_index, int *capacity)
+{
+    for (int j = 0; *(source + j); j++, *start_index++)
+    {
+        if (*start_index >= *capacity)
+        {
+            *capacity *=2;
+            dest = realloc(dest, sizeof(char) * *capacity);
+        }
+        dest[*start_index] = source[j];
+    }
+}
+
+/*
+ * index is the index of the character after the dollar sign in the input string
+ * k is the current index where to write in the result string, capacity the
+ * current capacity of result string.
+ * */
+
+char *set_string(char *instr, struct node *node, struct stored_data *data)
+{
+    int capacity = strlen(instr);
+    int len = capacity;
+    char *string = malloc(capacity * sizeof(char));
+    int after_dollar = 0;
+    if (node->tokentype == EXPAND_W)
+        after_dollar = 1;
+    int k = 0; //index to copy characters
+    for (int i = 0; *(instr + i); i++)
+    {
+        if (instr[i] == '$')
+        {
+            after_dollar = 1;
+            continue;
+        }
+        if (k >= capacity)
+        {
+            capacity *=2;
+            string = realloc(string, sizeof(char) * capacity);
+        }
+        if (after_dollar)
+        {
+            char *assigned_value = NULL;
+            char *name = NULL;
+            if (instr[i] >= '0' && instr[i] <= '9')
+            {
+                name = calloc(2, sizeof(char));
+                name[0] = instr[i];
+                assigned_value = get_assign(name, data->var_tab);
+            }
+            else
+            {
+                name = calloc(len, sizeof(char));
+                for (int j = 0; *(instr + i+ j)
+                        && *(instr + i+ j) != '$'; j++)
+                    name[j] = instr[i+ j];
+                assigned_value = get_assign(name, data->var_tab);
+            }
+            copy_string(assigned_value, string, &k, &capacity);
+            free(name);
+            free(assigned_value);
+        }
+        else
+        {
+            string[k++] = instr[i];
+        }
+        after_dollar = 0;
+    }
+    return string;
+}
 char **to_execute(struct node *child, struct node *oper_node
         , struct stored_data *data)
 {
@@ -70,10 +140,7 @@ char **to_execute(struct node *child, struct node *oper_node
     char *instr = NULL;
     for (; iter && iter != oper_node; i++, iter = iter->next)
     {
-        if (iter->tokentype == EXPAND_W)
-            instr = get_assign(iter->instr, data);
-        else
-            instr = iter->instr;
+        instr = set_string(iter->instr, iter, data);
         len = strlen(instr) + 1;
         result = realloc(result, (i + 1) * sizeof(char *));
         result[i] = calloc(len, sizeof(char));
