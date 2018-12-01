@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <time.h>
 
 size_t nbdigits(int r)
@@ -13,15 +14,15 @@ size_t nbdigits(int r)
     return i;
 }
 
-char *get_random(void)
+
+char *inttochar(int nb)
 {
-    int r = rand();
-    size_t s = nbdigits(r) + 1;
+    size_t s = nbdigits(nb) + 1;
     char *number = malloc(sizeof(char) * s);
     for (size_t i = 0; i < s; i++)
     {
-        number[i] = '0' + r % 10;
-        r /= 10;
+        number[i] = '0' + nb % 10;
+        nb /= 10;
     }
     s --;
     for (size_t i = 0; i < s / 2; i++)
@@ -32,6 +33,12 @@ char *get_random(void)
     }
     number[s] = '\0';
     return number;
+}
+
+char *get_random(void)
+{
+    int r = rand();
+    return inttochar(r);
 }
 
 int isanumber(char *name)
@@ -73,6 +80,11 @@ char *get_assign(char *name, struct stored_data *data)
 {
     if (!strcmp(name, "RANDOM"))
         return get_random();
+    if (!strcmp(name, "UID"))
+    {
+        int uid = getuid();
+        return inttochar(uid);
+    }
     if (isanumber(name) != -1)
         return get_param(name, data);
     return get_assign_var(name, data->var_tab);
