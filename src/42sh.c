@@ -21,6 +21,7 @@
 #include "globals.h"
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <time.h>
 
 struct globv global;
 
@@ -174,6 +175,7 @@ static int interactive_mode(struct globv global)
 int main(int argc, char *argv[])
 {
     init_globv();
+    srand(getpid());
     char *home = getenv("HOME");
     char *path = calloc(mstrlen(home) + 15, sizeof(char));
     strcpy(path, home);

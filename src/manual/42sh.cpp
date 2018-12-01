@@ -1,7 +1,7 @@
 //! @~English
-//! @page 42sh 
+//! @page 42sh
 //! @section synopsis SYNOPSIS
-//!	The program 42sh remains a project and, as thus, needs to be compiled before 
+//!	The program 42sh remains a project and, as thus, needs to be compiled before
 //!     being used.\n
 //!	The compilation process is as follows : mkdir build at root, cd build, cmake
 //!     .. make\n
@@ -14,9 +14,9 @@
 //!     tions:\n
 //!     The lexer() function splits an input line from a file, the terminal, or a st
 //!     ring, into tokens.\n
-//!     The grammar_check() function checks if a list of token is conform to the LL 
+//!     The grammar_check() function checks if a list of token is conform to the LL
 //!     grammar.\n
-//!     To execute the command line, all the token are organized in an AST tree. To 
+//!     To execute the command line, all the token are organized in an AST tree. To
 //!     create the tree the function build_ast() is called. Then the the print_ast()
 //!     function can be called to print the AST created.\n
 //!     Finally the execution_ast() function goes through the AST tree and interprete
@@ -37,7 +37,7 @@
 //!     rom standard input.\n
 //!	-/+o		Sets or unsets the option given as parameter. Calling -o [op
 //!     tion] shall set the option for the bash and calling +o [option] shall unset it.
-//!	--version	Prints the actual version of the 42sh program. 
+//!	--version	Prints the actual version of the 42sh program.
 //!
 //! @section examples EXAMPLES
 //!	1. To execute a command from a string:\n
@@ -60,7 +60,7 @@
 //!	On successful completion, lexer() shall return a linked_list containing all t
 //!     okens of the input line, correctly parsed. On error, which is basically when
 //!      a fail of malloc(3) occurs, it returns NULL.\n
-//!	
+//!
 //! @section author AUTHORS
 //!	Sarah Onfray - sarah.onfray - EPITA 2021\n
 //!	Leo Naves - leo.naves - EPITA 2021\n

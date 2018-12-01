@@ -28,7 +28,7 @@ static void print_aux(FILE *f, struct node *ast, int* encountered, int act)
 void print_ast(struct node *ast)
 {
     FILE *file = fopen("ast.dot", "w+");
-    if(!file)
+    if (!file)
         errx(-1, "42sh:print_ast: fail open file");
     fprintf(file,"graph ast\n{\n");
     int *encount = malloc(32 * sizeof(int));
