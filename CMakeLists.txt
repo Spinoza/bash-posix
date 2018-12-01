@@ -23,6 +23,9 @@ add_library(history ${CMAKE_SOURCE_DIR}/src/history/history.c)
 add_library(tty ${CMAKE_SOURCE_DIR}/src/prompt/handlePS1.c)
 target_link_libraries(tty readline)
 
+add_library(exit ${CMAKE_SOURCE_DIR}/src/builtins/exit.c)
+add_library(shopt ${CMAKE_SOURCE_DIR}/src/builtins/my_shopt.c)
+
 add_library(grammar ${CMAKE_SOURCE_DIR}/src/grammar/grammar_check.c
     ${CMAKE_SOURCE_DIR}/src/grammar/grammar_command.c
     ${CMAKE_SOURCE_DIR}/src/grammar/grammar_rule.c
@@ -55,6 +58,8 @@ target_link_libraries(42sh tty)
 target_link_libraries(42sh readline)
 target_link_libraries(42sh history)
 target_link_libraries(42sh handle)
+target_link_libraries(42sh exit)
+target_link_libraries(42sh shopt)
 
 add_custom_target(set_env
     COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/set_env.sh

@@ -1,6 +1,8 @@
 #include <err.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "ast.h"
 #include "builtins.h"
 
 static size_t mstrlen(char *string)
@@ -19,52 +21,57 @@ static int isdig(char *string)
     return 1;
 }
 
-static void freespace(char *cpy, char *tocomp)
+//FIXME: temporary place for this function
+
+struct builtins *init_builts(void)
 {
-    free(cpy);
-    free(tocomp);
+    struct builtins *tab = malloc( 11 * sizeof(struct builtins));
+    tab[0].name = "exit";
+    tab[0].builtin = my_exit;
+    tab[1].name = "shopt";
+    tab[1].builtin = my_shopt;
+
+    return tab;
 }
 
-int handle_exit(char *tocomp, int toret)
+int my_exit(int number, char *args[],  ...)
 {
-    size_t length = mstrlen(tocomp);
-    char *cpy = calloc(length + 1, sizeof(char));
-    strcpy(cpy, tocomp);
-    char *stock = NULL
+    number = number;
+    va_list ap;
+    va_start(ap, args);
 
-    char *string = strtok_r(cpy, " \n", &stock);
-    if (!strcmp(string, "exit;"))
+    int found = 0;
+    int retcode = va_arg(ap, int);
+    int i = 1;
+
+    while (args[i] && strcmp(args[i], ";"))
     {
-        freespace(cpy, tocomp);
-        exit(toret);
-    }
-
-    if (!strcmp(string, "exit"))
-    {
-        string = strtok(NULL, " \n", &stock);
-        if (!string)
-        {
-            freespace(cpy, tocomp);
-            exit(toret);
-        }
-
-        if (!isdig(string))
-        {
-            fprintf(stderr, "exit: numeric argument required.\n");
-            freespace(cpy, tocomp);
-            exit(toret);
-        }
-
-        if (stock && strcmp(stock, ""))
+        if (found)
         {
             fprintf(stderr, "exit: too many arguments.");
-            freespace(cpy, tocomp);
-            return -1;
+            va_end(ap);
+            return 1;
         }
 
-        freespace(cpy, tocomp);
-        exit(atoi(string));
+        if (!isdig(args[i]))
+        {
+            fprintf(stderr, "exit: %s is a non-numeric arg.", args[i]);
+            struct node *fre = va_arg(ap, struct node *);
+            //FIXME ajouter les extractions d'args à free
+            free_node(fre);
+            va_end(ap);
+            exit(2);
+        }
+
+        i++;
+        found = 1;
+        retcode = atoi(args[i]);
     }
 
-    return -2;
+    struct node *fre = va_arg(ap, struct node *);
+    //FIXME ajouter les extractions d'args à free
+    free_node(fre);
+    va_end(ap);
+    exit(retcode);
+    return retcode;
 }
