@@ -25,6 +25,9 @@ target_link_libraries(tty readline)
 
 add_library(exit ${CMAKE_SOURCE_DIR}/src/builtins/exit.c)
 add_library(shopt ${CMAKE_SOURCE_DIR}/src/builtins/my_shopt.c)
+add_library(cd ${CMAKE_SOURCE_DIR}/src/builtins/cd.c)
+add_library(export ${CMAKE_SOURCE_DIR}/src/builtins/export.c)
+
 
 add_library(global ${CMAKE_SOURCE_DIR}/src/utils/globals.c)
 
@@ -63,6 +66,9 @@ target_link_libraries(42sh handle)
 target_link_libraries(42sh exit)
 target_link_libraries(42sh shopt)
 target_link_libraries(42sh global)
+target_link_libraries(42sh cd)
+target_link_libraries(42sh export)
+
 
 add_custom_target(set_env
     COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/set_env.sh
