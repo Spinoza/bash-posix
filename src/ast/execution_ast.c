@@ -71,7 +71,7 @@ char **to_execute(struct node *child, struct node *oper_node
     for (; iter && iter != oper_node; i++, iter = iter->next)
     {
         if (iter->tokentype == EXPAND_W)
-            instr = get_assign(iter->instr, data->var_tab);
+            instr = get_assign(iter->instr, data);
         else
             instr = iter->instr;
         len = strlen(instr) + 1;
@@ -95,7 +95,7 @@ void get_function_param(struct node *child, struct node *oper_node
     for (; iter && iter != oper_node; i++, iter = iter->next)
     {
         if (iter->tokentype == EXPAND_W)
-            instr = get_assign(iter->instr, data->var_tab);
+            instr = get_assign(iter->instr, data);
         else
             instr = iter->instr;
         len = strlen(instr) + 1;
@@ -105,7 +105,8 @@ void get_function_param(struct node *child, struct node *oper_node
     }
     result = realloc(result, (i + 1) * sizeof(char *));
     result[i] = NULL;
-    return result;
+    data->nbparam = i;
+    data->param = result;
 }
 
 void free_command(char **string)
@@ -303,7 +304,7 @@ struct node *case_execution(struct node *n, struct stored_data *data)
     struct node *cases = elt->next;
     char *elt_instr = NULL;
     if (elt->tokentype == EXPAND_W)
-        elt_instr = get_assign(elt->instr, data->var_tab);
+        elt_instr = get_assign(elt->instr, data);
     else
         elt_instr = elt->instr;
     for ( ; cases; cases = cases->next)
@@ -313,7 +314,7 @@ struct node *case_execution(struct node *n, struct stored_data *data)
         {
             char *cond_instr = NULL;
             if (condition->tokentype == EXPAND_W)
-                cond_instr = get_assign(condition->instr, data->var_tab);
+                cond_instr = get_assign(condition->instr, data);
             else
                 cond_instr = condition->instr;
             if (!strcmp(elt_instr, cond_instr))
@@ -331,6 +332,11 @@ struct node *case_execution(struct node *n, struct stored_data *data)
 
 int traversal_ast(struct node *n, int *res, struct stored_data *data)
 {
+    if (!n || !strcmp(n->instr, ";"))
+    {
+        if (data->param)
+            free_command(data->param);
+    }
     if (!n)
         return *res;
     if (!strcmp(n->instr, ";"))

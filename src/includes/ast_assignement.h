@@ -2,7 +2,8 @@
 #define AST_ASSIGNEMENT_H
 #define HASH_TAB_SIZE 20
 #define TETA 0.5987526325
-/**
+
+/*
   *\struct assignment
   *\brief structure aiming to help handling assignment word.
   *
@@ -24,5 +25,5 @@ void add_assignment_split(char *name, char *value, struct assignment **a_tab);
 
 void add_assignment(char *string, struct assignment **a_tab);
 
-char *get_assign(char *name, struct assignment **a_tab);
-#endif /* ! ASSIGNEMENT_AST_H */
+int hash_function(char *string);
+#endif /* ! AST_ASSIGNEMENT_H */

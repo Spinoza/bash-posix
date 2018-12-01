@@ -33,7 +33,7 @@ void free_assignments(struct assignment **tab)
     free(tab);
 }
 //return the position in the hash table
-static int hash_function(char *string)
+int hash_function(char *string)
 {
 
     float r = 0;
@@ -117,18 +117,4 @@ void add_assignment(char *string, struct assignment **a_tab)
         continue;
     a->next = new;
     return;
-}
-
-char *get_assign(char *name, struct assignment **a_tab)
-{
-    int pos = hash_function(name);
-    struct assignment *a = a_tab[pos];
-    for ( ; a ; a = a ->next)
-    {
-        if (!a->name)
-            return "";
-        if (!strcmp(name, a->name))
-            return a->value;
-    }
-    return "";
 }

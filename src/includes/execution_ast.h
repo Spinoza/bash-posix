@@ -64,7 +64,8 @@ struct stored_data
 {
     struct f_tab *f_tab;
     struct assignment **var_tab;
-    char *param[];
+    char **param;
+    int nbparam;
     //struct builtins *builtins;
 };
 
@@ -75,7 +76,7 @@ struct stored_data
   *f_tab is the matrix of functions encountered.
   *\return an int representing the return value of the exeuction.
   */
-
+char *get_assign(char *name, struct stored_data *data);
 int execution_ast(struct node *n, struct stored_data *data);
 
 /**
