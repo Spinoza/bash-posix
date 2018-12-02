@@ -67,6 +67,7 @@ struct stored_data
     struct f_tab *f_tab;
     struct assignment **var_tab;
     struct assignment **export_tab;
+    struct assignment **alias_table;
     struct builtins *builtins;
 };
 

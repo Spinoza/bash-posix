@@ -31,6 +31,8 @@ void free_data(struct stored_data *data)
         free(data->builtins);
     }
     free_assignments(data->var_tab);
+    free_assignments(data->export_tab);
+    free_assignments(data->alias_tab);
     free(data);
 }
 
@@ -39,6 +41,8 @@ struct stored_data *stored_data_init(void)
     struct stored_data *new = malloc(sizeof(struct stored_data));
     new->f_tab = NULL;
     new->var_tab = init_assignment();
+    new->export_tab = init_assignment();
+    new->alias_table = init_assignment();
     new->builtins = init_builts();
     add_assignment_split("IFS"," ", new->var_tab);
     add_assignment_split("#","0", new->var_tab);
