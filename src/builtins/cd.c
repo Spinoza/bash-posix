@@ -30,7 +30,7 @@ int my_cd(int number, char *args[], ...)
         int i = strlen(pwd) - 1;
         if(pwd[i] == '/')
         {
-            pwd[i] '\0';
+            pwd[i] = '\0';
             i--;
         }
         while(pwd[i] != '/')
