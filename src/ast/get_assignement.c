@@ -43,9 +43,9 @@ char *get_random(void)
 
 int isanumber(char *name)
 {
-    for (int i = 0; *(name + 1); i++)
+    for (int i = 0; *(name + i); i++)
     {
-        if ( *(name + 1) <= '0' || *(name + 1) >= '9')
+        if ( *(name + i) <= '0' || *(name + i) >= '9')
             return -1;
     }
     return atoi(name);

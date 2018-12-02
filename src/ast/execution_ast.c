@@ -400,6 +400,33 @@ struct node *if_execution(struct node *n, int *res, struct stored_data *data)
     }
 }
 
+char **get_instruction_for (struct node *cond, struct stored_data *data)
+{
+    //no need to free inside instruction,
+    //as we did not malloc the instr
+    char **instruction = calloc(2, sizeof(char *));
+    if (cond->tokentype == EXPAND_W)
+    {
+        if (cond->instr[0] != '@' || cond->instr[0] != '*')
+        {
+            instruction[0] = get_assign(cond->instr, data);
+            instruction[1] = NULL;
+        }
+        else
+        {
+            //for '*' you need to built a string made of every args
+            //instruction = realloc(instruction,
+            return NULL;
+        }
+    }
+    else
+    {
+        instruction[0] = cond->instr;
+        instruction[1] = NULL;
+    }
+    return instruction;
+}
+
 int for_execution(struct node *n, int *res, struct stored_data *data)
 {
     struct node *elem = n->children->children;
@@ -411,8 +438,14 @@ int for_execution(struct node *n, int *res, struct stored_data *data)
         for ( ; cond && (cond->tokentype != SEMICOLON
                     && cond->tokentype != AND); cond = cond->next)
         {
-            add_assignment_split(elem->instr, cond->instr, data->var_tab);
-            *res = traversal_ast(do_node, res, data);
+            char **instruction = get_instruction_for (cond, data);
+            for (size_t i = 0; instruction[i]; i++)
+            {
+                add_assignment_split(elem->instr, instruction[i],
+                        data->var_tab);
+                *res = traversal_ast(do_node, res, data);
+            }
+            free(instruction);
         }
     }
     return *res;
