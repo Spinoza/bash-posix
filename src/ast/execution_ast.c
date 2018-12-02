@@ -414,25 +414,24 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
     //no need to free inside instruction,
     //as we did not malloc the instr
     char **instruction = calloc(2, sizeof(char *));
+    int i = 0;
     if (cond->tokentype == EXPAND_W)
     {
         if (cond->instr[0] != '@' || cond->instr[0] != '*')
         {
             instruction[0] = get_assign(cond->instr, data);
-            instruction[1] = NULL;
         }
         else
         {
             //for '*' you need to built a string made of every args
-            //instruction = realloc(instruction, data->nb_param);
-            return NULL;
+            instruction = realloc(instruction, data->nbparam + 1);
+            for ( ; i < data->nbparam; i++)
+                instruction[i] = data->param[i];
         }
     }
     else
-    {
         instruction[0] = cond->instr;
-        instruction[1] = NULL;
-    }
+    instruction[i + 1] = NULL;
     return instruction;
 }
 
