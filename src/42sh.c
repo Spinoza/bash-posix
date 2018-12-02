@@ -230,6 +230,40 @@ int main(int argc, char *argv[])
         }
         free(line);
     }
+    else if (argc == 2)
+    {
+        FILE *toread = fopen(argv[1], "r");
+        if (!toread)
+        {
+            errx(126, "%s: permission denied.", argv[1]);
+        }
+        char *line = NULL;
+        size_t i = 0;
+        int res = 0;
+        getline(&line, &i, toread);
+        if (res == -1)
+            errx(1, "incoherent input.");
+        if (line[strlen(line) - 1] == '\n')
+        {
+            line[strlen(line) - 1] = '\0';
+        }
+
+        tokens = lexer_c(line);
+        free(line);
+        line = NULL;
+        while ( (res = getline(&line, &i, toread)) != -1)
+        {
+            if (line[strlen(line) - 1] == '\n')
+            {
+                line[strlen(line) - 1] = '\0';
+            }
+            fuse_lists(tokens, line);
+            free(line);
+            line = NULL;
+        }
+        free(line);
+        fclose(toread);
+    }
     else if (global.options->c == TRUE)
     {
         tokens = lexer_c(global.options->arg_c);
@@ -238,7 +272,6 @@ int main(int argc, char *argv[])
     {
         tokens = lexer(argv, argc, index);
     }
-    print_list(tokens);
     int isgramm = grammar_check(tokens);
     if (!isgramm)
     {
