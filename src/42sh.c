@@ -171,6 +171,11 @@ int main(int argc, char *argv[])
 {
     init_globv();
     srand(getpid());
+    char *argE[] = {"exit", NULL};
+    char *argC[] = {"cd", "../src", NULL};
+    int retcode = my_cd(2, argC);
+    printf("%s\n", global.PWD);
+    my_exit(2, argE, retcode);
     char *home = getenv("HOME");
     char *path = calloc(strlen(home) + 15, sizeof(char));
     strcpy(path, home);
