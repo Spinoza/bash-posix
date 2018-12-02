@@ -366,9 +366,12 @@ void check_context(struct linked_list *l_list, struct token *new)
 }
 struct linked_list *lexer_c(char *input)
 {
+
     char **list = init_list();
     struct linked_list *l_list = init_link();
-    char *string = strtok(input, " ");
+    char *string = NULL;
+    if (input)
+        string = strtok(input, " ");
     while (string)
     {
         if (string[0] == '#') //Currently in a comment

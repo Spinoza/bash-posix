@@ -42,7 +42,7 @@ struct stored_data *stored_data_init(void)
     new->f_tab = NULL;
     new->var_tab = init_assignment();
     new->export_tab = init_assignment();
-    new->alias_table = init_assignment();
+    new->alias_tab = init_assignment();
     new->builtins = init_builts();
     add_assignment_split("IFS"," ", new->var_tab);
     add_assignment_split("#","0", new->var_tab);

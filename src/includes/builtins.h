@@ -14,4 +14,5 @@ struct builtins
 struct builtins *init_builts(void);
 int my_exit(int number, char *args[], ...);
 int my_shopt(int number, char *args[], ...);
+int my_cd(int number, char *args[], ...);
 #endif /* ! BUILTIN_H */
