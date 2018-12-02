@@ -4,6 +4,8 @@
 #include <string.h>
 #include "globals.h"
 
+//check return code of chdir first
+//while to handle les ../../.../..Pe(rio
 int my_cd(int number, char *args[], ...)
 {
     number = number;
