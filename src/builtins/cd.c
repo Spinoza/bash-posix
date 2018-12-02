@@ -57,34 +57,32 @@ int my_cd(int number, char *args[], ...)
     {
         char *save = calloc(strlen(args[1]) + 1, sizeof(char));
         strcpy(save, args[1]);
-        char *first = strtok(save, "/");
+        char *add;
+        char *first = strtok_r(save, "/", &add);
         if(!strcmp(first, "."))
         {
-            char *chg = calloc(strlen(save) + strlen(pwd) + 2,
+            char *chg = calloc(strlen(add) + strlen(pwd) + 2,
         sizeof(char));
             strcat(chg, pwd);
-            strcat(chg, "/");
-            strcat(chg, save);
+            strcat(chg, add);
             change_pwd(chg);
             free(chg);
         }
         else if(!strcmp(first, ".."))
         {
-            char *chg = calloc(strlen(save) + strlen(parent) + 2,
+            char *chg = calloc(strlen(add) + strlen(parent) + 2,
         sizeof(char));
             strcat(chg, parent);
-            strcat(chg, "/");
-            strcat(chg, save);
+            strcat(chg, add);
             change_pwd(chg);
             free(chg);
         }
         if(!strcmp(first, "~"))
         {
-            char *chg = calloc(strlen(save) + strlen(home) + 2,
+            char *chg = calloc(strlen(add) + strlen(home) + 2,
         sizeof(char));
             strcat(chg, home);
-            strcat(chg, "/");
-            strcat(chg, save);
+            strcat(chg, add);
             change_pwd(chg);
             free(chg);
         }
