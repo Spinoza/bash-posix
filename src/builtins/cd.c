@@ -7,6 +7,20 @@
 int my_cd(int number, char *args[], ...)
 {
     number = number;
+    char *home = getenv("HOME");
+    char *pwd = getenv("PWD");
+    char *parent = getenv("PWD");
+    int i = strlen(parent) - 1;
+    if(parent[i] == '/')
+    {
+        parent[i] = '\0';
+        i--;
+    }
+    while(parent[i] != '/')
+    {
+        parent[i] = '\0';
+        i--;
+    }
     if(args[1] != NULL && args[2] != NULL)
     {
         fprintf(stderr, "cd: Too many arguments");
@@ -15,33 +29,17 @@ int my_cd(int number, char *args[], ...)
     if(args[1]== NULL || !strcmp(args[1], "~") ||
     !strcmp(args[1], "~/"))
     {
-        char *home = getenv("HOME");
         change_pwd(home);
-        return chdir(home);
     }
-    if(!strcmp(args[1], ".") || !strcmp(args[1], "./"))
+    else if(!strcmp(args[1], ".") || !strcmp(args[1], "./"))
     {
         change_pwd(global.PWD);
-        return 0;
     }
-    if(!strcmp(args[1], "..") || !strcmp(args[1], "../"))
+    else if(!strcmp(args[1], "..") || !strcmp(args[1], "../"))
     {
-        char *pwd = getenv("PWD");
-        int i = strlen(pwd) - 1;
-        if(pwd[i] == '/')
-        {
-            pwd[i] = '\0';
-            i--;
-        }
-        while(pwd[i] != '/')
-        {
-            pwd[i] = '\0';
-            i--;
-        }
-        change_pwd(pwd);
-        return chdir(pwd);
+       change_pwd(parent);
     }
-    if(!strcmp(args[1], "-"))
+    else if(!strcmp(args[1], "-"))
     {
         if(global.oldPWD == NULL)
         {
@@ -50,6 +48,38 @@ int my_cd(int number, char *args[], ...)
         }
         change_pwd(global.oldPWD);
         return chdir(global.oldPWD);
+    }
+    else if(args[1][0] == '/')
+    {
+        change_pwd("/");
+    }
+    else
+    {
+        char *first = strtok(args[1], '/');
+        if(!strcmp(first, "."))
+        {
+            char *chg = calloc((strlen(args[1])+strlen(pwd))+2,sizeof(char));
+            strcat(chg, pwd);
+            strcat(chg, "/");
+            strcat(chg, args[1]);
+            change_pwd(chg);
+        }
+        else if(!strcmp(first, ".."))
+        {
+            char *chg = calloc((strlen(args[1])+strlen(parent)+2,sizeof(char));
+            strcat(chg, parent);
+            strcat(chg, "/");
+            strcat(chg, args[1]);
+            change_pwd(chg);
+        }
+        if(!strcmp(first, "~"))
+        {
+            char *chg = calloc((strlen(args[1])+strlen(home)+2,sizeof(char));
+            strcat(chg, home);
+            strcat(chg, "/");
+            strcat(chg, args[1]);
+            change_pwd(chg);
+        }
     }
     return chdir(args[1]);
 }
