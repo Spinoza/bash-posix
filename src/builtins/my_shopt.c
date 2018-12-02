@@ -22,7 +22,7 @@ static int print_everything(struct option *opt)
 static int set_opt(char *opt, int *q, int *s, int *u)
 {
     if (opt[0] != '-')
-        return 0;
+        return 2;
 
     int retcode = 2;
 
@@ -71,7 +71,7 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "ast-print    %s", ops->ast_print == TRUE ? "on" : "off");
+            fprintf(stdout, "ast-print    %s\n", ops->ast_print == TRUE ? "on" : "off");
         }
         else
         {
@@ -91,7 +91,7 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "dotglob    %s", ops->dotglob == TRUE ? "on" : "off");
+            fprintf(stdout, "dotglob    %s\n", ops->dotglob == TRUE ? "on" : "off");
         }
 
         else
@@ -112,7 +112,7 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "expand_aliases    %s", ops->expand_aliases == TRUE ? "on" : "off");
+            fprintf(stdout, "expand_aliases    %s\n", ops->expand_aliases == TRUE ? "on" : "off");
         }
 
         else
@@ -133,7 +133,7 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "extglob    %s", ops->extglob == TRUE ? "on" : "off");
+            fprintf(stdout, "extglob    %s\n", ops->extglob == TRUE ? "on" : "off");
         }
         else
         {
@@ -153,7 +153,7 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "nocaseglob    %s", ops->nocaseglob == TRUE ? "on" : "off");
+            fprintf(stdout, "nocaseglob    %s\n", ops->nocaseglob == TRUE ? "on" : "off");
         }
         else
         {
@@ -173,7 +173,7 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "nullglob    %s", ops->nullglob == TRUE ? "on" : "off");
+            fprintf(stdout, "nullglob    %s\n", ops->nullglob == TRUE ? "on" : "off");
         }
         else
         {
@@ -193,7 +193,7 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "sourcepath    %s", ops->sourcepath == TRUE ? "on" : "off");
+            fprintf(stdout, "sourcepath    %s\n", ops->sourcepath == TRUE ? "on" : "off");
         }
         else
         {
@@ -213,7 +213,7 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "xpg_echo    %s", ops->xpg_echo == TRUE ? "on" : "off");
+            fprintf(stdout, "xpg_echo    %s\n", ops->xpg_echo == TRUE ? "on" : "off");
         }
         else
         {
@@ -291,13 +291,14 @@ int my_shopt(int number, char *args[], ...)
     int q = 0;
     int u = 0;
 
+    int found = 0;
     if (!args[1])
     {
         va_end(ap);
         return print_everything(opt);
     }
 
-    int i = 2;
+    int i = 1;
     int retcode = 0;
     int qres = 0;
 
@@ -313,8 +314,12 @@ int my_shopt(int number, char *args[], ...)
 
         int vuO = set_opt(args[i], &q, &s, &u);
 
-        if (vuO == 0)
+        if (vuO == 0 && !found)
+        {
+            i++;
             continue;
+        }
+
         else if (vuO == 1)
         {
             va_end(ap);
@@ -322,6 +327,7 @@ int my_shopt(int number, char *args[], ...)
         }
         else
         {
+            found = 1;
             if (!is_opt(args[i]))
             {
                 fprintf(stderr, "shopt:  %s: invalid option name\n", args[i]);
@@ -331,7 +337,7 @@ int my_shopt(int number, char *args[], ...)
             {
                 int temp = handle_options(opt, args[i],q,s,u);
                 if ( qres == 0 )
-                    qres = temp;
+                    qres = !temp;
             }
         }
         i++;

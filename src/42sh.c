@@ -25,16 +25,11 @@
 
 struct globv global;
 
-static size_t mstrlen (char * string)
-{
-    return (*string ? 1 + mstrlen(string + 1) : 0);
-}
-
 static int norc_opt(void)
 {
     char *arg1[] = {"/etc/42shrc", NULL};
     char *home = getenv("HOME");
-    char *path = calloc(mstrlen(home) + 9, sizeof(char));
+    char *path = calloc(strlen(home) + 9, sizeof(char));
     strcpy(path, home);
     strcat(path, "/.42shrc");
     char *arg2[] = {path, NULL};
@@ -82,7 +77,7 @@ static size_t fulllen(struct linked_list *tokens)
     struct nL *start = tokens->head;
     while (start)
     {
-        len += mstrlen(start->elem->name) + 2;
+        len += strlen(start->elem->name) + 2;
         start = start->next;
     }
     return len;
@@ -93,8 +88,8 @@ static char * from_tok_toS(struct linked_list *tokens)
     int cursor = 0;
     struct nL *start = tokens->head;
     char * final = calloc(fulllen(tokens) + 2, sizeof(char));
-    cursor += mstrlen(start->elem->name);
-    memcpy(final, start->elem->name, mstrlen(start->elem->name));
+    cursor += strlen(start->elem->name);
+    memcpy(final, start->elem->name, strlen(start->elem->name));
     while (start->next)
     {
         start = start->next;
@@ -109,8 +104,8 @@ static char * from_tok_toS(struct linked_list *tokens)
         {
             final[cursor] = ' ';
             cursor++;
-            memcpy(final + cursor, start->elem->name, mstrlen(start->elem->name));
-            cursor += mstrlen(start->elem->name);
+            memcpy(final + cursor, start->elem->name, strlen(start->elem->name));
+            cursor += strlen(start->elem->name);
         }
     }
 
@@ -148,14 +143,14 @@ static int interactive_mode(struct globv global)
             {
                 add_history(listadd);
                 char *home = getenv("HOME");
-                char *path = calloc(mstrlen(home) + 15, sizeof(char));
+                char *path = calloc(strlen(home) + 15, sizeof(char));
                 strcpy(path, home);
                 strcat(path, "/.42sh_history");
                 FILE *history = fopen(path, "a");
                 free(path);
                 if (!history)
                     continue;
-                fwrite(listadd, 1, mstrlen(listadd), history);
+                fwrite(listadd, 1, strlen(listadd), history);
                 fwrite("\n", 1, 1, history);
                 fclose(history);
                 free(listadd);
@@ -177,7 +172,7 @@ int main(int argc, char *argv[])
     init_globv();
     srand(getpid());
     char *home = getenv("HOME");
-    char *path = calloc(mstrlen(home) + 15, sizeof(char));
+    char *path = calloc(strlen(home) + 15, sizeof(char));
     strcpy(path, home);
     strcat(path, "/.42sh_history");
     FILE *history = fopen(path, "r+");
@@ -215,9 +210,9 @@ int main(int argc, char *argv[])
         getline(&line, &i, stdin);
         if (res == -1)
             errx(1, "incoherent input.");
-        if (line[mstrlen(line) - 1] == '\n')
+        if (line[strlen(line) - 1] == '\n')
         {
-            line[mstrlen(line) - 1] = '\0';
+            line[strlen(line) - 1] = '\0';
         }
 
         tokens = lexer_c(line);
@@ -225,9 +220,9 @@ int main(int argc, char *argv[])
         line = NULL;
         while ( (res = getline(&line, &i, stdin)) != -1)
         {
-            if (line[mstrlen(line) - 1] == '\n')
+            if (line[strlen(line) - 1] == '\n')
             {
-                line[mstrlen(line) - 1] = '\0';
+                line[strlen(line) - 1] = '\0';
             }
             fuse_lists(tokens, line);
             free(line);
@@ -250,14 +245,14 @@ int main(int argc, char *argv[])
         errx(1, "Lexer error. Is your input conform to grammar ?");
     }
     char *home2 = getenv("HOME");
-    char *path2 = calloc(mstrlen(home2) + 15, sizeof(char));
+    char *path2 = calloc(strlen(home2) + 15, sizeof(char));
     strcpy(path2, home2);
     strcat(path2, "./42sh_history");
     history = fopen(path2, "a");
     char *toks = from_tok_toS(tokens);
     if (history)
     {
-        fwrite(toks, 1, mstrlen(toks), history);
+        fwrite(toks, 1, strlen(toks), history);
         fwrite("\n", 1, 1, history);
         fclose(history);
     }
