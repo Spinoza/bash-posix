@@ -55,10 +55,11 @@ int my_cd(int number, char *args[], ...)
     }
     else
     {
-        char *first = strtok(args[1], '/');
+        char *first = strtok(args[1], "/");
         if(!strcmp(first, "."))
         {
-            char *chg = calloc((strlen(args[1])+strlen(pwd))+2,sizeof(char));
+            char *chg = calloc(strlen(args[1]) + strlen(pwd) + 2,
+        sizeof(char));
             strcat(chg, pwd);
             strcat(chg, "/");
             strcat(chg, args[1]);
@@ -66,7 +67,8 @@ int my_cd(int number, char *args[], ...)
         }
         else if(!strcmp(first, ".."))
         {
-            char *chg = calloc((strlen(args[1])+strlen(parent)+2,sizeof(char));
+            char *chg = calloc(strlen(args[1]) + strlen(parent) + 2,
+        sizeof(char));
             strcat(chg, parent);
             strcat(chg, "/");
             strcat(chg, args[1]);
@@ -74,7 +76,8 @@ int my_cd(int number, char *args[], ...)
         }
         if(!strcmp(first, "~"))
         {
-            char *chg = calloc((strlen(args[1])+strlen(home)+2,sizeof(char));
+            char *chg = calloc(strlen(args[1]) + strlen(home) + 2,
+        sizeof(char));
             strcat(chg, home);
             strcat(chg, "/");
             strcat(chg, args[1]);
