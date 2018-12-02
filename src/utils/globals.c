@@ -2,10 +2,6 @@
 #include <string.h>
 #include "globals.h"
 
-static size_t mstrlen(char *string)
-{
-    return *string ? 1 + mstrlen(string + 1) : 0;
-}
 
 void init_globv(void)
 {
@@ -29,11 +25,11 @@ void free_glob(void)
     free(global.options);
 }
 
-void change_pid(char *newPID)
+void change_pwd(char *newPID)
 {
     if (!global.PWD)
     {
-        global.PWD = calloc(mstrlen(newPID) + 1, sizeof(char));
+        global.PWD = calloc(strlen(newPID) + 1, sizeof(char));
         strcpy(global.PWD, newPID);
     }
 
@@ -45,10 +41,10 @@ void change_pid(char *newPID)
             global.oldPWD = NULL;
         }
 
-        global.oldPWD = calloc(mstrlen(global.PWD) + 1, sizeof(char));
+        global.oldPWD = calloc(strlen(global.PWD) + 1, sizeof(char));
         strcpy(global.oldPWD, global.PWD);
         free(global.PWD);
-        global.PWD = calloc(mstrlen(newPID) + 1, sizeof(char));
+        global.PWD = calloc(strlen(newPID) + 1, sizeof(char));
         strcpy(global.PWD, newPID);
     }
 }

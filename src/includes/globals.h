@@ -13,7 +13,7 @@ struct globv
     char *PWD;
 };
 
-void change_pid(char *newPID);
+void change_pwd(char *newPID);
 void init_globv(void);
 void free_glob(void);
 
