@@ -31,8 +31,6 @@ void free_data(struct stored_data *data)
         free(data->builtins);
     }
     free_assignments(data->var_tab);
-    free_assignments(data->export_tab);
-    free_assignments(data->alias_tab);
     free(data);
 }
 
@@ -41,11 +39,13 @@ struct stored_data *stored_data_init(void)
     struct stored_data *new = malloc(sizeof(struct stored_data));
     new->f_tab = NULL;
     new->var_tab = init_assignment();
-    new->export_tab = init_assignment();
-    new->alias_tab = init_assignment();
     new->builtins = init_builts();
-    add_assignment_split("IFS"," ", new->var_tab);
-    add_assignment_split("#","0", new->var_tab);
+    char *ifs = calloc(2, sizeof(char));
+    char *hashtag = calloc(2, sizeof(char));
+    ifs[0] = ' ';
+    hashtag[0] = '0';
+    add_assignment_split("IFS", ifs, new->var_tab);
+    add_assignment_split("#", hashtag, new->var_tab);
     return new;
 }
 
@@ -60,6 +60,7 @@ struct function *is_a_function(struct node *n, struct f_tab *f_tab)
     }
     return NULL;
 }
+
 
 void function_stored(struct node *n, struct stored_data *data)
 {
@@ -200,7 +201,7 @@ char **to_execute(struct node *child, struct node *oper_node
 void get_function_param(struct node *child, struct node *oper_node
         , struct stored_data *data)
 {
-    struct node *iter = child;
+    struct node *iter = child->next;
     size_t len = 0;
     char **result = calloc(1, sizeof(char *));
     int i = 0;
@@ -217,11 +218,10 @@ void get_function_param(struct node *child, struct node *oper_node
         memcpy(result[i], instr, len);
     }
     result = realloc(result, (i + 1) * sizeof(char *));
-    result[i] = NULL;
+    result[i + 1] = NULL;
     data->nbparam = i;
     char *p = inttochar(i);
     add_assignment_split("#", p, data->var_tab);
-    free(p);
     data->param = result;
 }
 
@@ -272,6 +272,15 @@ struct node *get_oper_node(struct node *start)
     }
     return NULL;
 }
+
+struct node *next_node(struct node *n)
+{
+    struct node *oper_node = get_oper_node(n);
+    if (oper_node)
+        return oper_node->next;
+    return NULL;
+}
+
 int if_cond(struct node *cond, struct stored_data *data)
 {
     struct node *condition = cond->children;
@@ -415,7 +424,7 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
         else
         {
             //for '*' you need to built a string made of every args
-            //instruction = realloc(instruction,
+            //instruction = realloc(instruction, data->nb_param);
             return NULL;
         }
     }
@@ -499,6 +508,7 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
         if (n->type == A_FUNCTION)
         {
             function_stored(n, data);
+            return traversal_ast(next_node(n), res, data);
         }
         if (n->type == A_INSTRUCT)
         {
