@@ -15,6 +15,13 @@ static void print_alphabet(struct assignment **alias_tb)
 //FIXME: to implement.
 static int print_alias(char *args[i])
 {
+    int pos = hash_function(args[i]);
+    if (global.alias_tab[pos]->name == NULL)
+    {
+        fprintf(stderr, "42sh: alias: %s not found.\n", args[i]);
+        return 1;
+    }
+
     return 0;
 }
 
