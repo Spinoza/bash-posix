@@ -9,8 +9,8 @@ struct globv
     struct node *ast_root;
     struct stored_data *data;
     struct option *options;
-    char *oldPID;
-    char *PID;
+    char *oldPWD;
+    char *PWD;
 };
 
 void change_pid(char *newPID);

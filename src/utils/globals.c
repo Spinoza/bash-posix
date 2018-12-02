@@ -12,41 +12,43 @@ void init_globv(void)
     global.ast_root = NULL;
     global.data = stored_data_init();
     global.options = option_init();
-    global.oldPID = NULL;
-    global.PID = NULL;
+    global.oldPWD = NULL;
+    global.PWD = strcpy(calloc(strlen(getenv("PWD")) + 1, sizeof(char))
+    ,getenv("PWD"));
 }
 
 void free_glob(void)
 {
     if (global.ast_root)
         free_node(global.ast_root);
-    if (global.oldPID)
-        free(global.oldPID);
-    if (global.PID)
-        free(global.PID);
+    if (global.oldPWD)
+        free(global.oldPWD);
+    if (global.PWD)
+        free(global.PWD);
     free_data(global.data);
     free(global.options);
 }
 
 void change_pid(char *newPID)
 {
-    if (!global.PID)
+    if (!global.PWD)
     {
-        global.PID = calloc(mstrlen(newPID) + 1, sizeof(char));
-        strcpy(global.PID, newPID);
+        global.PWD = calloc(mstrlen(newPID) + 1, sizeof(char));
+        strcpy(global.PWD, newPID);
     }
 
     else
     {
-        if (global.oldPID)
+        if (global.oldPWD)
         {
-            free(global.oldPID);
+            free(global.oldPWD);
+            global.oldPWD = NULL;
         }
 
-        global.oldPID = calloc(mstrlen(global.PID) + 1, sizeof(char));
-        strcpy(global.oldPID, global.PID);
-        free(global.PID);
-        global.PID = calloc(mstrlen(newPID) + 1, sizeof(char));
-        strcpy(global.PID, newPID);
+        global.oldPWD = calloc(mstrlen(global.PWD) + 1, sizeof(char));
+        strcpy(global.oldPWD, global.PWD);
+        free(global.PWD);
+        global.PWD = calloc(mstrlen(newPID) + 1, sizeof(char));
+        strcpy(global.PWD, newPID);
     }
 }
