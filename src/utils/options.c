@@ -2,6 +2,7 @@
 #include "grammar_check.h"
 #include "options.h"
 #include "err.h"
+#include "globals.h"
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -23,10 +24,57 @@ struct option *option_init(void)
     new->sourcepath = FALS;
     new->xpg_echo = FALS;
 
-    new->arg_pO = NULL;
-    new->arg_mO = NULL;
     new->arg_c = NULL;
     return new;
+}
+
+static void set_opt(struct option *opts, char *ops, int retcode)
+{
+    if (!(strcmp("ast-print", ops)))
+    {
+        opts->ast_print = retcode ? FALS : TRUE;
+    }
+
+    else if (!(strcmp("dotglob", ops)))
+    {
+        opts->ast_print = retcode ? FALS : TRUE;
+    }
+
+    else if (!(strcmp("expand_aliases", ops)))
+    {
+        opts->ast_print = retcode ? FALS : TRUE;
+    }
+
+    else if (!(strcmp("extglob", ops)))
+    {
+        opts->ast_print = retcode ? FALS : TRUE;
+    }
+
+    else if (!(strcmp("nocaseglob", ops)))
+    {
+        opts->ast_print = retcode ? FALS : TRUE;
+    }
+
+    else if (!(strcmp("nullglob", ops)))
+    {
+        opts->ast_print = retcode ? FALS : TRUE;
+    }
+
+    else if (!(strcmp("sourcepath", ops)))
+    {
+        opts->ast_print = retcode ? FALS : TRUE;
+    }
+
+    else if (!(strcmp("xpg_echo", ops)))
+    {
+        opts->ast_print = retcode ? FALS : TRUE;
+    }
+
+    else
+    {
+        //FIXME: correctly free global* free_glob();
+        errx(127, "-O: %s: invalid option name.\n", ops);
+    }
 }
 
 static int set_c(struct option *opts, char *arg[], int pos, int argc)
@@ -43,7 +91,8 @@ static int set_mO(struct option *opts, char *arg[], int pos, int argc)
     if (pos >= argc)
         errx(1, "Error: the -O option takes an argument.");
 
-    opts->arg_mO = arg[pos];
+    //opts->arg_mO = arg[pos];
+    set_opt(opts, arg[pos], 0);
     return pos;
 }
 
@@ -52,7 +101,8 @@ static int set_pO(struct option *opts, char *arg[], int pos, int argc)
     if (pos >= argc)
         errx(1, "Error: the +O option takes an argument.");
 
-    opts->arg_pO = arg[pos];
+    //opts->arg_pO = arg[pos];
+    set_opt(opts, arg[pos], 1);
     return pos;
 }
 
@@ -99,9 +149,10 @@ int options_parser(int argc, char *argv[], struct option *options)
     {
         if (argv[pos][0] == '-' || argv[pos][0] == '+')
         {
+            int temp = pos;
             if ( (pos = set_commands(options,argv, pos, argc)) == 0)
             {
-                errx(1, "Invalid option : %s.", argv[pos]);
+                errx(2, "Invalid option : %s.", argv[temp]);
             }
         }
         else

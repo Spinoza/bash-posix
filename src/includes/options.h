@@ -36,8 +36,6 @@ struct option
     int version; /**< Set to 1 if option --vesrion activated */
 
     char *arg_c; /**< Keeps arg for option -c */
-    char *arg_pO; /**< Keeps arg for option -0 */
-    char *arg_mO; /**< Keeps arg for option +0 */
 };
 
 /**
