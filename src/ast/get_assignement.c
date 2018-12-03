@@ -78,6 +78,8 @@ char *get_assign_var(char *name, struct assignment **a_tab)
 
 char *get_assign(char *name, struct stored_data *data)
 {
+//    if (!strcmp(name, "OLDPWD"))
+  //      return global.oldPWD;
     if (!strcmp(name, "RANDOM"))
         return get_random();
     if (!strcmp(name, "UID"))
