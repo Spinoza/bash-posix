@@ -165,29 +165,8 @@ void free_command(char **string)
     free(string);
 }
 
-int is_builtin(char **string)
-{
-    for (int i = 0; i < NB_BUILTINS; i++)
-    {
-        if (!strcmp(global.data->builtins[i].name, string[0]))
-        {
-            int r = 0;
-            if (!strcmp(string[0], "exit"))
-                r = global.data->builtins[i].builtin(2, string, 2);
-            else
-                r = global.data->builtins[i].builtin(2, string);
-            return r;
-        }
-    }
-    return -1;
-}
-
-
 int exec_command(char **string)
 {
-    int r_builtin = is_builtin(string);
-    if (r_builtin != -1)
-        return r_builtin;
     pid_t pid = fork();
     if (pid == -1)//error
     {
@@ -209,4 +188,3 @@ int exec_command(char **string)
         return status;
     }
 }
-

@@ -35,7 +35,6 @@ void change_pwd(char *newPID)
         global.PWD = calloc(strlen(newPID) + 1, sizeof(char));
         strcpy(global.PWD, newPID);
     }
-
     else
     {
         if (global.oldPWD)
@@ -43,7 +42,6 @@ void change_pwd(char *newPID)
             free(global.oldPWD);
             global.oldPWD = NULL;
         }
-
         global.oldPWD = calloc(strlen(global.PWD) + 1, sizeof(char));
         strcpy(global.oldPWD, global.PWD);
         free(global.PWD);
