@@ -4,6 +4,7 @@
 #include <string.h>
 #include "ast.h"
 #include "builtins.h"
+#include "hardbs.h"
 
 static int is_echo_opt(char *arg, int *e, int *E, int *n)
 {
@@ -28,6 +29,35 @@ static int is_echo_opt(char *arg, int *e, int *E, int *n)
     return 0;
 }
 
+static int handle_hardbs(char *arg, char *printfin, int index)
+{
+    switch (arg[1])
+    {
+        case '0':
+            return back_zero(arg, printfin, index);
+            break;
+        case 'x':
+            return back_x(arg, printfin, index);
+            break;
+        case 'u':
+            return back_u(arg, printfin, index);
+            break;
+        case 'U':
+            return back_U(arg, printfin, index);
+            break;
+        default:
+            {
+                for (size_t i = 0; i < strlen(arg); i++)
+                {
+                    printfin[index] = arg[i];
+                    index++;
+                }
+                return index;
+            }
+            break;
+    }
+}
+
 static int match_bs(char *arg, char *printfin, int index)
 {
     if (strlen(arg) == 1)
@@ -36,24 +66,54 @@ static int match_bs(char *arg, char *printfin, int index)
         return index + 1;
     }
 
-    if (!strcmp(arg, "\a"))
+    if (arg[1] == 'a')
     {
         printfin[index] = 7;
         return index + 1;
     }
 
-    if (!strcmp(arg, "\b"))
+    if (arg[1] == 'b')
     {
         printfin[index] = 8;
         return index + 1;
     }
 
-    if (!strcmp(arg, "\c"))
+    if (arg[1] == 'c')
     {
         return -10;
     }
 
+    if (arg[1] == 'f')
+    {
+        printfin[index] = 12;
+        return index + 1;
+    }
 
+    if (arg[1] == 'n')
+    {
+        printfin[index] = 10;
+        return index + 1;
+    }
+
+    if (arg[1] == 'r')
+    {
+        printfin[index] = 13;
+        return index + 1;
+    }
+
+    if (arg[1] == 't')
+    {
+        printfin[index] = 9;
+        return index + 1;
+    }
+
+    if (arg[1] == 'v')
+    {
+        printfin[index] = 11;
+        return index + 1;
+    }
+
+    return handle_hardbs(arg, printfin, index);
 }
 
 static size_t fullength(char *args[], int i)
@@ -74,6 +134,7 @@ static size_t fullength(char *args[], int i)
 
 int my_echo(int number, char *args[], ...)
 {
+    number = number;
 
     if (!args[1])
     {
@@ -141,7 +202,7 @@ int my_echo(int number, char *args[], ...)
 
     else
     {
-        frprintf(stdout, "%s\n", printfin);
+        fprintf(stdout, "%s\n", printfin);
     }
     return 0;
 }

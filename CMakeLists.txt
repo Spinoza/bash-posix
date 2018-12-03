@@ -25,6 +25,8 @@ target_link_libraries(tty readline)
 
 add_library(global ${CMAKE_SOURCE_DIR}/src/utils/globals.c)
 add_library(vectors ${CMAKE_SOURCE_DIR}/src/utils/vector.c)
+add_library(hardbs ${CMAKE_SOURCE_DIR}/src/utils/hardbs.c)
+
 
 add_library(exit ${CMAKE_SOURCE_DIR}/src/builtins/exit.c)
 add_library(shopt ${CMAKE_SOURCE_DIR}/src/builtins/my_shopt.c)
@@ -33,7 +35,8 @@ add_library(export ${CMAKE_SOURCE_DIR}/src/builtins/export.c)
 add_library(alias ${CMAKE_SOURCE_DIR}/src/builtins/my_alias.c)
 target_link_libraries(alias vectors)
 add_library(unalias ${CMAKE_SOURCE_DIR}/src/builtins/my_unalias.c)
-
+add_library(echo ${CMAKE_SOURCE_DIR}/src/builtins/my_echo.c)
+target_link_libraries(echo hardbs)
 add_library(grammar ${CMAKE_SOURCE_DIR}/src/grammar/grammar_check.c
     ${CMAKE_SOURCE_DIR}/src/grammar/grammar_command.c
     ${CMAKE_SOURCE_DIR}/src/grammar/grammar_rule.c
@@ -76,6 +79,7 @@ target_link_libraries(42sh export)
 target_link_libraries(42sh vectors)
 target_link_libraries(42sh alias)
 target_link_libraries(42sh unalias)
+target_link_libraries(42sh echo)
 
 add_custom_target(set_env
     COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/set_env.sh
