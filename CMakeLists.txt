@@ -44,8 +44,10 @@ target_link_libraries(grammar PRIVATE lexer)
 target_link_libraries(grammar PRIVATE tty)
 
 add_library(execution ${CMAKE_SOURCE_DIR}/src/ast/execution_ast.c
+    ${CMAKE_SOURCE_DIR}/src/ast/helper_exec.c
     ${CMAKE_SOURCE_DIR}/src/ast/ast_assignement.c
-    ${CMAKE_SOURCE_DIR}/src/ast/get_assignement.c)
+    ${CMAKE_SOURCE_DIR}/src/ast/get_assignement.c
+    ${CMAKE_SOURCE_DIR}/src/ast/functions.c)
 target_link_libraries(execution ast)
 
 add_library(ast ${CMAKE_SOURCE_DIR}/src/ast/ast.c
