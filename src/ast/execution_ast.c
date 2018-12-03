@@ -5,12 +5,14 @@
 #include "functions.h"
 #include "helper_exec.h"
 #include "builtins.h"
+#include "globals.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include  <sys/types.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+
 
 struct node *get_oper_node(struct node *start)
 {
@@ -137,10 +139,7 @@ struct node *instr_execution(struct node *n, int *res,
             *res = exec_command(command_call);
     }
     else
-    {
-        //set the args table
         *res = traversal_ast(func, res, data);
-    }
     if ((!strcmp(oper,"&&") && !(*res))
             || (!strcmp(oper,"||") && (*res)))
         return oper_node->next;
@@ -255,6 +254,7 @@ struct node *case_execution(struct node *n, struct stored_data *data)
 
 int traversal_ast(struct node *n, int *res, struct stored_data *data)
 {
+    global.res = *res;
     if (!n || !strcmp(n->instr, ";"))
     {
         return *res;

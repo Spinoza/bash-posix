@@ -1,5 +1,6 @@
 #define _GNU_SOURCE
 #include "execution_ast.h"
+#include "globals.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -14,17 +15,17 @@ size_t nbdigits(int r)
     return i;
 }
 
-
 char *inttochar(int nb)
 {
-    size_t s = nbdigits(nb) + 1;
+    size_t s = nbdigits(nb);
     char *number = malloc(sizeof(char) * s);
     for (size_t i = 0; i < s; i++)
     {
         number[i] = '0' + nb % 10;
         nb /= 10;
     }
-    s --;
+    if (nb)
+        s --;
     for (size_t i = 0; i < s / 2; i++)
     {
         char tmp = number[i];
@@ -78,8 +79,10 @@ char *get_assign_var(char *name, struct assignment **a_tab)
 
 char *get_assign(char *name, struct stored_data *data)
 {
-    //if (!strcmp(name, "OLDPWD"))
-    //    return global.oldPWD;
+    if (!strcmp(name, "OLDPWD"))
+        return global.oldPWD;
+    if (!strcmp(name, "?"))
+        return inttochar(global.res);
     if (!strcmp(name, "RANDOM"))
         return get_random();
     if (!strcmp(name, "UID"))

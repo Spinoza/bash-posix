@@ -6,6 +6,7 @@
 void init_globv(void)
 {
     global.ast_root = NULL;
+    global.res = 0;
     global.data = stored_data_init();
     global.options = option_init();
     global.oldPWD = NULL;

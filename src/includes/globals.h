@@ -11,7 +11,7 @@ struct globv
     struct option *options;
     char *oldPWD;
     char *PWD;
-    char *res;
+    int res;
 };
 
 void change_pwd(char *newPID);
