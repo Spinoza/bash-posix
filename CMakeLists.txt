@@ -32,6 +32,7 @@ add_library(cd ${CMAKE_SOURCE_DIR}/src/builtins/cd.c)
 add_library(export ${CMAKE_SOURCE_DIR}/src/builtins/export.c)
 add_library(alias ${CMAKE_SOURCE_DIR}/src/builtins/my_alias.c)
 target_link_libraries(alias vectors)
+add_library(unalias ${CMAKE_SOURCE_DIR}/src/builtins/my_unalias.c)
 
 add_library(grammar ${CMAKE_SOURCE_DIR}/src/grammar/grammar_check.c
     ${CMAKE_SOURCE_DIR}/src/grammar/grammar_command.c
@@ -72,6 +73,7 @@ target_link_libraries(42sh cd)
 target_link_libraries(42sh export)
 target_link_libraries(42sh vectors)
 target_link_libraries(42sh alias)
+target_link_libraries(42sh unalias)
 
 add_custom_target(set_env
     COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/set_env.sh
