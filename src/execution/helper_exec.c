@@ -192,6 +192,8 @@ int exec_command(char **string)
     {
         int status = 0;
         waitpid(pid, &status, 0);
+        status %= 256;
+        printf("status is %d\n",status);
         if (status == 127)
             fprintf(stderr,"42sh : %s : command not found.\n",string[0]);
         free_command(string);

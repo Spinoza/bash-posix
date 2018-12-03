@@ -195,7 +195,6 @@ static int interactive_mode(struct globv global)
     }
     return retcode;
 }
-
 int main(int argc, char *argv[])
 {
     init_globv();
