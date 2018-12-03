@@ -4,93 +4,56 @@
 #include <string.h>
 #include "globals.h"
 
-//check return code of chdir first
-//while to handle les ../../.../..Pe(rio
+static char *find_path(char *arg)
+{
+    char *first = calloc (strlen(arg + 1, sizeof(char)));
+    strcpy(first, arg);
+    char *remain;
+    first strtok_r(first, "/ \0", &remain);
+    while(first)
+    {
+        if(!strcmp(frist, "-"))
+        {
+            if(global.oldPWD == NULL)
+            {
+                fprintf(stderr, "cd: old PWD not yet set");
+                return -1;
+            }
+            return chdir(global.oldPWD);
+        }
+        if(chdir(first) == -1)
+            return -1;
+    }
+    change_pwd(getenv("PWD"));
+    return 0;
+}
+
 int my_cd(int number, char *args[], ...)
 {
     number = number;
-    char *home = getenv("HOME");
-    char *pwd = getenv("PWD");
-    char *parent = getenv("PWD");
-    int i = strlen(parent) - 1;
-    if(parent[i] == '/')
-    {
-        parent[i] = '\0';
-        i--;
-    }
-    while(parent[i] != '/')
-    {
-        parent[i] = '\0';
-        i--;
-    }
     if(args[1] != NULL && args[2] != NULL)
     {
         fprintf(stderr, "cd: Too many arguments");
         return 1;
     }
-    if(args[1]== NULL || !strcmp(args[1], "~") ||
-    !strcmp(args[1], "~/"))
+    if(args[1] == NULL)
     {
-        change_pwd(home);
-    }
-    else if(!strcmp(args[1], ".") || !strcmp(args[1], "./"))
-    {
-        change_pwd(global.PWD);
-    }
-    else if(!strcmp(args[1], "..") || !strcmp(args[1], "../"))
-    {
-       change_pwd(parent);
-    }
-    else if(!strcmp(args[1], "-"))
-    {
-        if(global.oldPWD == NULL)
-        {
-            fprintf(stderr, "cd: old PWD not yet set");
+        int ret = chdir(getenv("HOME"));
+        if(ret == -1)
             return 1;
-        }
-        change_pwd(global.oldPWD);
-        return chdir(global.oldPWD);
+        change_pwd(getenv("PWD"));
+        return 0;
     }
-    else if(args[1][0] == '/')
+    if(args[1][0] == '/')
     {
         change_pwd("/");
+        return chdir("/");
     }
-    else
-    {
-        char *save = calloc(strlen(args[1]) + 1, sizeof(char));
-        strcpy(save, args[1]);
-        char *add;
-        char *first = strtok_r(save, "/", &add);
-        if(!strcmp(first, "."))
-        {
-            char *chg = calloc(strlen(add) + strlen(pwd) + 2,
-        sizeof(char));
-            strcat(chg, pwd);
-            strcat(chg, add);
-            change_pwd(chg);
-            free(chg);
-        }
-        else if(!strcmp(first, ".."))
-        {
-            char *chg = calloc(strlen(add) + strlen(parent) + 2,
-        sizeof(char));
-            strcat(chg, parent);
-            strcat(chg, add);
-            change_pwd(chg);
-            free(chg);
-        }
-        if(!strcmp(first, "~"))
-        {
-            char *chg = calloc(strlen(add) + strlen(home) + 2,
-        sizeof(char));
-            strcat(chg, home);
-            strcat(chg, add);
-            change_pwd(chg);
-            free(chg);
-        }
-        free(save);
-    }
-    return chdir(args[1]);
+    int change = find_path(args[1]);
+    if(change == -1)
+        return 1;
+
+    return 0;
 }
 
 
