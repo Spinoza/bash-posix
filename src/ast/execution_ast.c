@@ -184,6 +184,7 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
             {
                 instruction[i] = data->param[i];
             }
+            i--;
         }
         else
         {
