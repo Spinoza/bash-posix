@@ -76,5 +76,3 @@ void get_function_param(struct node *child, struct node *oper_node
     add_assignment_split("#", p, data->var_tab);
     data->param = result;
 }
-
-
