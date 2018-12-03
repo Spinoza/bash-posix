@@ -54,10 +54,10 @@ int isanumber(char *name)
 char *get_param(char *name, struct stored_data *data)
 {
     int nb = isanumber(name);
-    if (nb != -1)
+    if (nb <= 0)
     {
-        if (nb < data->nbparam)
-            return data->param[nb];
+        if (nb -1 < data->nbparam)
+            return data->param[nb - 1];
     }
     return "";
 }

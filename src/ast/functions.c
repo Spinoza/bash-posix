@@ -66,10 +66,11 @@ void get_function_param(struct node *child, struct node *oper_node
     for (; iter && iter != oper_node; i++, iter = iter->next)
     {
         instr = set_string(iter->instr, iter, data);
+        result = realloc(result, (i + 1) * sizeof(char *));
         result[i] = instr;
     }
     result = realloc(result, (i + 1) * sizeof(char *));
-    result[i + 1] = NULL;
+    result[i] = NULL;
     data->nbparam = i;
     char *p = inttochar(i);
     add_assignment_split("#", p, data->var_tab);

@@ -24,8 +24,10 @@ void free_assignments(struct assignment **tab)
         for (; next;)
         {
             to_free = next;
-            free(to_free->value);
-            free(to_free->name);
+            if (to_free->value)
+                free(to_free->value);
+            if (to_free->name)
+                free(to_free->name);
             next = next->next;
             free(to_free);
         }
