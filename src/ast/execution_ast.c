@@ -190,7 +190,7 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
             if (i + 1 >= capacity)
             {
                 capacity *= 2;
-                instruction = realloc(instruction, (i + 1)
+                instruction = realloc(instruction, capacity
                             * sizeof(char *));
             }
             instruction[i] = set_string(cond->instr, cond, data);
