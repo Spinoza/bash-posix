@@ -30,6 +30,7 @@ static int find_path(char *arg)
 
 int my_cd(int number, char *args[], ...)
 {
+    //FIXME: free everything.
     number = number;
     if (args[1] != NULL && args[2] != NULL)
    {
