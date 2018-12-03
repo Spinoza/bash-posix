@@ -4,15 +4,14 @@
 #include <string.h>
 #include "globals.h"
 
-static char *find_path(char *arg)
+static int find_path(char *arg)
 {
-    char *first = calloc (strlen(arg + 1, sizeof(char)));
+    char *first = calloc (strlen(arg) + 1, sizeof(char));
     strcpy(first, arg);
-    char *remain;
-    first strtok_r(first, "/ \0", &remain);
+    first = strtok(first, "/ \0");
     while(first)
     {
-        if(!strcmp(frist, "-"))
+        if(!strcmp(first, "-"))
         {
             if(global.oldPWD == NULL)
             {
@@ -23,6 +22,7 @@ static char *find_path(char *arg)
         }
         if(chdir(first) == -1)
             return -1;
+        first = strtok(NULL, "/ \0");
     }
     change_pwd(getenv("PWD"));
     return 0;
