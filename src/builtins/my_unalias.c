@@ -10,8 +10,11 @@
 static int remove_given(struct assignment *assign)
 {
     free(assign->name);
+    assign->name = NULL;
     free(assign->value);
+    assign->value = NULL;
     free(assign);
+    assign = NULL;
 
     return 0;
 }
@@ -87,7 +90,7 @@ int my_unalias(int number, char *args[], ...)
     int i = 1;
     while (args[i])
     {
-        if (!strcmp("-a", args[i]))
+        if (!strcmp("-a", args[i]) && !found)
         {
             return remove_all();
         }
@@ -100,6 +103,7 @@ int my_unalias(int number, char *args[], ...)
 
         else
         {
+            found = 1;
             if (retcode == 0)
                 retcode = remove_assignment(args[i]);
             else

@@ -82,10 +82,11 @@ static int print_alias(char *arg)
 
         if (!strcmp(a->name, arg))
         {
-            fprintf(stdout, "alias %s='%s'\n", arg, a->name);
+            fprintf(stdout, "alias %s='%s'\n", arg, a->value);
             return 0;
         }
     }
+    fprintf(stderr, "42sh: alias: %s not found.\n", arg);
     return 1;
 }
 
@@ -120,6 +121,12 @@ int my_alias(int number, char *args[], ...)
         {
             found = 1;
             print_alphabet(global.data->alias_tab);
+        }
+        else if (args[i][0] == '-' && !found)
+        {
+            fprintf(stderr, "42sh: alias: %s: invalid option.\n", args[i]);
+            fprintf(stderr, "alias: usage: alias [-p] [name[=value] ... ]\n");
+            return 2;
         }
         else if (!contain_equal(args[i]))
         {
