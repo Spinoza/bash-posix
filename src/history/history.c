@@ -7,15 +7,12 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-static size_t mstrlen(char *string)
-{
-    return *string ? 1 + mstrlen(string + 1) : 0;
-}
-
 void init_interact(void)
 {
     char *home = getenv("HOME");
-    char *path = calloc(mstrlen(home) + 15, sizeof(char));
+    if (!home)
+        return;
+    char *path = calloc(strlen(home) + 15, sizeof(char));
     strcpy(path, home);
     path = strcat(path, "/.42sh_history");
     FILE *history = fopen(path, "r+");
@@ -29,7 +26,7 @@ void init_interact(void)
 
     while ((read = getline(&line, &i, history)) != -1)
     {
-        line[mstrlen(line) - 1] = '\0';
+        line[strlen(line) - 1] = '\0';
         add_history(line);
         free(line);
         line = NULL;

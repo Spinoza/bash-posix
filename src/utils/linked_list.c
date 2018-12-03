@@ -3,11 +3,6 @@
 #include <stdlib.h>
 #include "linked_list.h"
 
-static size_t mstrlen(char *string)
-{
-    return *string ? 1 + mstrlen(string + 1) : 0;
-}
-
 struct linked_list *init_link(void)
 {
     struct linked_list *l = malloc(sizeof(struct linked_list));
@@ -74,7 +69,7 @@ struct token *token_copy(struct token *tok)
 {
     struct token *copy = calloc(1, sizeof(struct token));
     copy->type = tok->type;
-    copy->name = calloc(mstrlen(tok->name) + 1, sizeof(char));
+    copy->name = calloc(strlen(tok->name) + 1, sizeof(char));
     strcpy(copy->name, tok->name);
 
     return copy;

@@ -5,14 +5,10 @@
 #include "ast.h"
 #include "builtins.h"
 
-static size_t mstrlen(char *string)
-{
-    return *string ? 1 + mstrlen(string + 1) : 0;
-}
 
 static int isdig(char *string)
 {
-    for (size_t i = 0; i < mstrlen(string); i++)
+    for (size_t i = 0; i < strlen(string); i++)
     {
         if (string[i] < 48 || string[i] > 57)
             return 0;

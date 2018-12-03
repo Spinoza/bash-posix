@@ -8,12 +8,6 @@
 #include <readline/readline.h>
 #include "grammar_check.h"
 
-/*static size_t mstrlen(char *str)
-{
-    return *str ? 1 + mstrlen(str + 1) : 0;
-}*/
-
-
 struct nL *handletty(void)
 {
     while (isatty(STDIN_FILENO))

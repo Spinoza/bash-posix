@@ -5,10 +5,6 @@
 #include "lexer.h"
 #include "file_handle.h"
 
-static size_t mstrlen(char *string)
-{
-    return *string ? 1 + mstrlen(string + 1) : 0;
-}
 
 static struct nL *find_actual(struct linked_list *ll, struct nL *actual)
 {
@@ -33,8 +29,8 @@ static struct nL *find_actual(struct linked_list *ll, struct nL *actual)
 
 int is_file(char *path)
 {
-    char *copy = calloc(mstrlen(path) + 1, sizeof(char));
-    memcpy(copy, path, mstrlen(path));
+    char *copy = calloc(strlen(path) + 1, sizeof(char));
+    memcpy(copy, path, strlen(path));
     char *path2 = strtok(copy, " \n;");
     FILE *file = fopen(path2, "r");
     free(copy);
@@ -64,8 +60,8 @@ void fuse_lists(struct linked_list *ll, char *string)
 
 struct linked_list *read_fil(char *path)
 {
-    char *copy = calloc(mstrlen(path) + 1, sizeof(char));
-    memcpy(copy, path, mstrlen(path));
+    char *copy = calloc(strlen(path) + 1, sizeof(char));
+    memcpy(copy, path, strlen(path));
     char *path2 = strtok(copy, " \n;");
     FILE *file = fopen(path2, "r");
     free(copy);
@@ -74,7 +70,7 @@ struct linked_list *read_fil(char *path)
     ssize_t isread;
 
     isread = getline(&line, &len, file);
-    line[mstrlen(line) - 1] = '\0';
+    line[strlen(line) - 1] = '\0';
     struct linked_list *toret = lexer_c(line);
     if (isread == -1)
     {
@@ -87,7 +83,7 @@ struct linked_list *read_fil(char *path)
     actual = find_actual(toret, actual);
     while ((isread = getline(&line, &len, file)) != -1)
     {
-        line[mstrlen(line) - 1] = '\0';
+        line[strlen(line) - 1] = '\0';
         struct linked_list *temp = lexer_c(line);
         actual->next = temp->head;
         temp->head->prev = actual;
