@@ -5,6 +5,8 @@
 #include "globals.h"
 #include "vector.h"
 
+#define NB_BUILTINS 5
+
 struct builtins
 {
     char *name;
@@ -12,7 +14,7 @@ struct builtins
     int (*builtin)(int numb, char *args[], ...);
 };
 
-struct vector *get_assigns_sorted(struct assignment **table); 
+struct vector *get_assigns_sorted(struct assignment **table);
 struct builtins *init_builts(void);
 
 int my_exit(int number, char *args[], ...);

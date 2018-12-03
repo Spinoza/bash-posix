@@ -17,7 +17,7 @@ int my_export(int number, char *args[], ...)
     int i = 1;
     int n = 0;
     int file = 0;
-    while(args[i])
+    while (args[i])
     {
         if(!strcmp(args[i], "-p") && file == 0)
         {
