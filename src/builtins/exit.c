@@ -34,7 +34,8 @@ struct builtins *init_builts(void)
     tab[2].builtin = my_cd;
     tab[3].name = "alias";
     tab[3].builtin = my_alias;
-
+    tab[4].name = "unalias";
+    tab[4].builtin = my_unalias;
     return tab;
 }
 

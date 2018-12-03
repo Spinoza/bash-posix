@@ -31,6 +31,7 @@ void free_assignments(struct assignment **tab)
         }
     }
     free(tab);
+    tab = NULL;
 }
 //return the position in the hash table
 int hash_function(char *string)
