@@ -28,7 +28,7 @@ static struct nL *g_redirection(struct nL *tok)
     if (tok->elem->type == IONUMBER)
         tok = tok->next ? tok->next : NULL;
 
-    if (tok && tok->elem->type == REDIRECTION && is_conform(tok) == 1)
+    if (tok && is_conform(tok) == 1)
     {
         tok = tok->next;
         if (!tok)
@@ -65,10 +65,7 @@ static struct nL *g_redirection(struct nL *tok)
 static struct nL *g_element(struct nL *tok)
 {
     int conf = is_conform(tok);
-    if (conf == 1 || conf == 2)
-        return NULL;
-
-    if (tok->elem->type == WORD || tok->elem->type == EXPAND_W)
+    if (conf == 0 && (tok->elem->type == WORD || tok->elem->type == EXPAND_W))
         return tok;
 
     return g_redirection(tok);
