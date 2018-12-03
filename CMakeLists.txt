@@ -23,14 +23,15 @@ add_library(history ${CMAKE_SOURCE_DIR}/src/history/history.c)
 add_library(tty ${CMAKE_SOURCE_DIR}/src/prompt/handlePS1.c)
 target_link_libraries(tty readline)
 
+add_library(global ${CMAKE_SOURCE_DIR}/src/utils/globals.c)
+add_library(vectors ${CMAKE_SOURCE_DIR}/src/utils/vector.c)
+
 add_library(exit ${CMAKE_SOURCE_DIR}/src/builtins/exit.c)
 add_library(shopt ${CMAKE_SOURCE_DIR}/src/builtins/my_shopt.c)
 add_library(cd ${CMAKE_SOURCE_DIR}/src/builtins/cd.c)
 add_library(export ${CMAKE_SOURCE_DIR}/src/builtins/export.c)
 add_library(alias ${CMAKE_SOURCE_DIR}/src/builtins/my_alias.c)
-
-add_library(global ${CMAKE_SOURCE_DIR}/src/utils/globals.c)
-add_library(vectors ${CMAKE_SOURCE_DIR}/src/utils/vector.c)
+target_link_libraries(alias vectors)
 
 add_library(grammar ${CMAKE_SOURCE_DIR}/src/grammar/grammar_check.c
     ${CMAKE_SOURCE_DIR}/src/grammar/grammar_command.c
