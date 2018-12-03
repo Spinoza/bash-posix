@@ -21,8 +21,10 @@ void free_glob(void)
         free(global.oldPWD);
     if (global.PWD)
         free(global.PWD);
-    free_data(global.data);
-    free(global.options);
+    if (global.data)
+        free_data(global.data);
+    if (global.options)
+        free(global.options);
 }
 
 void change_pwd(char *newPID)
