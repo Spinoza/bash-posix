@@ -159,6 +159,14 @@ char **to_execute(struct node *child, struct node *oper_node
     }
     result = realloc(result, (i + 1) * sizeof(char *));
     result[i] = NULL;
+    char *is_alias = get_assign_var(result[0], data->alias_tab);
+    if (is_alias && strcmp(is_alias, ""))
+    {
+        int len = strlen(is_alias);
+        free(result[0]);
+        result[0] = calloc(len + 1, sizeof(char));
+        result[0] = memcpy(result[0], is_alias, len);
+    }
     return result;
 }
 
@@ -192,9 +200,7 @@ int exec_command(char **string)
     {
         int status = 0;
         waitpid(pid, &status, 0);
-        status %= 256;
-        printf("status is %d\n",status);
-        if (status == 127)
+        if (status == 127 || status == 65280)
             fprintf(stderr,"42sh : %s : command not found.\n",string[0]);
         free_command(string);
         return status;

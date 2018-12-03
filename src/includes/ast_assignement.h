@@ -25,7 +25,7 @@ void add_assignment_split(char *name, char *value, struct assignment **a_tab);
 
 void add_assignment(char *string, struct assignment **a_tab);
 
-int hash_function(char *string);
-
 char *inttochar(int nb);
+
+int hash_function(char *string);
 #endif /* ! AST_ASSIGNEMENT_H */

@@ -67,7 +67,7 @@ int my_export(int number, char *args[], ...)
                 int ind = hash_function(split);
                 struct assignment *assign = global.data->export_tab[ind];
                 struct assignment *prev = NULL;
-                while(assign != NULL && assign->name != NULL)
+                while (assign != NULL && assign->name != NULL)
                 {
                     if(!strcmp(args[i], assign->name))
                     {
@@ -119,7 +119,7 @@ int my_export(int number, char *args[], ...)
     if(file == 0)
     {
         struct vector *print = get_assigns_sorted(global.data->export_tab);
-        for(ssize_t i = 0; i < print->size; i++)
+        for (ssize_t i = 0; i < print->size; i++)
         {
             struct assignment *assign = print->arr[i];
             fprintf(stdout, "declare -x %s", assign->name);

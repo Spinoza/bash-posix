@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <time.h>
 
-size_t nbdigits(int r)
+static size_t nbdigits(int r)
 {
     int i = 0;
     for ( ; r > 0 ; r /= 10)
@@ -36,13 +36,13 @@ char *inttochar(int nb)
     return number;
 }
 
-char *get_random(void)
+static char *get_random(void)
 {
     int r = rand();
     return inttochar(r);
 }
 
-int isanumber(char *name)
+static int isanumber(char *name)
 {
     for (int i = 0; *(name + i); i++)
     {
@@ -52,7 +52,7 @@ int isanumber(char *name)
     return atoi(name);
 }
 
-char *get_param(char *name, struct stored_data *data)
+static char *get_param(char *name, struct stored_data *data)
 {
     int nb = isanumber(name);
     if (nb >= 0)
