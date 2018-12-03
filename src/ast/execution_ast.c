@@ -167,25 +167,36 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
 {
     //no need to free inside instruction,
     //as we did not malloc the instr
-    char **instruction = calloc(2, sizeof(char *));
+    int capacity = 2;
+    char **instruction = calloc(capacity, sizeof(char *));
     int i = 0;
-    if (cond->tokentype == EXPAND_W)
+    for (; cond && cond->tokentype != SEMICOLON; cond = cond->next, i++)
     {
-        if (cond->instr[0] != '@' || cond->instr[0] != '*')
+        if (cond->tokentype == EXPAND_W
+                && (cond->instr[0] == '@' || cond->instr[0] == '*'))
         {
-            instruction[0] = get_assign(cond->instr, data);
+            if (i + data->nbparam >= capacity)
+            {
+                capacity = (i + data->nbparam) * 2;
+                instruction = realloc(instruction, capacity * sizeof(char *));
+            }
+            for (; i < data->nbparam; i++)
+            {
+                instruction[i] = data->param[i];
+            }
         }
         else
         {
-            //for '*' you need to built a string made of every args
-            instruction = realloc(instruction, data->nbparam + 1);
-            for ( ; i < data->nbparam; i++)
-                instruction[i] = data->param[i];
+            if (i + 1 >= capacity)
+            {
+                capacity *= 2;
+                instruction = realloc(instruction, (i + 1)
+                            * sizeof(char *));
+            }
+            instruction[i] = set_string(cond->instr, cond, data);
         }
     }
-    else
-        instruction[0] = cond->instr;
-    instruction[i + 1] = NULL;
+    instruction[i] = NULL;
     return instruction;
 }
 
@@ -197,18 +208,14 @@ int for_execution(struct node *n, int *res, struct stored_data *data)
     {
         cond = cond->next;
         struct node *do_node = n->children->next->children;
-        for ( ; cond && (cond->tokentype != SEMICOLON
-                    && cond->tokentype != AND); cond = cond->next)
+        char **instruction = get_instruction_for (cond, data);
+        for (size_t i = 0; instruction[i]; i++)
         {
-            char **instruction = get_instruction_for (cond, data);
-            for (size_t i = 0; instruction[i]; i++)
-            {
-                add_assignment_split(elem->instr, instruction[i],
-                        data->var_tab);
-                *res = traversal_ast(do_node, res, data);
-            }
-            free(instruction);
+            add_assignment_split(elem->instr, instruction[i],
+                    data->var_tab);
+            *res = traversal_ast(do_node, res, data);
         }
+        free(instruction);
     }
     return *res;
 }
@@ -249,19 +256,19 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
 {
     if (!n || !strcmp(n->instr, ";"))
     {
-        if (data->param)
-            free_command(data->param);
+        return *res;
     }
     if (!n)
         return *res;
-    if (!strcmp(n->instr, ";"))
-        return traversal_ast(n->next, res, data);
     if ((n->type != A_BODY && n->type != A_ROOT && n->type != A_EBODY))
     {
         if (n->type == A_FUNCTION)
         {
             function_stored(n, data);
-            return traversal_ast(next_node(n), res, data);
+            int r = traversal_ast(next_node(n), res, data);
+            if (data->param)
+                free_command(data->param);
+            return r;
         }
         if (n->type == A_INSTRUCT)
         {

@@ -157,7 +157,10 @@ void free_command(char **string)
 {
     int i = 0;
     for (; *(string + i); i++)
+    {
         free(*(string + i));
+        *(string + i) = NULL;
+    }
     free(*(string + i));
     free(string);
 }

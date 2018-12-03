@@ -54,9 +54,9 @@ int isanumber(char *name)
 char *get_param(char *name, struct stored_data *data)
 {
     int nb = isanumber(name);
-    if (nb <= 0)
+    if (nb >= 0)
     {
-        if (nb -1 < data->nbparam)
+        if (nb - 1 <= data->nbparam)
             return data->param[nb - 1];
     }
     return "";
@@ -78,8 +78,8 @@ char *get_assign_var(char *name, struct assignment **a_tab)
 
 char *get_assign(char *name, struct stored_data *data)
 {
-//    if (!strcmp(name, "OLDPWD"))
-  //      return global.oldPWD;
+    //if (!strcmp(name, "OLDPWD"))
+    //    return global.oldPWD;
     if (!strcmp(name, "RANDOM"))
         return get_random();
     if (!strcmp(name, "UID"))
