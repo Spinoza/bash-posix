@@ -2,25 +2,27 @@
 #include <stdlib.h>
 #include <string.h>
 #include "vector.h"
-#include "ast_assignment.h"
+#include "ast_assignement.h"
 #include "ast.h"
 #include "options.h"
 #include "builtins.h"
 
 static void sort_assigns(struct vector *getter)
 {
-    for (size_t i = 0; i < getter->size; i++)
+    for (ssize_t i = 0; i < getter->size; i++)
     {
-        struct assignment *actual = getter[i];
+        struct assignment *actual = getter->arr[i];
         size_t indswp = 0;
-        for (size_t j = i; j < getter->size; j++)
+        for (ssize_t j = i; j < getter->size; j++)
         {
-            if ((indswp == 0) && (strcmp(actual, getter[j]) > 0))
+            struct assignment *tocomp = getter->arr[j];
+            struct assignment *comp2 = getter->arr[indswp];
+            if ((indswp == 0) && (strcmp(actual->name, tocomp->name) > 0))
             {
                 indswp = j;
             }
 
-            else if ((indswp != 0) && (strcmp(getter[indswp], getter[j]) > 0))
+            else if ((indswp != 0) && (strcmp(comp2->name, tocomp->name) > 0))
             {
                 indswp = j;
             }
@@ -28,9 +30,9 @@ static void sort_assigns(struct vector *getter)
 
         if (indswp != 0)
         {
-            struct assignment *temp = getter[i];
-            getter[i] = getter[indswp];
-            getter[indswp] = temp;
+            void *temp = getter->arr[i];
+            getter->arr[i] = getter->arr[indswp];
+            getter->arr[indswp] = temp;
         }
     }
 
@@ -57,9 +59,9 @@ static struct vector *get_assigns_sorted(struct assignment **table)
 static void print_alphabet(struct assignment **alias_tb)
 {
     struct vector *getter = get_assigns_sorted(alias_tb);
-    for (size_t i = 0; i < getter->size; i++)
+    for (ssize_t i = 0; i < getter->size; i++)
     {
-        struct assignment *assign = getter[i];
+        struct assignment *assign = getter->arr[i];
         fprintf(stdout, "%s='%s'", assign->name, assign->value);
     }
     return;
@@ -67,8 +69,8 @@ static void print_alphabet(struct assignment **alias_tb)
 
 static int print_alias(char *arg)
 {
-    int pos = hash_function(arg[i]);
-    struct assignment *a = global.alias_tab[pos];
+    int pos = hash_function(arg);
+    struct assignment *a = global.data->alias_tab[pos];
     for (; a; a = a->next)
     {
         if (a->name == NULL)
@@ -89,7 +91,7 @@ static int print_alias(char *arg)
 static int contain_equal(char *string)
 {
     size_t length = strlen(string);
-    for (int i = 0; i < length; i++)
+    for (size_t i = 0; i < length; i++)
     {
         if (string[i] == '=')
         {
@@ -101,9 +103,10 @@ static int contain_equal(char *string)
 
 int my_alias(int number, char *args[], ...)
 {
+    number = number;
     if (!args[1])
     {
-        print_alphabet(global.alias_tab);
+        print_alphabet(global.data->alias_tab);
         return 0;
     }
 
@@ -114,7 +117,7 @@ int my_alias(int number, char *args[], ...)
         if (!strcmp("-p", args[i]) && !found)
         {
             found = 1;
-            print_alphabet(global.alias_tab);
+            print_alphabet(global.data->alias_tab);
         }
         else if (!contain_equal(args[i]))
         {
@@ -124,10 +127,10 @@ int my_alias(int number, char *args[], ...)
         else
         {
             //FIXME: need to handle expansions though. (to see with Neganta and Leo)
-            add_assignment(args[i]);
+            add_assignment(args[i], global.data->alias_tab);
         }
 
         i++;
     }
-
+    return 0;
 }
