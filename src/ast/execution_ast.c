@@ -39,6 +39,10 @@ struct stored_data *stored_data_init(void)
     struct stored_data *new = malloc(sizeof(struct stored_data));
     new->f_tab = NULL;
     new->var_tab = init_assignment();
+    //FIXME: ne pas remove ces deux lignes !
+    new->export_tab = init_assignment();
+    new->alias_tab = init_assignment();
+    //ne sont pas encore correctement free.
     new->builtins = init_builts();
     char *ifs = calloc(2, sizeof(char));
     char *hashtag = calloc(2, sizeof(char));

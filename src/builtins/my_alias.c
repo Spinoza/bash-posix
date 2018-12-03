@@ -46,7 +46,8 @@ static struct vector *get_assigns_sorted(struct assignment **table)
         struct assignment *a = table[i];
         while (a)
         {
-            getter = vector_append(getter, a);
+            if (a->name)
+                getter = vector_append(getter, a);
             a = a->next;
         }
     }
@@ -62,7 +63,7 @@ static void print_alphabet(struct assignment **alias_tb)
     for (ssize_t i = 0; i < getter->size; i++)
     {
         struct assignment *assign = getter->arr[i];
-        fprintf(stdout, "%s='%s'", assign->name, assign->value);
+        fprintf(stdout, "alias %s='%s'\n", assign->name, assign->value);
     }
     return;
 }
@@ -110,6 +111,7 @@ int my_alias(int number, char *args[], ...)
         return 0;
     }
 
+    int retcode = 0;
     int found = 0;
     int i = 1;
     while (args[i])
@@ -121,7 +123,10 @@ int my_alias(int number, char *args[], ...)
         }
         else if (!contain_equal(args[i]))
         {
-            return print_alias(args[i]);
+            if (retcode == 0)
+                retcode = print_alias(args[i]);
+            else
+                print_alias(args[i]);
         }
 
         else
@@ -132,5 +137,5 @@ int my_alias(int number, char *args[], ...)
 
         i++;
     }
-    return 0;
+    return retcode;
 }

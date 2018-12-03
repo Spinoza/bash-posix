@@ -32,8 +32,8 @@ struct builtins *init_builts(void)
     tab[1].builtin = my_shopt;
     tab[2].name = "cd";
     tab[2].builtin = my_cd;
-//    tab[3].name = "alias";
-//    tab[3].builtin = my_alias;
+    tab[3].name = "alias";
+    tab[3].builtin = my_alias;
 
     return tab;
 }
