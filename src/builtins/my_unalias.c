@@ -38,6 +38,10 @@ static int remove_assignment(char *arg)
             {
                 prev->next = a->next;
             }
+            else
+            {
+                global.data->alias_tab[pos] = a->next;
+            }
             remove_given(a);
             return 0;
         }
