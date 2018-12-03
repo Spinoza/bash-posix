@@ -221,7 +221,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         while ((tok->elem->type != ELIF)&&(tok->elem->type != ELSE)&&
               (tok->elem->type != DONE)&&(tok->elem->type != FI)&&
               (tok->elem->type != TWO_SEMIC)&&(tok->elem->type != CLOSE_PAR)&&
-              (tok->elem->type != CLOSE_BRA))
+              (tok->elem->type != CLOSE_BRA) && strcmp(tok->elem->name, "ENDOF"))
         {
             while (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
                 tok = tok->next;
@@ -229,7 +229,8 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
             add_node(r, new);
             tok = build_aux(new, tok->next);
         }
-        if ((tok->elem->type == ELIF)||(tok->elem->type == ELSE))
+        if ((tok->elem->type == ELIF)||(tok->elem->type == ELSE) ||
+        (!strcmp(tok->elem->name, "ENDOF")))
             return tok;
         return tok->next;
     }
@@ -309,7 +310,8 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         tok = tok->next;
         new = init_node("body", 10);
         add_node(r, new);
-        while (tok->elem->type != WORD)
+        while (tok->elem->type == OPEN_PAR || tok->elem->type == CLOSE_PAR ||
+        tok->elem->type == OPEN_BRA)
         {
             tok = tok->next;
         }
