@@ -1,5 +1,6 @@
 #include "functions.h"
-#include "string.h"
+#include <string.h>
+#include "helper_exec.h"
 #include <stdio.h>
 
 struct function *is_a_function(struct node *n, struct f_tab *f_tab)
@@ -52,6 +53,27 @@ void function_stored(struct node *n, struct stored_data *data)
         }
         data->f_tab->f[data->f_tab->nb - 1] = new_f;
     }
+}
+
+
+void get_function_param(struct node *child, struct node *oper_node
+        , struct stored_data *data)
+{
+    struct node *iter = child->next;
+    char **result = calloc(1, sizeof(char *));
+    int i = 0;
+    char *instr = NULL;
+    for (; iter && iter != oper_node; i++, iter = iter->next)
+    {
+        instr = set_string(iter->instr, iter, data);
+        result[i] = instr;
+    }
+    result = realloc(result, (i + 1) * sizeof(char *));
+    result[i + 1] = NULL;
+    data->nbparam = i;
+    char *p = inttochar(i);
+    add_assignment_split("#", p, data->var_tab);
+    data->param = result;
 }
 
 

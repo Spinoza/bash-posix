@@ -1,8 +1,12 @@
 #include "execution_ast.h"
 #include "ast.h"
 #include "helper_exec.h"
+#include "builtins.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 void free_data(struct stored_data *data)
 {
@@ -73,7 +77,7 @@ static int copy_string(char *source, char **dest, int start_index,
  * current capacity of result string.
  * */
 
-static char *set_string(char *instr, struct node *node,
+char *set_string(char *instr, struct node *node,
         struct stored_data *data)
 {
     int len = strlen(instr);
@@ -146,25 +150,6 @@ char **to_execute(struct node *child, struct node *oper_node
     return result;
 }
 
-void get_function_param(struct node *child, struct node *oper_node
-        , struct stored_data *data)
-{
-    struct node *iter = child->next;
-    char **result = calloc(1, sizeof(char *));
-    int i = 0;
-    char *instr = NULL;
-    for (; iter && iter != oper_node; i++, iter = iter->next)
-    {
-        instr = get_assign(iter->instr, data);
-        result = realloc(result, (i + 1) * sizeof(char *));
-        result[i] = instr;
-    result = realloc(result, (i + 1) * sizeof(char *));
-    result[i + 1] = NULL;
-    data->nbparam = i;
-    char *p = inttochar(i);
-    add_assignment_split("#", p, data->var_tab);
-    data->param = result;
-}
 
 void free_command(char **string)
 {
