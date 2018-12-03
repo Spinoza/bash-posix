@@ -35,6 +35,8 @@ void free_data(struct stored_data *data)
 struct stored_data *stored_data_init(void)
 {
     struct stored_data *new = malloc(sizeof(struct stored_data));
+    new->param = NULL;
+    new->nbparam = 0;
     new->f_tab = NULL;
     new->var_tab = init_assignment();
     //FIXME: ne pas remove ces deux lignes !
@@ -80,7 +82,7 @@ static int copy_string(char *source, char **dest, int start_index,
 char *set_string(char *instr, struct node *node,
         struct stored_data *data)
 {
-    int len = strlen(instr);
+    int len = strlen(instr) + 1;
     int *capacity = malloc(sizeof(int));;
     *capacity = len;
     char *string = calloc(*capacity, sizeof(char));
@@ -95,7 +97,7 @@ char *set_string(char *instr, struct node *node,
             after_dollar = 1;
             continue;
         }
-        if (k + 1 >= *capacity)
+        if (k + 2 >= *capacity)
         {
             *capacity *=2;
             string = realloc(string, sizeof(char) * *capacity);
