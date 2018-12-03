@@ -38,7 +38,7 @@ static void sort_assigns(struct vector *getter)
 
 }
 
-static struct vector *get_assigns_sorted(struct assignment **table)
+struct vector *get_assigns_sorted(struct assignment **table)
 {
     struct vector *getter = vector_create();
     for (int i = 0; i < HASH_TAB_SIZE; i++)
