@@ -78,7 +78,8 @@ int back_zero(char *arg, char *printfin, int index, size_t *i)
     char cpy[3] = {"\0"};
     int filled = 0;
     int hasfilled = 0;
-    for (;(*i < strlen(arg)) && (*i < 5); (*i)++)
+    int j = *i;
+    for (;(*i < strlen(arg)) && ((*i - j) < 3); (*i)++)
     {
         cpy[filled] = arg[*i];
         filled++;
@@ -115,7 +116,8 @@ int back_x(char *arg, char *printfin, int index, size_t *i)
     char cpy[2] = {"\0"};
     int filled = 0;
     int hasfilled = 0;
-    for (; (*i < strlen(arg)) && (*i < 4); (*i)++)
+    int j = *i;
+    for (; (*i < strlen(arg)) && ((*i - j) < 4); (*i)++)
     {
         cpy[filled] = arg[*i];
         filled++;
@@ -152,7 +154,8 @@ int back_u(char *arg, char *printfin, int index, size_t *i)
     char cpy[4] = {"\0"};
     int filled = 0;
     int hasfilled = 0;
-    for (; (*i < strlen(arg)) && (*i < 8); (*i)++)
+    int j = *i;
+    for (; (*i < strlen(arg)) && ((*i - j) < 8); (*i)++)
     {
         cpy[filled] = arg[*i];
         filled++;
@@ -189,7 +192,8 @@ int back_U(char *arg, char *printfin, int index, size_t *i)
     char cpy[8] = {"\0"};
     int filled = 0;
     int hasfilled = 0;
-    for (; (*i < strlen(arg)) && (*i < 10); (*i)++)
+    int j = *i;
+    for (; (*i < strlen(arg)) && ((*i - j) < 10); (*i)++)
     {
         cpy[filled] = arg[*i];
         filled++;

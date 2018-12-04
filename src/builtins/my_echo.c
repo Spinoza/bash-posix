@@ -31,9 +31,9 @@ static int is_echo_opt(char *arg, int *e, int *E, int *n)
 
 static int handle_hardbs(char *arg, char *printfin, int index, size_t *i)
 {
-    if (arg[*(i+1)] && arg[*i] == '\\')
+    if (arg[*i+1] && arg[*i] == '\\')
     {
-        switch (arg[*(i+1)])
+        switch (arg[*i+1])
         {
             case 'x':
                 (*i)++;
@@ -178,8 +178,12 @@ int my_echo(int number, char *args[], ...)
 
     while (args[i])
     {
+
         if (is_echo_opt(args[i], &e, &E, &n) && !found)
+        {
+            i++;
             continue;
+        }
 
         else
         {
