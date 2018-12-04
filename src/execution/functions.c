@@ -72,7 +72,5 @@ void get_function_param(struct node *child, struct node *oper_node
     result = realloc(result, (i + 1) * sizeof(char *));
     result[i] = NULL;
     data->nbparam = i;
-    char *p = inttochar(i);
-    add_assignment_split("#", p, data->var_tab);
     data->param = result;
 }

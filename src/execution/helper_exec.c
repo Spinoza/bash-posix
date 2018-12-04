@@ -56,7 +56,6 @@ struct stored_data *stored_data_init(void)
     ifs[0] = ' ';
     hashtag[0] = '0';
     add_assignment_split("IFS", ifs, new->var_tab);
-    add_assignment_split("#", hashtag, new->var_tab);
     add_assignment_split("PS1", PS1, new->var_tab);
     add_assignment_split("PS2", PS2, new->var_tab);
     return new;

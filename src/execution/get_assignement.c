@@ -71,6 +71,17 @@ static char *get_param(char *name, struct stored_data *data)
     return "";
 }
 
+int strcmp_expand(char *name, char *toexpand)
+{
+    int len = strlen(name);
+    if (name[0] == '{' && name[len] == '}')
+    {
+        name++;
+        return strncmp(name, toexpand, len - 1);
+    }
+    return strcmp(name, toexpand);
+}
+
 char *get_assign_var(char *name, struct assignment **a_tab)
 {
     int pos = hash_function(name);
@@ -79,34 +90,25 @@ char *get_assign_var(char *name, struct assignment **a_tab)
     {
         if (!a->name)
             return "";
-        if (!strcmp(name, a->name))
+        if (!strcmp_expand(name, a->name))
             return a->value;
     }
     return "";
 }
 
-int strcmp_expand(char *name, char *toexpand)
-{
-    int len = strlen(name);
-    if (name[0] == '{' && name[len] == '}')
-    {
-        name++;
-        return strncmp(name, expand, len - 1);
-    }
-    return strcmp(name, toexpand);
-}
-
 char *get_assign(char *name, struct stored_data *data)
 {
-    if (!strcmp(name, "$"))
+    if (!strcmp_expand(name, "#"))
+        return inttochar(data->nbparam);
+    if (!strcmp_expand(name, "$"))
         return inttochar(getpid());
-    if (!strcmp(name, "OLDPWD"))
+    if (!strcmp_expand(name, "OLDPWD"))
         return global.oldPWD;
-    if (!strcmp(name, "?"))
+    if (!strcmp_expand(name, "?"))
         return inttochar(global.res);
-    if (!strcmp(name, "RANDOM"))
+    if (!strcmp_expand(name, "RANDOM"))
         return get_random();
-    if (!strcmp(name, "UID"))
+    if (!strcmp_expand(name, "UID"))
     {
         int uid = getuid();
         return inttochar(uid);
