@@ -18,13 +18,23 @@ static int find_path(char *arg)
                 fprintf(stderr, "cd: old PWD not yet set");
                 return -1;
             }
-            return chdir(global.oldPWD);
+            int res = chdir(global.oldPWD);
+            if (res != -1)
+            {
+                char *cpy = calloc(strlen(global.oldPWD) + 1, sizeof(char));
+                strcpy(cpy, global.oldPWD);
+                change_pwd(cpy);
+                free(cpy);
+            }
+            return res;
         }
         if (chdir(first) == -1)
             return -1;
         first = strtok(NULL, "/ \0");
     }
-    change_pwd(getenv("PWD"));
+    char * dir = getcwd(NULL, 0);
+    change_pwd(dir);
+    free(dir);
     return 0;
 }
 
