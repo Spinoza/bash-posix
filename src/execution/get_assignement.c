@@ -85,6 +85,17 @@ char *get_assign_var(char *name, struct assignment **a_tab)
     return "";
 }
 
+int strcmp_expand(char *name, char *toexpand)
+{
+    int len = strlen(name);
+    if (name[0] == '{' && name[len] == '}')
+    {
+        name++;
+        return strncmp(name, expand, len - 1);
+    }
+    return strcmp(name, toexpand);
+}
+
 char *get_assign(char *name, struct stored_data *data)
 {
     if (!strcmp(name, "$"))

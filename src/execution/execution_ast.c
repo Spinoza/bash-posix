@@ -189,9 +189,7 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
                 instruction = realloc(instruction, capacity * sizeof(char *));
             }
             for (; i < data->nbparam; i++)
-            {
                 instruction[i] = data->param[i];
-            }
             i--;
         }
         else
@@ -310,11 +308,6 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
 
 int execution_ast(struct node *n, struct stored_data *data)
 {
-    /*struct tab_a *tab = calloc(1, sizeof(struct tab_a));
-      tab->capacity = 10;
-      struct assignment **assignment = malloc(sizeof(struct assignment *)
-     * capacity);
-     tab->assignment = assignment;*/
     int r = 0;
-    return traversal_ast(n, &r, data);//call with tab;
+    return traversal_ast(n, &r, data);
 }
