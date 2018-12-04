@@ -17,6 +17,7 @@
 #include "ast.h"
 #include "file_handle.h"
 #include "execution_ast.h"
+#include "ast_assignement.h"
 #include "err.h"
 #include "globals.h"
 #include <sys/types.h>
@@ -24,6 +25,21 @@
 #include <time.h>
 
 struct globv global;
+
+//FIXME: find a better place for this.
+char *get_assignment(char *name)
+{
+    int pos = hash_function(name);
+    struct assignment *a = global.data->var_tab[pos];
+    while (a && a->name)
+    {
+        if (!strcmp(a->name, name))
+            return a->value;
+        a = a->next;
+    }
+
+    return NULL;
+}
 
 static int norc_opt(void)
 {
@@ -120,7 +136,12 @@ static int interactive_mode(struct globv global)
     char *listadd = NULL;
     while (1)
     {
-        char *line = readline("42sh$ ");
+        char *line;
+        char *PS1 = get_assignment("PS1");
+        if (!PS1)
+            line = readline("42sh$ ");
+        else
+            line = readline(PS1);
         struct linked_list *tokens = lexer_c(line);
         int isgramm = grammar_check(tokens);
         if (!isgramm)
