@@ -29,91 +29,116 @@ static int is_echo_opt(char *arg, int *e, int *E, int *n)
     return 0;
 }
 
-static int handle_hardbs(char *arg, char *printfin, int index)
+static int handle_hardbs(char *arg, char *printfin, int index, size_t *i)
 {
-    switch (arg[1])
+    if (arg[*(i+1)] && arg[*i] == '\\')
     {
-        case '0':
-            return back_zero(arg, printfin, index);
-            break;
-        case 'x':
-            return back_x(arg, printfin, index);
-            break;
-        case 'u':
-            return back_u(arg, printfin, index);
-            break;
-        case 'U':
-            return back_U(arg, printfin, index);
-            break;
-        default:
+        switch (arg[*(i+1)])
+        {
+            case 'x':
+                (*i)++;
+                return back_x(arg, printfin, index, i);
+                break;
+            case 'u':
+                (*i)++;
+                return back_u(arg, printfin, index, i);
+                break;
+            case 'U':
+                (*i)++;
+                return back_U(arg, printfin, index, i);
+                break;
+            default:
             {
-                for (size_t i = 0; i < strlen(arg); i++)
+                for (; *i < strlen(arg) && !isforbidden(arg[*i]); (*i)++)
                 {
-                    printfin[index] = arg[i];
+                    printfin[index] = arg[*i];
                     index++;
                 }
                 return index;
             }
             break;
+        }
     }
+
+    for (; *i < strlen(arg) && !isforbidden(arg[*i]); (*i)++)
+    {
+        printfin[index] = arg[*i];
+        index++;
+    }
+    return index;
 }
 
 static int match_bs(char *arg, char *printfin, int index)
 {
-    if (strlen(arg) == 1)
-    {
-        printfin[index] = 92;
-        return index + 1;
-    }
 
-    if (arg[1] == 'a')
+    size_t i = 0;
+    while (i < strlen(arg))
     {
-        printfin[index] = 7;
-        return index + 1;
-    }
+        if (arg[i] == '\a')
+        {
+            printfin[index] = 7;
+            index++;
+            i++;
+        }
 
-    if (arg[1] == 'b')
-    {
-        printfin[index] = 8;
-        return index + 1;
-    }
+        else if (arg[i] == '\b')
+        {
+            printfin[index] = 8;
+            index++;
+            i++;
+        }
 
-    if (arg[1] == 'c')
-    {
-        return -10;
-    }
+        else if (arg[i+1] && arg[i] == '\\'&& arg[i+1] == 'c')
+        {
+            return -10;
+        }
 
-    if (arg[1] == 'f')
-    {
-        printfin[index] = 12;
-        return index + 1;
-    }
+        else if (arg[i] == '\f')
+        {
+            printfin[index] = 12;
+            index++;
+            i++;
+        }
 
-    if (arg[1] == 'n')
-    {
-        printfin[index] = 10;
-        return index + 1;
-    }
+        else if (arg[i] == '\n')
+        {
+            printfin[index] = 10;
+            index++;
+            i++;
+        }
 
-    if (arg[1] == 'r')
-    {
-        printfin[index] = 13;
-        return index + 1;
-    }
+        else if (arg[i] == '\r')
+        {
+            printfin[index] = 13;
+            index++;
+            i++;
+        }
 
-    if (arg[1] == 't')
-    {
-        printfin[index] = 9;
-        return index + 1;
-    }
+        else if (arg[i] == '\t')
+        {
+            printfin[index] = 9;
+            index++;
+            i++;
+        }
 
-    if (arg[1] == 'v')
-    {
-        printfin[index] = 11;
-        return index + 1;
-    }
+        else if (arg[i] == '\v')
+        {
+            printfin[index] = 11;
+            index ++;
+            i++;
+        }
 
-    return handle_hardbs(arg, printfin, index);
+        else if (arg[i] == '\0')
+        {
+            index = back_zero(arg, printfin, index, &i);
+        }
+
+        else
+        {
+            index = handle_hardbs(arg, printfin, index, &i);
+        }
+    }
+    return index;
 }
 
 static size_t fullength(char *args[], int i)
@@ -166,19 +191,11 @@ int my_echo(int number, char *args[], ...)
             }
             if (e || E)
             {
-                if (args[i][0] == '\\')
+                index = match_bs(args[i], printfin, index);
+                if (index < 0)
                 {
-                    index = match_bs(args[i], printfin, index);
-                    if (index < 0)
-                    {
-                        n = 1;
-                        break;
-                    }
-                }
-                else
-                {
-                    strcat(printfin, args[i]);
-                    index += strlen(args[i]);
+                    n = 1;
+                    break;
                 }
             }
             else

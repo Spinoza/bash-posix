@@ -51,14 +51,36 @@ static char convert_hexa(int conv)
     return c;
 }
 
-int back_zero(char *arg, char *printfin, int index)
+int isforbidden(char c)
+{
+    if (c == '\\')
+        return 1;
+    if (c == '\0')
+        return 1;
+    if (c == '\a')
+        return 1;
+    if (c == '\n')
+        return 1;
+    if (c == '\f')
+        return 1;
+    if (c == '\v')
+        return 1;
+    if (c == '\t')
+        return 1;
+    if (c == '\b')
+        return 1;
+
+    return 0;
+}
+
+int back_zero(char *arg, char *printfin, int index, size_t *i)
 {
     char cpy[3] = {"\0"};
     int filled = 0;
     int hasfilled = 0;
-    for (size_t i = 2; (i < strlen(arg)) && (i < 5); i++)
+    for (;(*i < strlen(arg)) && (*i < 5); (*i)++)
     {
-        cpy[filled] = arg[i];
+        cpy[filled] = arg[*i];
         filled++;
     }
 
@@ -78,9 +100,9 @@ int back_zero(char *arg, char *printfin, int index)
     }
     else
     {
-        for (size_t i = 5; i < strlen(arg); i++)
+        for (; *i < strlen(arg) && !isforbidden(arg[*i]); (*i)++)
         {
-            printfin[index] = arg[i];
+            printfin[index] = arg[*i];
             index++;
         }
         return index;
@@ -88,14 +110,14 @@ int back_zero(char *arg, char *printfin, int index)
 
 }
 
-int back_x(char *arg, char *printfin, int index)
+int back_x(char *arg, char *printfin, int index, size_t *i)
 {
     char cpy[2] = {"\0"};
     int filled = 0;
     int hasfilled = 0;
-    for (size_t i = 2; (i < strlen(arg)) && (i < 4); i++)
+    for (; (*i < strlen(arg)) && (*i < 4); (*i)++)
     {
-        cpy[filled] = arg[i];
+        cpy[filled] = arg[*i];
         filled++;
     }
 
@@ -115,9 +137,9 @@ int back_x(char *arg, char *printfin, int index)
     }
     else
     {
-        for (size_t i = 4; i < strlen(arg); i++)
+        for (; *i < strlen(arg) && !isforbidden(arg[*i]); (*i)++)
         {
-            printfin[index] = arg[i];
+            printfin[index] = arg[*i];
             index++;
         }
         return index;
@@ -125,14 +147,14 @@ int back_x(char *arg, char *printfin, int index)
 
 }
 
-int back_u(char *arg, char *printfin, int index)
+int back_u(char *arg, char *printfin, int index, size_t *i)
 {
     char cpy[4] = {"\0"};
     int filled = 0;
     int hasfilled = 0;
-    for (size_t i = 4; (i < strlen(arg)) && (i < 8); i++)
+    for (; (*i < strlen(arg)) && (*i < 8); (*i)++)
     {
-        cpy[filled] = arg[i];
+        cpy[filled] = arg[*i];
         filled++;
     }
 
@@ -152,9 +174,9 @@ int back_u(char *arg, char *printfin, int index)
     }
     else
     {
-        for (size_t i = 8; i < strlen(arg); i++)
+        for (; *i < strlen(arg) && !isforbidden(arg[*i]); (*i)++)
         {
-            printfin[index] = arg[i];
+            printfin[index] = arg[*i];
             index++;
         }
         return index;
@@ -162,14 +184,14 @@ int back_u(char *arg, char *printfin, int index)
 
 }
 
-int back_U(char *arg, char *printfin, int index)
+int back_U(char *arg, char *printfin, int index, size_t *i)
 {
     char cpy[8] = {"\0"};
     int filled = 0;
     int hasfilled = 0;
-    for (size_t i = 2; (i < strlen(arg)) && (i < 10); i++)
+    for (; (*i < strlen(arg)) && (*i < 10); (*i)++)
     {
-        cpy[filled] = arg[i];
+        cpy[filled] = arg[*i];
         filled++;
     }
 
@@ -189,9 +211,9 @@ int back_U(char *arg, char *printfin, int index)
     }
     else
     {
-        for (size_t i = 10; i < strlen(arg); i++)
+        for (;*i < strlen(arg) && !isforbidden(arg[*i]); (*i)++)
         {
-            printfin[index] = arg[i];
+            printfin[index] = arg[*i];
             index++;
         }
         return index;
