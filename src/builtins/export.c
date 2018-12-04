@@ -4,6 +4,18 @@
 #include "stdio.h"
 #include "ast_assignement.h"
 
+static int has_equal(char *word)
+{
+    int i = 0;
+    while(word[i])
+    {
+        if(word[i] == '=')
+            return 1;
+        i++;
+    }
+    return 0;
+}
+
 static void free_assign(struct assignment *assign)
 {
     free(assign->name);
@@ -41,7 +53,13 @@ int my_export(int number, char *args[], ...)
             }
             if(n == 1)
             {
-                int ind = hash_function(args[i]);
+                char *split = args[1];
+                if(has_equal(args[i]) == 1)
+                {
+                    add_assignment(args[1], global.data->var_tab);
+                    split = strtok(split, "=");
+                }
+                int ind = hash_function(split);
                 struct assignment *assign = global.data->export_tab[ind];
                 struct assignment *prev = NULL;
                 while(assign != NULL && assign->name != NULL)
@@ -67,7 +85,28 @@ int my_export(int number, char *args[], ...)
             }
             else
             {
-                fprintf(stdout, "When fct finish, it will add %s to export tab!", args[i]);
+                if(has_equal(args[1]) == 1)
+                {
+                    add_assignment(args[1], global.data->var_tab);
+                    add_assignment(args[1], global.data->export_tab);
+                }
+                else
+                {
+                    char *val = NULL;
+                    int ind = hash_function(args[1]);
+                    struct assignment *assign = global.data->var_tab[ind];
+                    while(assign != NULL && assign->name != NULL)
+                    {
+                        if(!strcmp(args[1], assign->name))
+                        {
+                            val = assign->value;
+                            break;
+                        }
+                        assign = assign->next;
+                    }
+
+                    add_assignment_split(args[1], val, global.data->export_tab);
+                }
             }
         }
         i++;
