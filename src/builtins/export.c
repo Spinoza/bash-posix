@@ -46,10 +46,10 @@ int my_export(int number, char *args[], ...)
             {
                 if (file)
                 {
-                    fprintf(stderr, "export: not a valid identifier");
+                    fprintf(stderr, "export: not a valid identifier\n");
                     return 1;
                 }
-                fprintf(stderr, "export: not a valid option");
+                fprintf(stderr, "export: not a valid option\n");
                 return 1;
             }
             if(file == 0)
@@ -58,10 +58,10 @@ int my_export(int number, char *args[], ...)
             }
             if(n == 1)
             {
-                char *split = args[1];
+                char *split = args[i];
                 if(has_equal(args[i]) == 1)
                 {
-                    add_assignment(args[1], global.data->var_tab);
+                    add_assignment(args[i], global.data->var_tab);
                     split = strtok(split, "=");
                 }
                 int ind = hash_function(split);
@@ -69,7 +69,7 @@ int my_export(int number, char *args[], ...)
                 struct assignment *prev = NULL;
                 while(assign != NULL && assign->name != NULL)
                 {
-                    if(!strcmp(args[1], assign->name))
+                    if(!strcmp(args[i], assign->name))
                     {
                         if(prev == NULL)
                         {
@@ -90,19 +90,19 @@ int my_export(int number, char *args[], ...)
             }
             else
             {
-                if(has_equal(args[1]) == 1)
+                if(has_equal(args[i]) == 1)
                 {
-                    add_assignment(args[1], global.data->var_tab);
-                    add_assignment(args[1], global.data->export_tab);
+                    add_assignment(args[i], global.data->var_tab);
+                    add_assignment(args[i], global.data->export_tab);
                 }
                 else
                 {
                     char *val = NULL;
-                    int ind = hash_function(args[1]);
+                    int ind = hash_function(args[i]);
                     struct assignment *assign = global.data->var_tab[ind];
                     while(assign != NULL && assign->name != NULL)
                     {
-                        if(!strcmp(args[1], assign->name))
+                        if(!strcmp(args[i], assign->name))
                         {
                             val = assign->value;
                             break;
@@ -110,7 +110,7 @@ int my_export(int number, char *args[], ...)
                         assign = assign->next;
                     }
 
-                    add_assignment_split(args[1], val, global.data->export_tab);
+                    add_assignment_split(args[i], val, global.data->export_tab);
                 }
             }
         }
@@ -126,6 +126,10 @@ int my_export(int number, char *args[], ...)
             if(assign->value)
             {
                 fprintf(stdout, "=\"%s\"\n", assign->value);
+            }
+            else
+            {
+                fprintf(stdout, "\n");
             }
         }
     }
