@@ -23,4 +23,5 @@ int my_cd(int number, char *args[], ...);
 int my_alias(int number, char *args[], ...);
 int my_unalias(int number, char *args[], ...);
 int my_echo(int number, char *args[], ...);
+int my_export(int number, char *args[], ...);
 #endif /* ! BUILTIN_H */

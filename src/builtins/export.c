@@ -42,14 +42,19 @@ int my_export(int number, char *args[], ...)
         }
         else
         {
+            if(args[i][0] == '-')
+            {
+                if (file)
+                {
+                    fprintf(stderr, "export: not a valid identifier");
+                    return 1;
+                }
+                i++;
+                continue;
+            }
             if(file == 0)
             {
                 file = 1;
-            }
-            if(args[i][0] == '-')
-            {
-                fprintf(stderr, "export: not a valid identifier");
-                return 1;
             }
             if(n == 1)
             {
@@ -117,10 +122,10 @@ int my_export(int number, char *args[], ...)
         for(ssize_t i = 0; i < print->size; i++)
         {
             struct assignment *assign = print->arr[i];
-            fprintf(stdout, "declare -x %s=", assign->name);
-            if(assign->value[0] != '\0')
+            fprintf(stdout, "declare -x %s", assign->name);
+            if(assign->value)
             {
-                fprintf(stdout, "\'%s\'\n", assign->value);
+                fprintf(stdout, "=\"%s\"\n", assign->value);
             }
         }
     }

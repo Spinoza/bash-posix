@@ -228,6 +228,7 @@ int main(int argc, char *argv[])
     }
     if (index >= argc && global.options->c == FALS && isatty(STDIN_FILENO))
     {
+        global.isatty = 1;
         return interactive_mode(global);
     }
     struct linked_list *tokens;
