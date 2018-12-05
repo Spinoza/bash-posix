@@ -216,6 +216,12 @@ int check_specials(char *string) //checks for & and ;
 void check_word(struct token *new, char *string)
 {
     int string_len = strlen(string) + 1;
+    //FIXME: pour éviter les memleaks, ajout de cette condition.
+    if (new->name)
+    {
+        free(new->name);
+        new->name = NULL;
+    }
     new->name = calloc(sizeof(char), string_len);
     if (string[0] == '$')
     {
