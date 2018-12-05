@@ -349,6 +349,8 @@ int is_special_word(struct token *new)
             return 1;
         case FOR:
             return 1;
+        case IN:
+            return 1;
         case UNTIL:
             return 1;
         case CASE:
@@ -369,6 +371,11 @@ int is_special_word(struct token *new)
 }
 void check_context(struct token *new, enum type *context)
 {
+    if (*context == FOR && new->type == IN)
+    {
+        *context = ENDOF;
+        return;
+    }
     if (*context == ENDOF || (new->type == SEMICOLON || new->type == ENDOF))
     {
         *context = set_context(new);
