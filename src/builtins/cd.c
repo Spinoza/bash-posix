@@ -7,17 +7,16 @@
 static int find_path(char *arg)
 {
     char *first = calloc (strlen(arg) + 1, sizeof(char));
-    char *tofree = first;
     strcpy(first, arg);
-    first = strtok(first, "/ \0");
-    while (first)
+    char *tok = strtok(first, "/ \0");
+    while (tok)
     {
         if (!strcmp(first, "-"))
         {
             if (global.oldPWD == NULL)
             {
-                fprintf(stderr, "cd: old PWD not yet set");
-                free(tofree);
+                fprintf(stderr, "cd: old PWD not yet set\n");
+                free(first);
                 return -1;
             }
             int res = chdir(global.oldPWD);
@@ -28,14 +27,14 @@ static int find_path(char *arg)
                 change_pwd(cpy);
                 free(cpy);
             }
-            free(tofree);
+            free(first);
             return res;
         }
         if (chdir(first) == -1)
             return -1;
-        first = strtok(NULL, "/ \0");
+        tok = strtok(NULL, "/ \0");
     }
-    free(tofree);
+    free(first);
     char * dir = getcwd(NULL, 0);
     change_pwd(dir);
     free(dir);
@@ -44,11 +43,10 @@ static int find_path(char *arg)
 
 int my_cd(int number, char *args[], ...)
 {
-    //FIXME: free everything.
     number = number;
     if (args[1] != NULL && args[2] != NULL)
    {
-        fprintf(stderr, "cd: Too many arguments");
+        fprintf(stderr, "cd: Too many arguments\n");
         return 1;
     }
     if (args[1] == NULL)
