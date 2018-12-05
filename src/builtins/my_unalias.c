@@ -40,7 +40,12 @@ static int remove_assignment(char *arg)
             }
             else
             {
-                global.data->alias_tab[pos] = a->next;
+                if (a->next)
+                    global.data->alias_tab[pos] = a->next;
+                else
+                {
+                    global.data->alias_tab[pos] = calloc(1, sizeof(struct assignment));
+                }
             }
             remove_given(a);
             return 0;

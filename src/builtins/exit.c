@@ -67,10 +67,7 @@ int my_exit(int number, char *args[],  ...)
     }
 
     va_end(ap);
-    if (global.isatty == 1)
-    {
-        printf("\n");
-    }
+    free_glob();
     exit(retcode);
     return retcode;
 }

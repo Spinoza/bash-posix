@@ -17,7 +17,7 @@ void init_interact(void)
     path = strcat(path, "/.42sh_history");
     FILE *history = fopen(path, "r+");
     free(path);
-    char *line;
+    char *line = NULL;
     size_t i = 0;
     ssize_t read = 0;
 

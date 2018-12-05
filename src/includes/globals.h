@@ -7,7 +7,6 @@
 struct globv
 {
     int res;
-    int isatty;
     struct node *ast_root;
     struct stored_data *data;
     struct option *options;
