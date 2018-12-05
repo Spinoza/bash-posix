@@ -140,6 +140,7 @@ char *set_string(char *instr, struct node *node,
         after_dollar = 0;
     }
     string[k + 1] = '\0';
+    free(capacity);
     return string;
 }
 
