@@ -168,12 +168,12 @@ static char **init_list(void)
     return list;
 }
 
-int special_character(char c)
+int special_character(char c, int parenthesis)
 {
     switch (c)
     {
         case ' ':
-            return 1;
+            return !parenthesis;
         case '(':
             return 1;
         case ')':
@@ -256,7 +256,7 @@ static int check_special_words(char *string, char **list)
 static struct token *read_characters(struct token *new, char *string,
         int *index, char **list)
 {
-    if (special_character(string[*index]))
+    if (special_character(string[*index], 0))
     {
         if (string[*index] != ' ')
             return set_specials(new, string, index, list);
@@ -265,11 +265,21 @@ static struct token *read_characters(struct token *new, char *string,
     int cur_index = 0;
     int len = strlen(string);
     char *res = calloc(len + 1, sizeof(char));
+    int parenthesis = 0;
     enum type current_type = WORD;
     for (; *(string + *index); cur_index++, *index = *index + 1)
     {
-        if (special_character(*(string + *index)))
+        if (special_character(*(string + *index), parenthesis))
         {
+            if ((string[*index] == ')' && string[*index + 1] == ')')
+                    || (string[*index] == '(' && string[*index + 1] == '('))
+            {
+                parenthesis = !parenthesis;
+                res[cur_index++] = string[*index];
+                *index = *index + 1;
+                res[cur_index] = string[*index];
+                continue;
+            }
             if (string[*index] == '=')
                 current_type = ASSIGNMENT_W;
             break;
