@@ -57,9 +57,21 @@ void free_list(struct linked_list *l)
     {
         struct nL *copy = node;
         node = node->next;
-        free(copy->elem->name);
-        free(copy->elem);
-        free(copy);
+        if (copy->elem->name)
+        {
+            free(copy->elem->name);
+            copy->elem->name = NULL;
+        }
+        if (copy->elem)
+        {
+            free(copy->elem);
+            copy->elem = NULL;
+        }
+        if (copy)
+        {
+            free(copy);
+            copy = NULL;
+        }
     }
 
     free(l);

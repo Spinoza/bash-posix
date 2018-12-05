@@ -51,11 +51,15 @@ void fuse_lists(struct linked_list *ll, char *string)
     }
 
     free(head->next->elem->name);
-    free(head->next->elem);
-    free(head->next);
+    head->next->elem->name = NULL;
 
+    free(head->next->elem);
+    head->next->elem = NULL;
+
+    free(head->next);
     head->next = temp->head;
     free(temp);
+    temp = NULL;
 }
 
 struct linked_list *read_fil(char *path)
