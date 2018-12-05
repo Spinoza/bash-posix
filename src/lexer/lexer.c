@@ -234,9 +234,9 @@ int special_character(char c)
 struct token *set_token(struct token *new, char *res, int cur_index,
         enum type current_type)
 {
+    res = realloc(res, (cur_index + 1) * sizeof(char));
     new->name = res;
     new->type = current_type;
-    res = realloc(res, cur_index + 1);
     return new;
 }
 
@@ -328,6 +328,8 @@ enum type set_context(struct token *new)
             return WORD;
         case FOR:
             return FOR;
+        case CASE:
+            return FOR;
         default:
             return ENDOF;
     }
@@ -395,7 +397,7 @@ struct linked_list *tmp_lexer_c(char *input)
     {
         struct token *new = token_init();
         read_characters(new, input, &index, list);
-        if (!strcmp(new->name, ""))
+        if (!new->name || !strcmp(new->name, ""))
         {
             free(new->name);
             free(new);
