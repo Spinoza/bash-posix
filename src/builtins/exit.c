@@ -4,7 +4,7 @@
 #include <string.h>
 #include "ast.h"
 #include "builtins.h"
-
+#include "globals.h"
 
 static int isdig(char *string)
 {
@@ -67,7 +67,10 @@ int my_exit(int number, char *args[],  ...)
     }
 
     va_end(ap);
-    printf("\n");
+    if (global.isatty == 1)
+    {
+        printf("\n");
+    }
     exit(retcode);
     return retcode;
 }

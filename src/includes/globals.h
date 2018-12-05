@@ -12,6 +12,7 @@ struct globv
     char *oldPWD;
     char *PWD;
     int res;
+    int isatty;
 };
 
 void change_pwd(char *newPID);

@@ -12,6 +12,7 @@ void init_globv(void)
     global.oldPWD = NULL;
     global.PWD = strcpy(calloc(strlen(getenv("PWD")) + 1, sizeof(char))
     ,getenv("PWD"));
+    global.isatty = 0;
 }
 
 void free_glob(void)
