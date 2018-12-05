@@ -265,10 +265,6 @@ struct node *case_execution(struct node *n, struct stored_data *data)
 int traversal_ast(struct node *n, int *res, struct stored_data *data)
 {
     global.res = *res;
-    if (!n || !strcmp(n->instr, ";"))
-    {
-        return *res;
-    }
     if (!n)
         return *res;
     if ((n->type != A_BODY && n->type != A_ROOT && n->type != A_EBODY))
@@ -283,6 +279,8 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
         }
         if (n->type == A_INSTRUCT)
         {
+            if (!strcmp(n->instr, ";"))
+                return traversal_ast(n->next, res, data);
             if (n->tokentype == ASSIGNMENT_W)
                 add_assignment(n->instr, data->var_tab);
             else

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define LIST_LENGTH 35
+#define LIST_LENGTH 31
 #define REDIR_LENGTH 9
 
 static struct token *token_init(void)
@@ -117,12 +117,6 @@ void print_enum(enum type type)
         case 32:
                 printf("EXPAND_W");
                 break;
-        case 33:
-                printf("OPEN_ARITH");
-                break;
-        case 34:
-                printf("END_ARITH");
-                break;
     }
 }
 void print_list(struct linked_list *l_list)
@@ -136,8 +130,6 @@ void print_list(struct linked_list *l_list)
     }
     printf("\n");
 }
-static void read_string(struct token *new, char *string, char **list,
-        struct linked_list *l_list);
 /*
    static char **init_redir_list(void)
    {
@@ -188,177 +180,9 @@ static char **init_list(void)
     *(list + 28) = "{";
     *(list + 29) = "}";
     *(list + 30) = ";;";
-    *(list + 31) = ";;";
-    *(list + 32) = ";;";
-    *(list + 33) = "$((";
-    *(list + 34) = "))";
-
     return list;
 }
-int check_specials(char *string) //checks for & and ;
-{
-    for (int i = 0; *(string + i); i++)
-    {
-        if (*(string + i) == ';'
-                || *(string + i) == '('
-                || *(string + i) == ')'
-                || *(string + i) == '{'
-                || *(string + i) == '}')
-            return i;
-        if (!*(string + i + 1) && *(string + i) == '&')
-            return i;
-        if (*(string + i) == '&' && *(string + i + 1) != '&')
-            return i;
-    }
-    return -1;
-}
-
-void check_word(struct token *new, char *string)
-{
-    int string_len = strlen(string) + 1;
-    //FIXME: pour éviter les memleaks, ajout de cette condition.
-    if (new->name)
-    {
-        free(new->name);
-        new->name = NULL;
-    }
-    new->name = calloc(sizeof(char), string_len);
-    if (string[0] == '$')
-    {
-        new->type = EXPAND_W;
-        memcpy(new->name, string, string_len - 1);
-        return;
-    }
-    memcpy(new->name, string, string_len);
-    for (int i = 0; *(string + i); i++)
-    {
-        if (*(string + i) == '=' && i != 0)
-        {
-            new->type = ASSIGNMENT_W;
-            return;
-        }
-        if (*(string + i) == '<' || *(string + i) == '>')
-        {
-            new->type = IONUMBER;
-            return;
-        }
-    }
-    new->type = WORD;
-}
-
-int check_list(struct token *new, char *string, char **list)
-{
-    for (int i = 0; i < LIST_LENGTH; i++)
-    {
-        if (!strcmp(string, list[i]))
-        {
-            new->type = i;
-            int len = strlen(list[i]);
-            if (!strcmp(list[i], "fi"))
-                new->name = calloc(10, sizeof(char));
-            else
-                new->name = calloc(20, sizeof(char));
-            new->name = memcpy(new->name, list[i], len);
-            return 1;
-
-        }
-    }
-    if (!strcmp(string, "\n"))
-    {
-        new->type = ENDOF;
-        new->name = calloc(20, sizeof(char));
-        memcpy(new->name, "\n", 2);
-        return 1;
-    }
-    return 0;
-}
-
-void splitted_tokens(struct token *new, char c, char **list)
-{
-    char *string = calloc(2, sizeof(char));
-    string[0] = c;
-    check_list(new, string, list);
-    free(string);
-}
-
-/**
-  * returns 1 if the name has already been set i.e the string is a special token
-  */
-
-int split_tokens(struct token *new, char *string, struct linked_list *l_list,
-        int index_sc, char **list)
-{
-    if (index_sc == 0)
-    {
-        splitted_tokens(new, string[index_sc], list);
-        return 0;
-    }
-    else
-    {
-        struct token *to_add = token_init();
-        add(l_list, to_add);
-        splitted_tokens(to_add, string[index_sc], list);
-    }
-    string[index_sc] = '\0';
-    if (check_list(new,string,list))
-        return 0;
-    new->name = calloc(index_sc + 1, sizeof(char));
-    new->name = memcpy(new->name, string, index_sc);
-    return 1;
-}
-
-void read_string(struct token *new, char *string, char **list,
-        struct linked_list *l_list)
-{
-    if (!string || !strcmp(string,""))
-    {
-        free(new);
-        return;
-    }
-    add(l_list,new);
-    if (check_list(new,string,list))
-        return;
-    int index_sc = check_specials(string);
-    if (index_sc != -1)
-    {
-        struct token *next = token_init();
-        int is_word = split_tokens(new, string, l_list, index_sc, list);
-        if (is_word) //token type was not assigned
-            check_word(new, string);
-        read_string(next, string + index_sc + 1,list,l_list);
-        return;
-    }
-    check_word(new, string); //Set the type of the token
-}
-
-int type_oper(struct token *new)
-{
-    switch (new->type)
-    {
-        case LOGICAL_AND:
-            return 1;
-        case SEMICOLON:
-            return 1;
-        case PIPE:
-            return 1;
-        case LOGICAL_OR:
-            return 1;
-        case AND:
-            return 1;
-        case OPEN_PAR:
-            return 1;
-        case CLOSE_PAR:
-            return 1;
-        case OPEN_BRA:
-            return 1;
-        case CLOSE_BRA:
-            return 1;
-        case TWO_SEMIC:
-            return 1;
-        default :
-            return 0;
-    }
-}
+/*
 void check_context(struct linked_list *l_list, struct token *new)
 {
     if (type_oper(new))
@@ -369,8 +193,7 @@ void check_context(struct linked_list *l_list, struct token *new)
     {
         if (context == FOR && iter->elem->type == DO)
             context = ENDOF;
-        if (context == ENDOF
-                && (iter->elem->type == FOR || iter->elem->type == CASE))
+        if (context == ENDOF && (iter->elem->type == FOR || iter->elem->type == CASE))
             context = FOR;
         if (context == ENDOF && iter->elem->type == WORD)
             context = WORD;
@@ -379,11 +202,216 @@ void check_context(struct linked_list *l_list, struct token *new)
     }
     if (context == WORD && new->type != EXPAND_W)
         new->type = WORD;
+}*/
+
+int special_character(char c)
+{
+    switch (c)
+    {
+        case ' ':
+            return 1;
+        case '(':
+            return 1;
+        case ')':
+            return 1;
+        case '{':
+            return 1;
+        case '}':
+            return 1;
+        case ';':
+            return 1;
+        case '=':
+            return 1;
+        case '&':
+            return 1;
+        case '|':
+            return 1;
+        default:
+            return 0;
+    }
 }
-struct linked_list *lexer_c(char *input)
+
+struct token *set_token(struct token *new, char *res, int cur_index,
+        enum type current_type)
+{
+    new->name = res;
+    new->type = current_type;
+    res = realloc(res, cur_index + 1);
+    return new;
+}
+
+struct token *set_specials(struct token *new, char *string,
+        int *index, char **list)
+{
+    char *cmp = calloc(3, sizeof(char));
+    for (; string[*index]; *index = *index + 1)
+    {
+        if (!cmp[0])
+            cmp[0] = string[*index];
+        else
+        {
+            if (cmp[0] == string[*index])
+            {
+                cmp[1] = string[*index];
+                *index = *index + 1;
+            }
+            break;
+        }
+    }
+    for (int i = 0; i < LIST_LENGTH; i++)
+    {
+        if (!strcmp(cmp, list[i]))
+        {
+            new->type = i;
+            new->name = cmp;
+            break;
+        }
+    }
+    if (!strcmp(cmp, "\n"))
+    {
+        new->type = ENDOF;
+        new->name = cmp;
+    }
+    return new;
+}
+
+int check_special_words(char *string, char **list)
+{
+    for (int i = 0; i < LIST_LENGTH; i++)
+    {
+        if (!strcmp(string, list[i]))
+            return i;
+    }
+    if (!strcmp(string, "\n"))
+    {
+        return ENDOF;
+    }
+    return WORD;
+}
+
+struct token *read_characters(struct token *new, char *string,
+        int *index, char **list)
+{
+    if (special_character(string[*index]))
+    {
+        if (string[*index] != ' ')
+            return set_specials(new, string, index, list);
+        *index = *index + 1;
+    }
+    int cur_index = 0;
+    int len = strlen(string);
+    char *res = calloc(len + 1, sizeof(char));
+    enum type current_type = WORD;
+    for (; *(string + *index); cur_index++, *index = *index + 1)
+    {
+        if (special_character(*(string + *index)))
+        {
+            if (string[*index] == '=')
+                current_type = ASSIGNMENT_W;
+            break;
+        }
+        res[cur_index] = string[*index];
+    }
+    current_type = check_special_words(res, list);
+    return set_token(new, res, cur_index, current_type);
+}
+
+enum type set_context(struct token *new)
+{
+    switch (new->type)
+    {
+        case WORD:
+            return WORD;
+        case ASSIGNMENT_W:
+            return WORD;
+        case EXPAND_W:
+            return WORD;
+        case FOR:
+            return FOR;
+        default:
+            return ENDOF;
+    }
+}
+
+int is_special_word(struct token *new)
+{
+    switch (new->type)
+    {
+        case IF:
+            return 1;
+        case THEN:
+            return 1;
+        case ELSE:
+            return 1;
+        case FI:
+            return 1;
+        case WHILE:
+            return 1;
+        case FOR:
+            return 1;
+        case UNTIL:
+            return 1;
+        case CASE:
+            return 1;
+        case DO:
+            return 1;
+        case DONE:
+            return 1;
+        case ESAC:
+            return 1;
+        case ELIF:
+            return 1;
+        case ASSIGNMENT_W:
+            return 1;
+        default:
+            return 0;
+    }
+}
+void check_context(struct token *new, enum type *context)
+{
+    if (*context == ENDOF)
+    {
+        *context = set_context(new);
+        return;
+    }
+    if (is_special_word(new))
+        new->type = WORD;
+}
+struct linked_list *tmp_lexer_c(char *input)
 {
 
     char **list = init_list();
+    struct linked_list *l_list = init_link();
+    int index = 0;
+    enum type context = ENDOF;
+    for (; input[index]; )
+    {
+        struct token *new = token_init();
+        read_characters(new, input, &index, list);
+        if (!strcmp(new->name, ""))
+        {
+            free(new->name);
+            free(new);
+            new = NULL;
+            continue;
+        }
+        check_context(new, &context);
+        add(l_list, new);
+    }
+    struct token *eof = malloc(sizeof(struct token));
+    eof->type = ENDOF;
+    eof->name = calloc(6, sizeof(char));
+    memcpy(eof->name, "ENDOF", 6);
+    add(l_list, eof);
+    free(list);
+    return l_list;
+}
+
+struct linked_list *lexer_c(char *input)
+{
+    if (1)
+        return tmp_lexer_c(input);
+    /*char **list = init_list();
     struct linked_list *l_list = init_link();
     char *string = NULL;
     if (input)
@@ -413,11 +441,17 @@ struct linked_list *lexer_c(char *input)
     memcpy(eof->name, "ENDOF", 6);
     add(l_list, eof);
     free(list);
-    return l_list;
+    return l_list;*/
 }
 
 struct linked_list *lexer (char *input[], int argc, int begin)
 {
+    input = input;
+    argc = argc;
+    begin = begin;
+    if (1)
+        return NULL;
+    /*
     char **list = init_list();
     //char **redir_list = init_redir_list();
     struct linked_list *l_list = init_link();
@@ -445,4 +479,4 @@ struct linked_list *lexer (char *input[], int argc, int begin)
     add(l_list,eof);
     free(list);
     return l_list;
-}
+*/}
