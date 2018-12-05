@@ -32,4 +32,6 @@ struct linked_list *read_fil(char *path);
   */
 void fuse_lists(struct linked_list *ll, char *string);
 
+struct linked_list *reading(FILE *file);
+
 #endif /* ! FILE_H */

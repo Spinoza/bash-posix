@@ -225,31 +225,7 @@ int main(int argc, char *argv[])
     struct linked_list *tokens;
     if (!isatty(STDIN_FILENO))
     {
-        char *line = NULL;
-        size_t i = 0;
-        int res = 0;
-        getline(&line, &i, stdin);
-        if (res == -1)
-            errx(1, "incoherent input.");
-        if (line[strlen(line) - 1] == '\n')
-        {
-            line[strlen(line) - 1] = '\0';
-        }
-
-        tokens = lexer_c(line);
-        free(line);
-        line = NULL;
-        while ( (res = getline(&line, &i, stdin)) != -1)
-        {
-            if (line[strlen(line) - 1] == '\n')
-            {
-                line[strlen(line) - 1] = '\0';
-            }
-            fuse_lists(tokens, line);
-            free(line);
-            line = NULL;
-        }
-        free(line);
+        tokens = reading(stdin);
     }
     else if (argc == 2)
     {
@@ -258,31 +234,7 @@ int main(int argc, char *argv[])
         {
             errx(126, "%s: permission denied.", argv[1]);
         }
-        char *line = NULL;
-        size_t i = 0;
-        int res = 0;
-        getline(&line, &i, toread);
-        if (res == -1)
-            errx(1, "incoherent input.");
-        if (line[strlen(line) - 1] == '\n')
-        {
-            line[strlen(line) - 1] = '\0';
-        }
-
-        tokens = lexer_c(line);
-        free(line);
-        line = NULL;
-        while ( (res = getline(&line, &i, toread)) != -1)
-        {
-            if (line[strlen(line) - 1] == '\n')
-            {
-                line[strlen(line) - 1] = '\0';
-            }
-            fuse_lists(tokens, line);
-            free(line);
-            line = NULL;
-        }
-        free(line);
+        tokens = reading(toread);
         fclose(toread);
     }
     else if (global.options->c == TRUE)
