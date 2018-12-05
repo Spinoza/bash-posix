@@ -20,9 +20,22 @@ int get_number(struct node *n)
     return 0;
 }
 
-void add_to_tree(struct bt_node *new, struct bt_node *root)
+void add_to_list(struct bt_node **list, struct bt_node *root)
 {
 
+}
+
+int get_op(char *string)
+{
+    if (!string)
+        return 0;
+    char *list_op = "+-*/^~";
+    for (int i = 0; *(list_op + i); i++)
+    {
+        if (string[0] == list_op[i])
+            return i - 1;
+    }
+    return 0;
 }
 
 struct bt_node *arithmetic_expansion(struct node *n)
@@ -31,16 +44,60 @@ struct bt_node *arithmetic_expansion(struct node *n)
     struct bt_node *bt = calloc(1, sizeof(struct bt_node));
     struct node *iter = n;
     struct bt_node *prev = NULL;
-    while (iter->tokentype != END_ARTHMETIC)
+    struct bt_node *new = calloc(1, sizeof(struct bt_node));
+    new->number = NULL;
+    while (iter)
     {
-        struct bt_node *new = calloc(1, sizeof(struct bt_node));
-        char *number = iter->instr;
-
-        if (prev && prev->operateur)
+        if (new->operateur || new->number)
         {
-
+            add_to_list(new, bt);
+            prev = new;
+            iter = iter->next;
+            struct bt_node *new = calloc(1, sizeof(struct bt_node));
         }
-        bt->data = get_number(iter);
+        while (!bt_node->op && !bt_node->nb)
+        {
+            if (!string)
+            {
+                if (iter->next)
+                    iter = iter-next;
+                else
+                    iter = NULL;
+                if (iter)
+                    string = iter->instr;
+            }
+            int op = get_op(string);
+            if (prev && !prev->operateur)
+            {
+                if (!op)
+                    fprintf(stderr, "error in arithmetic expression");
+                //need to  return
+                new->op = op - 1;
+            }
+            else
+            {
+                while (op)
+                {
+                    op --;
+                    if (op == '+' || op == '-')
+                    {
+                        if (op == '-')
+                            int sign = new->nb->sign + 1;
+                        if (sign == 2)
+                            new->nb->sign = '+';
+                        else
+                            new->nb->sign = '-';
+                    }
+                    else
+                        fprintf(stderr, "error in arithmetic expression");
+                    //need to return
+                    string ++;
+                    op = get_op(string);
+                }
+
+                //number
+            }
+        }
         prev = new;
         iter = iter->next;
     }

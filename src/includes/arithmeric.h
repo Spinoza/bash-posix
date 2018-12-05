@@ -1,6 +1,12 @@
 #ifndef ARITHMETIC_H
 #define ARITHMETIC_H
 
+enum sign
+{
+    '+',
+    '-',
+}
+
 enum operateur
 {
     'n' = 0,
@@ -14,7 +20,7 @@ enum operateur
 
 struct number
 {
-    int sign;
+    enum sign;
     int number;
 }
 
@@ -22,10 +28,9 @@ struct bt_node
 
 {
     struct number *nb;
-    enum operateur operateur;
+    enum operateur op;
     struct bt_node *left;
     struct bt_node *right;
 }
-
 
 #endif /* ! ARITHMETIC_H */
