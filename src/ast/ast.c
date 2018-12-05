@@ -221,7 +221,8 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         while ((tok->elem->type != ELIF)&&(tok->elem->type != ELSE)&&
               (tok->elem->type != DONE)&&(tok->elem->type != FI)&&
               (tok->elem->type != TWO_SEMIC)&&(tok->elem->type != CLOSE_PAR)&&
-              (tok->elem->type != CLOSE_BRA) && strcmp(tok->elem->name, "ENDOF"))
+              (tok->elem->type != CLOSE_BRA) && (tok->elem->type != ESAC) &&
+              strcmp(tok->elem->name, "ENDOF"))
         {
             while (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
                 tok = tok->next;
@@ -298,7 +299,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
             tok = build_aux(new2, tok);
 
         }
-        return tok;
+        return tok->next;
 
     }
     if (r->type == A_FUNCTION)
