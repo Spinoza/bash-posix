@@ -247,10 +247,6 @@ int main(int argc, char *argv[])
     {
         tokens = lexer_c(global.options->arg_c);
     }
-    else
-    {
-        tokens = lexer(argv, argc, index);
-    }
     int isgramm = grammar_check(tokens);
     if (!isgramm)
     {

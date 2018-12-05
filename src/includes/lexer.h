@@ -18,16 +18,6 @@
   *\return void
   */
 void print_list(struct linked_list *l_list);
-
-/**
-  *\fn struct linked_list *lexer(char *input[], int argc, int begin)
-  *\brief creates a list of tokens from a list of arguments
-  *\param char *input[] list of args, int argc number opf args, int begin index
-  *where to start
-  *\return struct linked_list if everything works, NULL otherwise
-  */
-struct linked_list *lexer(char *input[],int argc, int begin);
-
 /**
   *\fn linked_list *lexer_c(char *input)
   *\brief creates a list of tokens from a string
