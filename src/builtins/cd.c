@@ -7,6 +7,7 @@
 static int find_path(char *arg)
 {
     char *first = calloc (strlen(arg) + 1, sizeof(char));
+    char *tofree = first;
     strcpy(first, arg);
     first = strtok(first, "/ \0");
     while (first)
@@ -16,6 +17,7 @@ static int find_path(char *arg)
             if (global.oldPWD == NULL)
             {
                 fprintf(stderr, "cd: old PWD not yet set");
+                free(tofree);
                 return -1;
             }
             int res = chdir(global.oldPWD);
@@ -26,12 +28,14 @@ static int find_path(char *arg)
                 change_pwd(cpy);
                 free(cpy);
             }
+            free(tofree);
             return res;
         }
         if (chdir(first) == -1)
             return -1;
         first = strtok(NULL, "/ \0");
     }
+    free(tofree);
     char * dir = getcwd(NULL, 0);
     change_pwd(dir);
     free(dir);
