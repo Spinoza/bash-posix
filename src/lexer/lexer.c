@@ -369,7 +369,7 @@ int is_special_word(struct token *new)
 }
 void check_context(struct token *new, enum type *context)
 {
-    if (*context == ENDOF)
+    if (*context == ENDOF || (new->type == SEMICOLON || new->type == ENDOF))
     {
         *context = set_context(new);
         return;
