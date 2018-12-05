@@ -67,6 +67,7 @@ int my_exit(int number, char *args[],  ...)
     }
 
     va_end(ap);
+    printf("\n");
     exit(retcode);
     return retcode;
 }

@@ -142,6 +142,12 @@ static int interactive_mode(struct globv global)
             line = readline("42sh$ ");
         else
             line = readline(PS1);
+        if (!line)
+        {
+            printf("exit");
+            char *ex[] = { "exit", NULL};
+            my_exit(2, ex, 0);
+        }
         struct linked_list *tokens = lexer_c(line);
         int isgramm = grammar_check(tokens);
         if (!isgramm)
