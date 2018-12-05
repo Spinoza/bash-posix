@@ -47,14 +47,12 @@ struct stored_data *stored_data_init(void)
     //ne sont pas encore correctement free.
     new->builtins = init_builts();
     char *ifs = calloc(2, sizeof(char));
-    char *hashtag = calloc(2, sizeof(char));
     //Shinyo: ajout des variables PS1 et PS2
     char *PS1 = calloc(7, sizeof(char));
     char *PS2 = calloc(3, sizeof(char));
     strcpy(PS1, "42sh$ ");
     strcpy(PS2, "> ");
     ifs[0] = ' ';
-    hashtag[0] = '0';
     add_assignment_split("IFS", ifs, new->var_tab);
     add_assignment_split("PS1", PS1, new->var_tab);
     add_assignment_split("PS2", PS2, new->var_tab);
