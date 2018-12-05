@@ -11,17 +11,37 @@ int get_number(struct node *n)
     int n = isnumber(n->instr);
     if (n != -1)
         return n;
+    if (n->instr[0] == '-')
+    {
+        n = isanumber(n-instr + 1);
+        if (n != -1)
+            return -n;
+    }
     return 0;
 }
 
-struct binary_tree *arithmetic_expansion(struct node *n)
+void add_to_tree(struct bt_node *new, struct bt_node *root)
+{
+
+}
+
+struct bt_node *arithmetic_expansion(struct node *n)
 {
     int i = 0;
-    struct binary_tree *bt = calloc(1, sizeof(struct binary_tree));
+    struct bt_node *bt = calloc(1, sizeof(struct bt_node));
     struct node *iter = n;
+    struct bt_node *prev = NULL;
     while (iter->tokentype != END_ARTHMETIC)
     {
+        struct bt_node *new = calloc(1, sizeof(struct bt_node));
+        char *number = iter->instr;
+
+        if (prev && prev->operateur)
+        {
+
+        }
         bt->data = get_number(iter);
+        prev = new;
         iter = iter->next;
     }
     return bt;
