@@ -18,7 +18,13 @@ static size_t nbdigits(int r)
 char *inttochar(int nb)
 {
     size_t s = nbdigits(nb);
-    char *number = malloc(sizeof(char) * s);
+    char *number = malloc(sizeof(char) * (s + 1));
+    if (nb == 0)
+    {
+        number[0] = '0';
+        number[1] = '\0';
+        return number;
+    }
     for (size_t i = 0; i < s; i++)
     {
         number[i] = '0' + nb % 10;

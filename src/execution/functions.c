@@ -65,7 +65,7 @@ void get_function_param(struct node *child, struct node *oper_node
     char *instr = NULL;
     for (; iter && iter != oper_node; i++, iter = iter->next)
     {
-        instr = set_string(iter->instr, iter, data);
+        instr = set_string(iter->instr, data);
         result = realloc(result, (i + 1) * sizeof(char *));
         result[i] = instr;
     }

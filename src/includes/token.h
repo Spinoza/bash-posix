@@ -48,7 +48,9 @@ enum type
     CLOSE_BRA = 29, /**< The string parsed is a closing bracket. */
     TWO_SEMIC = 30, /**< The string parsed is a double semicolon. */
     FUNCTION = 31, /**< Used to build the ast tree. */
-    EXPAND_W = 32 /**< The string parsed starts with & '$'. */
+    EXPAND_W = 32, /**< The string parsed starts with & '$'. */
+    OPEN_ARITH, /**< Used in execution for arithmetic expansions **/
+    END_ARITH /**< Used in execution for arithmetic expansions **/
 };
 
 /**

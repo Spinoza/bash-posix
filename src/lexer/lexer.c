@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define LIST_LENGTH 31
+#define LIST_LENGTH 35
 #define REDIR_LENGTH 9
 
 static struct token *token_init(void)
@@ -117,6 +117,12 @@ void print_enum(enum type type)
         case 32:
                 printf("EXPAND_W");
                 break;
+        case 33:
+                printf("OPEN_ARITH");
+                break;
+        case 34:
+                printf("END_ARITH");
+                break;
     }
 }
 void print_list(struct linked_list *l_list)
@@ -182,6 +188,10 @@ static char **init_list(void)
     *(list + 28) = "{";
     *(list + 29) = "}";
     *(list + 30) = ";;";
+    *(list + 31) = ";;";
+    *(list + 32) = ";;";
+    *(list + 33) = "$((";
+    *(list + 34) = "))";
 
     return list;
 }
@@ -210,7 +220,7 @@ void check_word(struct token *new, char *string)
     if (string[0] == '$')
     {
         new->type = EXPAND_W;
-        memcpy(new->name, string + 1, string_len - 1);
+        memcpy(new->name, string, string_len - 1);
         return;
     }
     memcpy(new->name, string, string_len);

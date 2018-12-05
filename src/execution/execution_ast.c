@@ -202,7 +202,7 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
                 instruction = realloc(instruction, capacity
                             * sizeof(char *));
             }
-            instruction[i] = set_string(cond->instr, cond, data);
+            instruction[i] = set_string(cond->instr, data);
         }
     }
     instruction[i] = NULL;

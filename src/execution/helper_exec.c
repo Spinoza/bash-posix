@@ -88,16 +88,13 @@ static int copy_string(char *source, char **dest, int start_index,
  * current capacity of result string.
  * */
 
-char *set_string(char *instr, struct node *node,
-        struct stored_data *data)
+char *set_string(char *instr, struct stored_data *data)
 {
     int len = strlen(instr) + 1;
     int *capacity = malloc(sizeof(int));;
     *capacity = len;
     char *string = calloc(*capacity, sizeof(char));
     int after_dollar = 0;
-    if (node->tokentype == EXPAND_W)
-        after_dollar = 1;
     int k = 0; //index to copy characters
     for (int i = 0; *(instr + i); i++)
     {
@@ -153,7 +150,7 @@ char **to_execute(struct node *child, struct node *oper_node
     char *instr = NULL;
     for (; iter && iter != oper_node; i++, iter = iter->next)
     {
-        instr = set_string(iter->instr, iter, data);
+        instr = set_string(iter->instr, data);
         result = realloc(result, (i + 1) * sizeof(char *));
         result[i] = instr;
     }
