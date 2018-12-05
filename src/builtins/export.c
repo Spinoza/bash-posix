@@ -49,8 +49,8 @@ int my_export(int number, char *args[], ...)
                     fprintf(stderr, "export: not a valid identifier");
                     return 1;
                 }
-                i++;
-                continue;
+                fprintf(stderr, "export: not a valid option");
+                return 1;
             }
             if(file == 0)
             {
