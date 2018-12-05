@@ -4,6 +4,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+static int is_forbidden(char *name)
+{
+    char *forb[4] = { "IFS", "#", "PS1", "PS2" };
+    for (int i = 0; i < 4; i ++)
+    {
+        if (!strcmp(forb[i], name))
+            return 1;
+    }
+    return 0;
+}
+
 struct assignment **init_assignment(void)
 {
     struct assignment **a_tab = calloc(HASH_TAB_SIZE,
@@ -25,9 +36,15 @@ void free_assignments(struct assignment **tab)
         {
             to_free = next;
             if (to_free->value)
+            {
                 free(to_free->value);
-            if (to_free->name)
+                to_free->value = NULL;
+            }
+            if (to_free->name && !is_forbidden(to_free->name))
+            {
                 free(to_free->name);
+                to_free->name = NULL;
+            }
             next = next->next;
             free(to_free);
         }

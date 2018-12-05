@@ -177,10 +177,12 @@ static int interactive_mode(struct globv global)
                 free(listadd);
             }
             struct node *ast = build_ast(tokens);
+            global.ast_root = ast;
             if (global.options->ast_print == TRUE)
                 print_ast(ast);
             retcode = execution_ast(ast, global.data);
-            free_node(ast);
+            free_node(global.ast_root);
+            global.ast_root = NULL;
             ast = NULL;
         }
         free_list(tokens);
@@ -266,12 +268,11 @@ int main(int argc, char *argv[])
     path2 = NULL;
     free(toks);
     struct node *ast = build_ast(tokens);
+    global.ast_root = ast;
     if (global.options->ast_print == TRUE)
         print_ast(ast);
     int res = execution_ast(ast, global.data);
-    free(global.options);
     free_list(tokens);
-    free_node(ast);
-    //free_data(global.data);
+    free_glob();
     return res;
 }
