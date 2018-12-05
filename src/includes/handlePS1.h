@@ -17,6 +17,4 @@ char *get_assignment(char *name);
   *\return a Struct nL if everything works properly, NULL otherwise
   */
 struct nL *handletty(void);
-
-
 #endif /* ! ATTY_H */

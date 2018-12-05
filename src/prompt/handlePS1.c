@@ -18,6 +18,10 @@ struct nL *handletty(void)
             line = readline("> ");
         else
             line = readline(PS2);
+        if (!line)
+        {
+            return NULL;
+        }
         struct linked_list *tokens = lexer_c(line);
         struct nL *ret = tokens->head;
         free(tokens);

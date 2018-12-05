@@ -144,7 +144,7 @@ static int interactive_mode(struct globv global)
             line = readline(PS1);
         if (!line)
         {
-            printf("exit");
+            printf("exit\n");
             char *ex[] = { "exit", NULL};
             my_exit(2, ex, 0);
         }
@@ -159,7 +159,6 @@ static int interactive_mode(struct globv global)
                 add_history(listadd);
                 free(listadd);
             }
-            fprintf(stdout, "lexer error: Is your input conform to grammar ?\n");
             retcode = 2;
         }
         else

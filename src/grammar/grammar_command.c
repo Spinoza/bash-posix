@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 #include "linked_list.h"
 #include "grammar_check.h"
 #include "handlePS1.h"
@@ -114,7 +115,13 @@ struct nL *g_funcdec(struct nL *tok)
     {
         if (!tok)
         {
-            save->prev->next = handletty();
+            struct nL *tok1 = handletty();
+            if (!tok1)
+            {
+                fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                return NULL;
+            }
+            save->prev->next = tok1;
             save->prev->next->prev = save->prev;
             tok = save->prev;
             free(save->elem->name);
@@ -191,7 +198,13 @@ struct nL *g_compoundlist(struct nL *tok)
     {
         if (!tok)
         {
-            save->prev->next = handletty();
+            struct nL *tok1 = handletty();
+            if (!tok1)
+            {
+                fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                return NULL;
+            }
+            save->prev->next = tok1;
             save->prev->next->prev = save->prev;
             tok = save->prev;
             free(save->elem->name);
@@ -220,7 +233,13 @@ struct nL *g_compoundlist(struct nL *tok)
         {
             if (!tok)
             {
-                stock->prev->next = handletty();
+                struct nL *tok1 = handletty();
+                if (!tok1)
+                {
+                    fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                    return NULL;
+                }
+                stock->prev->next = tok1;
                 stock->prev->next->prev = stock->prev;
                 tok = stock->prev;
                 free(stock->elem->name);
@@ -257,7 +276,13 @@ struct nL *g_compoundlist(struct nL *tok)
         {
             if (!tok)
             {
-                save->prev->next = handletty();
+                struct nL *tok1 = handletty();
+                if (!tok1)
+                {
+                    fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                    return NULL;
+                }
+                save->prev->next = tok1;
                 save->prev->next->prev = save->prev;
                 tok = save->prev;
                 free(save->elem->name);

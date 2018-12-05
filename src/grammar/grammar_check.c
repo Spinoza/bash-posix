@@ -38,7 +38,13 @@ struct nL *g_pipeline(struct nL *tok)
             {
                 if (!tok)
                 {
-                    stock->prev->next = handletty();
+                    struct nL *tok1 = handletty();
+                    if (!tok1)
+                    {
+                        fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                        return NULL;
+                    }
+                    stock->prev->next = tok1;
                     stock->prev->next->prev = stock->prev;
                     tok = stock->prev;
                     free(stock->elem->name);
@@ -81,7 +87,13 @@ struct nL *g_andor(struct nL *tok)
             {
                 if (!tok)
                 {
-                    stock->prev->next = handletty();
+                    struct nL *tok1 = handletty();
+                    if (!tok1)
+                    {
+                        fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                        return NULL;
+                    }
+                    stock->prev->next = tok1;
                     stock->prev->next->prev = stock->prev;
                     tok = stock->prev;
                     free(stock->elem->name);
