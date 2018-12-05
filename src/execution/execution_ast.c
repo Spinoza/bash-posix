@@ -119,6 +119,7 @@ struct node *instr_execution(struct node *n, int *res,
     char *oper = (oper_node ? oper_node->instr : "");
     char **command_call = to_execute(n, oper_node, data);
     int r_builtin = is_builtin(command_call);
+    int pipe = 0;
     if (r_builtin != -1)
     {
         *res = r_builtin;
@@ -137,6 +138,7 @@ struct node *instr_execution(struct node *n, int *res,
         {
             if (oper_node && oper_node->tokentype == PIPE)
             {
+                pipe = 1;
                 *res = pipe_handling(command_call, n, data);
                 while (oper_node && oper_node->tokentype == PIPE)
                     oper_node = get_oper_node(oper_node->next);
@@ -148,7 +150,8 @@ struct node *instr_execution(struct node *n, int *res,
         else
             *res = traversal_ast(func, res, data);
     }
-    free_command(command_call);
+    if (!pipe)
+        free_command(command_call);
     if ((!strcmp(oper,"&&") && !(*res))
             || (!strcmp(oper,"||") && (*res)))
         return oper_node->next;
@@ -198,7 +201,7 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
             {
                 capacity *= 2;
                 instruction = realloc(instruction, capacity
-                            * sizeof(char *));
+                        * sizeof(char *));
             }
             instruction[i] = set_string(cond->instr, data);
         }
