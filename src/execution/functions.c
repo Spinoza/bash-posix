@@ -3,13 +3,13 @@
 #include "helper_exec.h"
 #include <stdio.h>
 
-struct function *is_a_function(struct node *n, struct f_tab *f_tab)
+struct function *is_a_function(char *name, struct f_tab *f_tab)
 {
     if (!f_tab || !f_tab->nb)
         return NULL;
     for (size_t i = 0; i < f_tab->nb; i++)
     {
-        if (!strcmp(n->instr, f_tab->f[i]->name))
+        if (!strcmp(name, f_tab->f[i]->name))
             return f_tab->f[i];
     }
     return NULL;
@@ -24,7 +24,7 @@ void function_stored(struct node *n, struct stored_data *data)
         data->f_tab->capacity = 10;
         data->f_tab->f = calloc(10, sizeof(struct function*));
     }
-    struct function *func = is_a_function(n, data->f_tab);
+    struct function *func = is_a_function(n->instr, data->f_tab);
     if (func)
     {
         free_node_copy(func->function_start);

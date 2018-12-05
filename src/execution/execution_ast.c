@@ -115,31 +115,40 @@ struct node *instr_execution(struct node *n, int *res,
         struct stored_data *data)
 {
     /*check redirection*/
-    struct function *f = is_a_function(n, data->f_tab);
-    struct node *func = NULL;
-
     struct node *oper_node = get_oper_node(n);
-    if (f)
-    {
-        func = f->function_start;
-        get_function_param(n, oper_node, data);
-    }
     char *oper = (oper_node ? oper_node->instr : "");
-    if (!func)
+    char **command_call = to_execute(n, oper_node, data);
+    int r_builtin = is_builtin(command_call);
+    if (r_builtin != -1)
     {
-        char **command_call = to_execute(n, oper_node, data);
-        if (oper_node && oper_node->tokentype == PIPE)
-        {
-            *res = pipe_handling(command_call, n, data);
-            while (oper_node && oper_node->tokentype == PIPE)
-                oper_node = get_oper_node(oper_node->next);
-            oper = (oper_node ? oper_node->instr : "");
-        }
-        else
-            *res = exec_command(command_call);
+        *res = r_builtin;
     }
     else
-        *res = traversal_ast(func, res, data);
+    {
+        struct function *f = is_a_function(command_call[0], data->f_tab);
+        struct node *func = NULL;
+
+        if (f)
+        {
+            func = f->function_start;
+            get_function_param(n, oper_node, data);
+        }
+        if (!func)
+        {
+            if (oper_node && oper_node->tokentype == PIPE)
+            {
+                *res = pipe_handling(command_call, n, data);
+                while (oper_node && oper_node->tokentype == PIPE)
+                    oper_node = get_oper_node(oper_node->next);
+                oper = (oper_node ? oper_node->instr : "");
+            }
+            else
+                *res = exec_command(command_call);
+        }
+        else
+            *res = traversal_ast(func, res, data);
+    }
+    free_command(command_call);
     if ((!strcmp(oper,"&&") && !(*res))
             || (!strcmp(oper,"||") && (*res)))
         return oper_node->next;

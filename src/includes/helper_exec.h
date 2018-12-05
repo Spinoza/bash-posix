@@ -17,4 +17,6 @@ int exec_command(char **string);
 
 char *set_string(char *instr, struct node *node, struct stored_data *data);
 
+int is_builtin(char **string);
+
 #endif /* ! HELPER_EXEC */

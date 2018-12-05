@@ -183,6 +183,24 @@ void free_command(char **string)
     free(string);
 }
 
+int is_builtin(char **string)
+{
+    for (int i = 0; i < NB_BUILTINS; i++)
+    {
+        if (!strcmp(global.data->builtins[i].name, string[0]))
+        {
+            int r = 0;
+            if (!strcmp(string[0], "exit"))
+                r = global.data->builtins[i].builtin(2, string, global.res);
+            else
+                r = global.data->builtins[i].builtin(2, string);
+            return r;
+        }
+    }
+    return -1;
+}
+
+
 int exec_command(char **string)
 {
     pid_t pid = fork();
@@ -202,7 +220,7 @@ int exec_command(char **string)
         waitpid(pid, &status, 0);
         if (status == 127 || status == 65280)
             fprintf(stderr,"42sh : %s : command not found.\n",string[0]);
-        free_command(string);
         return status;
     }
 }
+
