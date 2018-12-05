@@ -225,5 +225,9 @@ int my_echo(int number, char *args[], ...)
     {
         fprintf(stdout, "%s\n", printfin);
     }
+    if (printfin)
+    {
+        free(printfin);
+    }
     return 0;
 }
