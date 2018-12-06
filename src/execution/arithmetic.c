@@ -302,8 +302,7 @@ long int eval_list(struct stack *stack, struct stack *operators_stack,
             int next_precedence = get_precedence(current);
             if (next_precedence <= precedence)
                 stack = eval_nodes(stack, operators_stack);
-            else
-                precedence = next_precedence;
+            precedence = next_precedence;
             operators_stack = push(operators_stack, copy_bt_node(current));
         }
         if (stack && current->op == OPEN_PAR_OPER)
