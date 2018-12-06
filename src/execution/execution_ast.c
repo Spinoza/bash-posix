@@ -114,7 +114,6 @@ int pipe_handling(char **command1, struct node *n, struct stored_data *data)
     return pipe_aux(command1, oper_node, fd, data);
 }
 
-
 void break_execution(struct stored_data *data, int break_nb)
 {
 
@@ -125,12 +124,8 @@ void break_execution(struct stored_data *data, int break_nb)
     }
     if (break_nb < data->nbparent)
     {
-        data->brk += break_nb + 1;
-        /*for (int i = 0; i < break_nb; i++)
-        {
-            data->parent_list[data->nbparent - i] = NULL;
-        }*/
-        data->nbparent-= break_nb;
+        data->brk -= (break_nb);
+        data->nbparent -= break_nb;
     }
     else
     {
@@ -171,7 +166,7 @@ struct node *instr_execution(struct node *n, int *res,
             //if (command_call[1])
             //    break_execution(data, atoi(command_call[1]));
             //else
-                break_execution(data, 0);
+                break_execution(data, 1);
             free_command(command_call);
             return NULL;
         }
@@ -288,13 +283,18 @@ int for_execution(struct node *n, int *res, struct stored_data *data)
         int len = strlen(elem->instr);
         char *cpy_instr = calloc(len + 1, sizeof(char));
         cpy_instr = memcpy(cpy_instr, elem->instr, len);
-        if(!instruction[0])
+        if (!instruction[0])
             free(cpy_instr);
-        for (size_t i = 0; instruction[i]; i++)
+        data->brk ++;
+        for (size_t i = 0; instruction[i] && data->brk > 0; i++)
         {
             add_assignment_split(cpy_instr, instruction[i],
-                    data->var_tab);
+            data->var_tab);
+            add_parent(n, data);
             *res = traversal_ast(do_node, res, data);
+             if (data->brk)
+                 data->brk --;
+            data->parent_list[data->nbparent--] = NULL;
         }
         free(instruction);
     }
