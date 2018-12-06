@@ -50,6 +50,11 @@ void *pop(struct stack *s)
     return elem;
 }
 
+void *peek(struct stack *s)
+{
+    return s->head->elem;
+}
+
 void empty_stack(struct stack *s)
 {
     while (s->size > 0)

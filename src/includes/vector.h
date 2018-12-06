@@ -5,7 +5,7 @@
 #include <unistd.h>
 /**
   *\file vector.h
-  *\brief 
+  *\brief
   *All information about vectores and all functions
   *to build, update and free them.
   */
@@ -14,7 +14,7 @@
   *\struct vector
   *\brief Struct of the vectors
   */
-struct vector 
+struct vector
 {
     ssize_t size; /**< The number of elements in vector*/
     ssize_t capacity; /**< The total number of element that can be contained by the vector*/

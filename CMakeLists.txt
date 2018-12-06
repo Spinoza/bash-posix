@@ -23,20 +23,22 @@ add_library(history ${CMAKE_SOURCE_DIR}/src/history/history.c)
 add_library(tty ${CMAKE_SOURCE_DIR}/src/prompt/handlePS1.c)
 target_link_libraries(tty readline)
 
+add_library(stack ${CMAKE_SOURCE_DIR}/src/utils/stack.c)
+
 add_library(global ${CMAKE_SOURCE_DIR}/src/utils/globals.c)
 add_library(vectors ${CMAKE_SOURCE_DIR}/src/utils/vector.c)
 add_library(hardbs ${CMAKE_SOURCE_DIR}/src/utils/hardbs.c)
 
 
-add_library(exit ${CMAKE_SOURCE_DIR}/src/builtins/exit.c)
-add_library(shopt ${CMAKE_SOURCE_DIR}/src/builtins/my_shopt.c)
-add_library(cd ${CMAKE_SOURCE_DIR}/src/builtins/cd.c)
-add_library(export ${CMAKE_SOURCE_DIR}/src/builtins/export.c)
-add_library(alias ${CMAKE_SOURCE_DIR}/src/builtins/my_alias.c)
-target_link_libraries(alias vectors)
-add_library(unalias ${CMAKE_SOURCE_DIR}/src/builtins/my_unalias.c)
-add_library(echo ${CMAKE_SOURCE_DIR}/src/builtins/my_echo.c)
-target_link_libraries(echo hardbs)
+add_library(builtins ${CMAKE_SOURCE_DIR}/src/builtins/exit.c
+    ${CMAKE_SOURCE_DIR}/src/builtins/my_shopt.c
+    ${CMAKE_SOURCE_DIR}/src/builtins/cd.c
+    ${CMAKE_SOURCE_DIR}/src/builtins/export.c
+    ${CMAKE_SOURCE_DIR}/src/builtins/my_alias.c
+    ${CMAKE_SOURCE_DIR}/src/builtins/my_unalias.c
+    ${CMAKE_SOURCE_DIR}/src/builtins/my_echo.c)
+target_link_libraries(builtins PRIVATE vectors)
+
 add_library(grammar ${CMAKE_SOURCE_DIR}/src/grammar/grammar_check.c
     ${CMAKE_SOURCE_DIR}/src/grammar/grammar_command.c
     ${CMAKE_SOURCE_DIR}/src/grammar/grammar_rule.c
@@ -49,9 +51,13 @@ target_link_libraries(grammar PRIVATE tty)
 add_library(execution ${CMAKE_SOURCE_DIR}/src/execution/execution_ast.c
     ${CMAKE_SOURCE_DIR}/src/execution/helper_exec.c
     ${CMAKE_SOURCE_DIR}/src/execution/assignement.c
+    ${CMAKE_SOURCE_DIR}/src/execution/arithmetic.c
     ${CMAKE_SOURCE_DIR}/src/execution/get_assignement.c
     ${CMAKE_SOURCE_DIR}/src/execution/functions.c)
-target_link_libraries(execution ast)
+
+target_link_libraries(execution PRIVATE ast)
+target_link_libraries(execution PRIVATE builtins)
+target_link_libraries(execution PRIVATE stack)
 
 add_library(ast ${CMAKE_SOURCE_DIR}/src/ast/ast.c
     ${CMAKE_SOURCE_DIR}/src/ast/ast_print.c)
@@ -61,26 +67,20 @@ add_library(handle ${CMAKE_SOURCE_DIR}/src/utils/file_handle.c)
 
 add_library(options ${CMAKE_SOURCE_DIR}/src/utils/options.c)
 
+
 ##EXECUTABLES
+
 
 add_executable(42sh ${CMAKE_SOURCE_DIR}/src/42sh.c)
 ##target_link_libraries(42sh asan)
 target_link_libraries(42sh execution)
 target_link_libraries(42sh ast)
 target_link_libraries(42sh options)
-target_link_libraries(42sh tty)
 target_link_libraries(42sh readline)
 target_link_libraries(42sh history)
 target_link_libraries(42sh handle)
-target_link_libraries(42sh exit)
-target_link_libraries(42sh shopt)
 target_link_libraries(42sh global)
-target_link_libraries(42sh cd)
-target_link_libraries(42sh export)
-target_link_libraries(42sh vectors)
-target_link_libraries(42sh alias)
-target_link_libraries(42sh unalias)
-target_link_libraries(42sh echo)
+target_link_libraries(42sh hardbs)
 
 add_custom_target(set_env
     COMMAND ${CMAKE_SOURCE_DIR}/tests/test_scripts/set_env.sh

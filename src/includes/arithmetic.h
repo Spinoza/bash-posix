@@ -4,22 +4,26 @@
 enum oper
 {
     NOT_AN_OP = 0,
-    PLUS,
-    MINUS,
-    MULTIPLY,
-    DIVIDE,
-    POWER,
-    TILDE,
-    OPEN_PAR_OPER,
-    CLOSE_PAR_OPER
+    PLUS, // precendence 1
+    MINUS, // precedence 1
+    MULTIPLY, // precedence 2
+    DIVIDE, // precedence 2
+    POWER, // precedence 3
+    TILDE, // precedence 3
+    OPEN_PAR_OPER, // precedence 0
+    CLOSE_PAR_OPER //precedence 4
 };
 
 struct bt_node
 {
     long int nb;
     enum oper op;
-    struct bt_node *left;
-    struct bt_node *right;
 };
 
+struct arith_list
+{
+    int nb_nodes;
+    int capacity;
+    struct bt_node **list;
+};
 #endif /* ! ARITHMETIC_H */

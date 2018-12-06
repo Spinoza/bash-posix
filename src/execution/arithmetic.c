@@ -1,22 +1,50 @@
 #include "arithmetic.h"
+#include "stack.h"
 #include "ast.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
-void add_to_list(struct bt_node **list, struct bt_node *new,
-        int *capacity, int *nb_node)
+#define MAX(A, B) ((A < B ? A : B))
+
+static int nbdigits(int r)
 {
-    if (*nb_node == *capacity)
+    int i = 0;
+    for (; r > 0; r/=10, i++);
+    return i;
+}
+static char *itoa(int nb)
+{
+    int s = nbdigits(nb);
+    char *number = malloc(sizeof(char) * (s + 1));
+    if (nb == 0)
     {
-        *capacity *= 2;
-        list = realloc(list, sizeof(struct bt_node) * *capacity);
+        number[0] = '0';
+        number[1] = '\0';
+        return number;
     }
-    list[*nb_node] = new;
-    *nb_node = *nb_node + 1;
+    for (int i = s-1; i >= 0; i--)
+    {
+        number[i] = '0' + nb % 10;
+        nb /= 10;
+    }
+    number[s] = '\0';
+    return number;
 }
 
-enum oper get_op(char *string)
+static void add_to_list(struct arith_list *arith_list, struct bt_node *new)
+{
+    if (arith_list->nb_nodes == arith_list->capacity)
+    {
+        arith_list->capacity *= 2;
+        arith_list->list = realloc(arith_list->list,
+                sizeof(struct bt_node) * arith_list->capacity);
+    }
+    arith_list->list[arith_list->nb_nodes] = new;
+    arith_list->nb_nodes++;
+}
+
+static enum oper get_op(char *string)
 {
     if (!string)
         return 0;
@@ -30,51 +58,52 @@ enum oper get_op(char *string)
     return 0;
 }
 
-char *next_string(char *string)
+static char *next_string(char *string)
 {
     while (string && string[0] == ' ')
         string ++;
     return string;
 }
 
-void free_list_bt_node(struct bt_node **list, int nb_node)
+void free_arith_list(struct arith_list *arith_list)
 {
-    for (int i = 0; i < nb_node; i++)
-        free(list[i]);
-    free(list);
+    for (int i = 0; i < arith_list->nb_nodes; i++)
+        free(arith_list->list[i]);
+    free(arith_list->list);
+    free(arith_list);
 }
 
-struct bt_node **list_arithmetic(char **input)
+struct arith_list *list_arithmetic(char *string)
 {
-    char *string = *input;
     int parenthesis = 2;
-    int capacity = 10;
-    int nb_node = 0;
-    struct bt_node **list = calloc(10, sizeof(struct bt_node*));
-    struct bt_node *prev = NULL;
+    struct arith_list *arith_list = calloc(1, sizeof(struct arith_list));
+    arith_list->list = calloc(10, sizeof(struct bt_node*));
+    arith_list->capacity = 10;
+    arith_list->nb_nodes = 0;
     struct bt_node *new = calloc(1, sizeof(struct bt_node));
     char *number = calloc(15, sizeof(char));
     int nbdigits = 0;
     int nb = 1;
+    enum oper prev_op = 0;
     while (parenthesis && string)
     {
         if (new->op || new->nb)
         {
             number = calloc(15, sizeof(char));
-            add_to_list(list, new, &capacity, &nb_node);
-            prev = new;
+            add_to_list(arith_list, new);
+            prev_op = new->op;
             nb = 1;
             nbdigits = 0;
             new = calloc(1, sizeof(struct bt_node));
         }
         enum oper op = get_op(string);
-        if (prev && prev->nb)
+        if (prev_op == 0)
         {
-            if (!op || op == OPEN_PAR_OPER || op == CLOSE_PAR_OPEN)
+            if (!op || op == OPEN_PAR_OPER || op == CLOSE_PAR_OPER)
             {
                 //nb --> nb
                 fprintf(stderr, "42sh: error in arithmetic expression");
-                free_list_bt_node(list, nb_node);
+                free_arith_list(arith_list);
                 return NULL;
             }
             new->op = op;
@@ -84,7 +113,7 @@ struct bt_node **list_arithmetic(char **input)
         {
             //prev is null or an operator : hence we can have
             //a parenthesis
-            if (op == OPEN_PAR_OPER || op == CLOSE_PAR_OPEN)
+            if (op == OPEN_PAR_OPER || op == CLOSE_PAR_OPER)
             {
                 if (op == CLOSE_PAR_OPER)
                     parenthesis--;
@@ -105,7 +134,7 @@ struct bt_node **list_arithmetic(char **input)
                     else
                     {
                         fprintf(stderr, "error in arithmetic expression");
-                        free_list_bt_node(list, nb_node);
+                        free_arith_list(arith_list);
                         free(number);
                         return NULL;
                     }
@@ -123,43 +152,118 @@ struct bt_node **list_arithmetic(char **input)
             }
         }
     }
-    *input = string;
-    return list;
-}
-struct bt_node *build_tree(struct bt_node **list_node, struct bt_node *root)
-{
-    if (!list_node || !*list_node)
-    {
-        return root;
-    }
-    struct bt_node *current = *list_node;
-    if (current->oper == OPEN_PAR_OPER)
-    {
-    }
+    return arith_list;
 }
 
-long int eval_tree(struct bt_node *bt_node)
+long int power(long int nb, long int exp, int res)
 {
-    if (bt_node->op == NOT_AN_OP)
-        return bt_node->nb;
-    if (bt_node->op == PLUS)
-        return eval_tree(bt_node->left) + eval_tree(bt_node->right);
-    if (bt_node->op == MINUS)
-        return  eval_tree(bt_node->left) - eval_tree(bt_node->right);
-    if (bt_node->op == MULTIPLY)
-        return eval_tree(bt_node->left) * eval_tree(bt_node->right);
-    if (bt_node->op == DIVIDE)
-        return eval_tree(bt_node->left) / eval_tree(bt_node->right);
-    if (bt_node->op == POWER)
-        return powl(eval_tree(bt_node->left), eval_tree(bt_node->right));
-    //need to add the tilde case
-    return 0;
+    if (!exp)
+        return 1;
+    if (exp == 1)
+        return res;
+    return power(nb, exp - 1, res * nb);
+}
+long int compute(struct bt_node *left, struct bt_node *oper,
+        struct bt_node *right)
+{
+    int res = 0;
+    switch (oper->op)
+    {
+        case PLUS:
+            res =left->nb + right->nb;
+            break;
+        case MINUS:
+            res = left->nb - right->nb;
+            break;
+        case MULTIPLY:
+            res =left->nb * right->nb;
+            break;
+        case DIVIDE:
+            res = left->nb / right->nb;
+            break;
+        case POWER:
+            res = power(left->nb, right->nb, 1);
+            break;
+        default:
+            fprintf(stderr,"42sh: arithmetic expansion, bad operator");
+            return 0;
+    }
+    return res;
 }
 
-int binary_evaluation(char **string)
+struct stack *eval_nodes(struct stack *stack)
 {
-    int result = 0;
-    struct bt_node **list_node = list_arithmetic(string);
-    struct bt_node *root = build_tree(list_node, NULL);
-    return eval_tree(root);
+    struct bt_node *right = pop(stack);
+    if (right->op == CLOSE_PAR_OPER)
+    {
+        free(right);
+        right = pop(stack);
+    }
+    struct bt_node *oper = pop(stack);
+    struct bt_node *left = pop(stack);
+    long int res = compute(left, oper, right);
+    struct bt_node *res_node = calloc(1, sizeof(struct bt_node));
+    res_node->nb = res;
+    return push(stack, res_node);
+}
+
+int get_precedence(struct bt_node *node)
+{
+    if (!node->op)
+        return -1;
+    if (node->op == OPEN_PAR_OPER)
+        return 0;
+    return node->op / 2;
+}
+
+long int eval_tree(struct stack *stack, struct arith_list *list, int *index)
+{
+    int precedence = 0;
+    while (*index < list->nb_nodes)
+    {
+        struct bt_node *current = list->list[*index];
+        if (current->nb)
+            stack = push(stack, current);
+        if (current->op == CLOSE_PAR_OPER)
+        {
+            struct bt_node *top = peek(stack);
+            while (top->op != OPEN_PAR_OPER)
+            {
+                stack = eval_nodes(stack);
+                top = peek(stack);
+            }
+            free(pop(stack));
+        }
+        if (current->op)
+        {
+            int next_precedence = get_precedence(current);
+            if (next_precedence <= precedence)
+                stack = eval_nodes(stack);
+            else
+                precedence = next_precedence;
+        }
+        *index = *index + 1;
+    }
+    while (stack->size != 1)
+    {
+        stack = eval_nodes(stack);
+    }
+    long int r = stack->head->elem->nb;
+    free(stack->head->elem);
+    return r;
+}
+
+char *arith_expansion(char *string)
+{
+    struct arith_list *list = list_arithmetic(string);
+    if (list->nb_nodes == 1)
+    {
+        return itoa(list->list[0]->nb);
+    }
+    int index = 0;
+    struct stack *stack = stack_init();
+    long int r = eval_tree(stack, list, &index);
+    free_arith_list(list);
+    free_stack(stack);
+    return itoa(r);;
 }
