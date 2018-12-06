@@ -209,7 +209,7 @@ static long int compute(struct bt_node *left, struct bt_node *oper,
             break;
         default:
             fprintf(stderr,"42sh: arithmetic expansion, bad operator.\n");
-            return 0;
+            return -1;
     }
     return res;
 }
@@ -226,6 +226,8 @@ static struct stack *eval_nodes(struct stack *stack,
     struct bt_node *oper = pop(operators_stack);
     struct bt_node *left = pop(stack);
     long int res = compute(left, oper, right);
+    if (oper->op == DIVIDE && right->nb == 0)
+        return NULL;
     struct bt_node *res_node = calloc(1, sizeof(struct bt_node));
     res_node->nb = res;
     return push(stack, res_node);
@@ -269,13 +271,13 @@ long int eval_list(struct stack *stack, struct stack *operators_stack,
         struct arith_list *list, int *index)
 {
     int precedence = 0;
-    while (*index < list->nb_nodes)
+    while (stack && *index < list->nb_nodes)
     {
         struct bt_node *current = list->list[*index];
         if (current->op == CLOSE_PAR_OPER)
         {
             struct bt_node *top = peek(operators_stack);
-            while (top->op != OPEN_PAR_OPER)
+            while (stack && top->op != OPEN_PAR_OPER)
             {
                 stack = eval_nodes(stack, operators_stack);
                 top = peek(operators_stack);
@@ -285,7 +287,7 @@ long int eval_list(struct stack *stack, struct stack *operators_stack,
             *index = *index + 1;
             continue;
         }
-        if (!current->nb && current->op != OPEN_PAR_OPER)
+        if (stack && !current->nb && current->op != OPEN_PAR_OPER)
         {
             int next_precedence = get_precedence(current);
             if (next_precedence <= precedence)
@@ -294,7 +296,7 @@ long int eval_list(struct stack *stack, struct stack *operators_stack,
                 precedence = next_precedence;
             operators_stack = push(operators_stack,current);
         }
-        if (current->op == OPEN_PAR_OPER)
+        if (stack && current->op == OPEN_PAR_OPER)
         {
             precedence = 0;
             operators_stack = push(operators_stack,current);
@@ -303,6 +305,8 @@ long int eval_list(struct stack *stack, struct stack *operators_stack,
             stack = push(stack, current);
         *index = *index + 1;
     }
+    if (!stack)
+        return 0;
     while (stack->size != 1)
     {
         stack = eval_nodes(stack, operators_stack);
