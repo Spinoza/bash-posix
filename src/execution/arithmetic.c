@@ -177,7 +177,7 @@ static struct arith_list *build_list(char *string)
     return arith_list;
 }
 
-static long int power(long int nb, long int exp, int res)
+static int power(double nb, long int exp, double res)
 {
     if (!exp)
         return 1;
@@ -186,10 +186,10 @@ static long int power(long int nb, long int exp, int res)
     return power(nb, exp - 1, res * nb);
 }
 
-static long int compute(struct bt_node *left, struct bt_node *oper,
+static double compute(struct bt_node *left, struct bt_node *oper,
         struct bt_node *right)
 {
-    int res = 0;
+    double res = 0;
     switch (oper->op)
     {
         case PLUS:

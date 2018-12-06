@@ -17,7 +17,7 @@ enum oper
 
 struct bt_node
 {
-    long int nb;
+    double nb;
     enum oper op;
 };
 
