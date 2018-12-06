@@ -168,7 +168,7 @@ static char **init_list(void)
     return list;
 }
 
-int special_character(char c, int quoting)
+int special_character(char c, int quoting, enum type context)
 {
     switch (c)
     {
@@ -185,7 +185,7 @@ int special_character(char c, int quoting)
         case ';':
             return 1;
         case '=':
-            return 1;
+            return context != WORD;
         case '&':
             return 1;
         case '|':
@@ -254,9 +254,9 @@ static int check_special_words(char *string, char **list)
 }
 
 static struct token *read_characters(struct token *new, char *string,
-        int *index, char **list)
+        int *index, char **list, enum type context)
 {
-    if (special_character(string[*index], 0))
+    if (special_character(string[*index], 0, context))
     {
         if (string[*index] != ' ')
             return set_specials(new, string, index, list);
@@ -274,7 +274,7 @@ static struct token *read_characters(struct token *new, char *string,
             quoting = !quoting;
             continue;
         }
-        if (special_character(*(string + *index), quoting))
+        if (special_character(*(string + *index), quoting, context))
         {
             if ((string[*index] == ')' && string[*index + 1] == ')')
                     || (string[*index] == '(' && string[*index + 1] == '('))
@@ -286,12 +286,16 @@ static struct token *read_characters(struct token *new, char *string,
                 continue;
             }
             if (string[*index] == '=')
+            {
+                res[cur_index++] = string[*index];
                 current_type = ASSIGNMENT_W;
+            }
             break;
         }
         res[cur_index++] = string[*index];
     }
-    current_type = check_special_words(res, list);
+    if (current_type == WORD)
+        current_type = check_special_words(res, list);
     return set_token(new, res, cur_index, current_type);
 }
 
@@ -379,7 +383,7 @@ struct linked_list *lexer_c(char *input)
     for (; input[index]; )
     {
         struct token *new = token_init();
-        read_characters(new, input, &index, list);
+        read_characters(new, input, &index, list, context);
         if (!new->name || !strcmp(new->name, ""))
         {
             free(new->name);
