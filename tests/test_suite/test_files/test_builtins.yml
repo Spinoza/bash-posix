@@ -1,6 +1,14 @@
 easy_echo:
         type: "bash diff"
         command: "echo test"
+         expected:
+                stdout:
+                stderr:
+                rvalue:
+
+break_while:
+        type: "bash diff"
+        command: "while true; do break; done;"
         expected:
                 stdout:
                 stderr:
@@ -9,8 +17,31 @@ easy_echo:
 easy_echo_semicolon:
         type: "bash diff"
         command: "echo test;"
+         expected:
+                stdout:
+                stderr:
+                rvalue:
+
+break_until:
+        type: "bash diff"
+        command: "until false; do break; done;"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
+break_while_then_command:
+        type: "bash diff"
+        command: "while true; do break; done;ls;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+break_until_then_command:
+        type: "bash diff"
+        command: "until false; do break; done;ls;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
