@@ -2,6 +2,7 @@
 #include "ast.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 void add_to_list(struct bt_node **list, struct bt_node *new,
         int *capacity, int *nb_node)
@@ -67,15 +68,11 @@ struct bt_node **list_arithmetic(char **input)
             new = calloc(1, sizeof(struct bt_node));
         }
         enum oper op = get_op(string);
-        if (op == CLOSE_PAR_OPER)
-            parenthesis--;
-        if (op == OPEN_PAR_OPER)
-            parenthesis++;
-        if (prev && prev->nb) //précédent et précédent == chiffre
+        if (prev && prev->nb)
         {
-            if (!op) //courant = chiffre
+            if (!op || op == OPEN_PAR_OPER || op == CLOSE_PAR_OPEN)
             {
-                //chiffre suivi de chiffre
+                //nb --> nb
                 fprintf(stderr, "42sh: error in arithmetic expression");
                 free_list_bt_node(list, nb_node);
                 return NULL;
@@ -85,45 +82,84 @@ struct bt_node **list_arithmetic(char **input)
         }
         else
         {
-            while (op)
+            //prev is null or an operator : hence we can have
+            //a parenthesis
+            if (op == OPEN_PAR_OPER || op == CLOSE_PAR_OPEN)
             {
-                if (op == PLUS || op == MINUS)
-                {
-                    if (op == MINUS)
-                        nb = -nb;
-                }
-                else
-                {
-                    fprintf(stderr, "error in arithmetic expression");
-                    free_list_bt_node(list, nb_node);
-                    free(number);
-                    return NULL;
-                }
+                if (op == CLOSE_PAR_OPER)
+                    parenthesis--;
+                if (op == OPEN_PAR_OPER)
+                    parenthesis++;
+                new->op = op;
                 string = next_string(string);
-                op = get_op(string);
-            }
-            while (string && !op)
+            }//or a number
+            else
             {
-                number[nbdigits++] = string[0];
-                op = get_op(string);
-                string++;
+                while (op)
+                {
+                    if (op == PLUS || op == MINUS)
+                    {
+                        if (op == MINUS)
+                            nb = -nb;
+                    }
+                    else
+                    {
+                        fprintf(stderr, "error in arithmetic expression");
+                        free_list_bt_node(list, nb_node);
+                        free(number);
+                        return NULL;
+                    }
+                    string = next_string(string);
+                    op = get_op(string);
+                }
+                while (string && !op)
+                {
+                    number[nbdigits++] = string[0];
+                    op = get_op(string);
+                    string++;
+                }
+                new->nb = nb * atoi(number);
+                free(number);
             }
-            new->nb = nb * atoi(number);
-            free(number);
         }
     }
     *input = string;
     return list;
 }
-struct bt_node *build_tree(struct bt_node **list_node)
+struct bt_node *build_tree(struct bt_node **list_node, struct bt_node *root)
 {
-    <
+    if (!list_node || !*list_node)
+    {
+        return root;
+    }
+    struct bt_node *current = *list_node;
+    if (current->oper == OPEN_PAR_OPER)
+    {
+    }
 }
-int eval_tree(struct bt_node *bt_node);
+
+long int eval_tree(struct bt_node *bt_node)
+{
+    if (bt_node->op == NOT_AN_OP)
+        return bt_node->nb;
+    if (bt_node->op == PLUS)
+        return eval_tree(bt_node->left) + eval_tree(bt_node->right);
+    if (bt_node->op == MINUS)
+        return  eval_tree(bt_node->left) - eval_tree(bt_node->right);
+    if (bt_node->op == MULTIPLY)
+        return eval_tree(bt_node->left) * eval_tree(bt_node->right);
+    if (bt_node->op == DIVIDE)
+        return eval_tree(bt_node->left) / eval_tree(bt_node->right);
+    if (bt_node->op == POWER)
+        return powl(eval_tree(bt_node->left), eval_tree(bt_node->right));
+    //need to add the tilde case
+    return 0;
+}
+
 int binary_evaluation(char **string)
 {
     int result = 0;
     struct bt_node **list_node = list_arithmetic(string);
-    struct bt_node *root = build_tree(list_node);
+    struct bt_node *root = build_tree(list_node, NULL);
     return eval_tree(root);
 }
