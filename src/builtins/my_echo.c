@@ -4,6 +4,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <locale.h>
+#include <unistd.h>
 #include "ast.h"
 #include "builtins.h"
 #include "hardbs.h"
@@ -221,18 +222,19 @@ int my_echo(int number, char *args[], ...)
     if (n)
     {
         if (printfin)
-            fprintf(stdout, "%ls", printfin);
+            printf("%ls", printfin);
         else
-            fprintf(stdout, "%s", "");
+            printf("%s", "");
     }
 
     else
     {
         if (printfin)
-            fprintf(stdout, "%ls\n", printfin);
+            printf("%ls\n", printfin);
         else
-            fprintf(stdout, "%s", "");
+            printf("%s", "");
     }
+    fflush(stdout);
     if (printfin)
     {
         free(printfin);
