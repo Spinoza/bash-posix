@@ -1,6 +1,7 @@
 #include "execution_ast.h"
 #include "ast.h"
 #include "helper_exec.h"
+#include "arithmetic.h"
 #include "builtins.h"
 #include <string.h>
 #include <stdlib.h>
@@ -109,7 +110,7 @@ char *set_string(char *instr, struct stored_data *data)
         {
             char *assigned_value = NULL;
             char *name = NULL;
-            if (instr[i] >= '0' && instr[i] <= '9')
+            if (instr[i] >= '0' && instr[i] <= '9') //PARAM expansion
             {
                 name = calloc(2, sizeof(char));
                 name[0] = instr[i];
@@ -117,21 +118,36 @@ char *set_string(char *instr, struct stored_data *data)
             }
             else
             {
+                int j = 0;
                 name = calloc(len, sizeof(char));
-                for (int j = 0; *(instr + i) && *(instr + i) != '$';
+                if (instr[i] == '(' && instr[i + 1] == '(')
+                {
+                    i +=2;
+                    for (; *(instr + i) && *(instr + i) != '$';
                         i++, j++)
-                    name[j] = instr[i];
-                i--;
-                assigned_value = get_assign(name, data);
-            }
-            k = copy_string(assigned_value, &string, k, capacity);
+                        name[j] = instr[i];
+                    i--;
+                    name[j-2] = '\0';
+                    assigned_value = arith_expansion(name);
+                    k = copy_string(assigned_value, &string, k, capacity);
+                    free(assigned_value);
+                }
+                else
+                {
+                    for (; *(instr + i) && *(instr + i) != '$';
+                            i++, j++)
+                        name[j] = instr[i];
+                    i--;
+                    name[j] = '\0';
+                    assigned_value = get_assign(name, data);
+                    k = copy_string(assigned_value, &string, k, capacity);
+                }
             free(name);
+            after_dollar = 0;
+            continue;
+            }
         }
-        else
-        {
-            string[k++] = instr[i];
-        }
-        after_dollar = 0;
+        string[k++] = instr[i];
     }
     string[k + 1] = '\0';
     free(capacity);

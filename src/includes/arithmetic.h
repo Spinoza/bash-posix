@@ -11,7 +11,8 @@ enum oper
     POWER, // precedence 3
     TILDE, // precedence 3
     OPEN_PAR_OPER, // precedence 0
-    CLOSE_PAR_OPER //precedence 4
+    CLOSE_PAR_OPER, //precedence 4
+    WHITE_SPACE //Used in get_op function
 };
 
 struct bt_node
@@ -26,4 +27,6 @@ struct arith_list
     int capacity;
     struct bt_node **list;
 };
+
+char *arith_expansion(char *string);
 #endif /* ! ARITHMETIC_H */

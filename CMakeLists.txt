@@ -45,20 +45,20 @@ add_library(grammar ${CMAKE_SOURCE_DIR}/src/grammar/grammar_check.c
     ${CMAKE_SOURCE_DIR}/src/grammar/grammar_rule.c
     ${CMAKE_SOURCE_DIR}/src/grammar/grammar_group.c
     )
-
 target_link_libraries(grammar PRIVATE lexer)
 target_link_libraries(grammar PRIVATE tty)
+
+add_library(arithmetic ${CMAKE_SOURCE_DIR}/src/execution/arithmetic.c)
+target_link_libraries(arithmetic PRIVATE stack)
 
 add_library(execution ${CMAKE_SOURCE_DIR}/src/execution/execution_ast.c
     ${CMAKE_SOURCE_DIR}/src/execution/helper_exec.c
     ${CMAKE_SOURCE_DIR}/src/execution/assignement.c
-    ${CMAKE_SOURCE_DIR}/src/execution/arithmetic.c
     ${CMAKE_SOURCE_DIR}/src/execution/get_assignement.c
     ${CMAKE_SOURCE_DIR}/src/execution/functions.c)
-
 target_link_libraries(execution PRIVATE ast)
 target_link_libraries(execution PRIVATE builtins)
-target_link_libraries(execution PRIVATE stack)
+target_link_libraries(execution PRIVATE arithmetic)
 
 add_library(ast ${CMAKE_SOURCE_DIR}/src/ast/ast.c
     ${CMAKE_SOURCE_DIR}/src/ast/ast_print.c)

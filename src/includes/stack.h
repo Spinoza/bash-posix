@@ -15,7 +15,7 @@ struct stack
     struct nS *head;
 };
 
-struct stack *stack_init(void);
+struct stack *init_stack(void);
 
 void *peek(struct stack *s);
 
