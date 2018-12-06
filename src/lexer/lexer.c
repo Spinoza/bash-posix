@@ -175,9 +175,9 @@ int special_character(char c, int quoting, enum type context)
         case ' ':
             return !quoting;
         case '(':
-            return 1;
+            return !quoting;
         case ')':
-            return 1;
+            return !quoting;
         case '{':
             return 1;
         case '}':

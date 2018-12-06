@@ -72,8 +72,6 @@ static enum oper get_op(char *string, int *index)
 static int next_token(char *string, int index)
 {
     for (; string[index] && string[index] == ' '; index++);
-    if (!string[index])
-        index++;
     return index;
 }
 
@@ -102,7 +100,8 @@ int set_number(struct bt_node *new, char *string, int *index,
         else
         {
             fprintf(stderr,
-                    "42sh: error in arithmetic expression.\n");
+                    "42sh: error in arithmetic expression,\
+                    unexpected operator %c.\n", string[*index-1]);
             free_arith_list(arith_list);
             free(number);
             return 0;
@@ -121,7 +120,7 @@ int set_number(struct bt_node *new, char *string, int *index,
     return 1;
 }
 
-static struct arith_list *list_arithmetic(char *string)
+static struct arith_list *build_list(char *string)
 {
     struct arith_list *arith_list = calloc(1, sizeof(struct arith_list));
     arith_list->list = calloc(10, sizeof(struct bt_node*));
@@ -141,36 +140,30 @@ static struct arith_list *list_arithmetic(char *string)
             op = 0; //Operator was actually a sign for the next number
             index--;
         }
+        if (op == OPEN_PAR_OPER || op == CLOSE_PAR_OPER)
+        {
+            if (op == CLOSE_PAR_OPER)
+                parenthesis--;
+            if (op == OPEN_PAR_OPER)
+                parenthesis++;
+        }
         if (prev_op == 0)
         {
-            if (!op || op == OPEN_PAR_OPER || op == CLOSE_PAR_OPER)
+            if (!op || op == OPEN_PAR_OPER)
             {
-                fprintf(stderr, "42sh: error in arithmetic expression.\n");
+                fprintf(stderr,
+                        "42sh: error in arithmetic expression bad syntax.\n");
                 free_arith_list(arith_list);
                 return NULL;
             }
-            new->op = op;
             index = next_token(string, index);
         }
-        else
+        if (op == NOT_AN_OP)
         {
-            //prev is null or an operator : hence we can have
-            //a parenthesis
-            if (op == OPEN_PAR_OPER || op == CLOSE_PAR_OPER)
-            {
-                if (op == CLOSE_PAR_OPER)
-                    parenthesis--;
-                if (op == OPEN_PAR_OPER)
-                    parenthesis++;
-                new->op = op;
-                index = next_token(string, index);
-            }//or a number
-            else
-            {
-                if (!set_number(new,string, &index, arith_list))
-                    return NULL;
-            }
+            if (!set_number(new,string, &index, arith_list))
+                return NULL;
         }
+        new->op = op;
         add_to_list(arith_list, new);
         prev_op = new->op;
         new = calloc(1, sizeof(struct bt_node));
@@ -221,7 +214,8 @@ static long int compute(struct bt_node *left, struct bt_node *oper,
     return res;
 }
 
-static struct stack *eval_nodes(struct stack *stack)
+static struct stack *eval_nodes(struct stack *stack,
+        struct stack *operators_stack)
 {
     struct bt_node *right = pop(stack);
     if (right->op == CLOSE_PAR_OPER)
@@ -229,7 +223,7 @@ static struct stack *eval_nodes(struct stack *stack)
         free(right);
         right = pop(stack);
     }
-    struct bt_node *oper = pop(stack);
+    struct bt_node *oper = pop(operators_stack);
     struct bt_node *left = pop(stack);
     long int res = compute(left, oper, right);
     struct bt_node *res_node = calloc(1, sizeof(struct bt_node));
@@ -239,6 +233,8 @@ static struct stack *eval_nodes(struct stack *stack)
 
 static int get_precedence(struct bt_node *node)
 {
+    if (!node)
+        return 0;
     switch (node->op)
     {
         case NOT_AN_OP:
@@ -266,40 +262,50 @@ static int get_precedence(struct bt_node *node)
     return -1;
 }
 
-long int eval_list(struct stack *stack, struct arith_list *list, int *index)
+/*
+ * function to know if the next operator is a parenthesis
+ */
+long int eval_list(struct stack *stack, struct stack *operators_stack,
+        struct arith_list *list, int *index)
 {
     int precedence = 0;
     while (*index < list->nb_nodes)
     {
         struct bt_node *current = list->list[*index];
-        if (current->nb)
-            stack = push(stack, current);
         if (current->op == CLOSE_PAR_OPER)
         {
-            struct bt_node *top = peek(stack);
+            struct bt_node *top = peek(operators_stack);
             while (top->op != OPEN_PAR_OPER)
             {
-                stack = eval_nodes(stack);
-                top = peek(stack);
+                stack = eval_nodes(stack, operators_stack);
+                top = peek(operators_stack);
             }
-            free(pop(stack));
+            pop(operators_stack);
+            precedence = get_precedence(peek(operators_stack));
+            *index = *index + 1;
+            continue;
         }
-        if (current->op)
+        if (!current->nb && current->op != OPEN_PAR_OPER)
         {
             int next_precedence = get_precedence(current);
             if (next_precedence <= precedence)
-                stack = eval_nodes(stack);
+                stack = eval_nodes(stack, operators_stack);
             else
-            {
                 precedence = next_precedence;
-                stack = push(stack, current);
-            }
+            operators_stack = push(operators_stack,current);
         }
+        if (current->op == OPEN_PAR_OPER)
+        {
+            precedence = 0;
+            operators_stack = push(operators_stack,current);
+        }
+        if (current->nb)
+            stack = push(stack, current);
         *index = *index + 1;
     }
     while (stack->size != 1)
     {
-        stack = eval_nodes(stack);
+        stack = eval_nodes(stack, operators_stack);
     }
     long int r = stack->head->elem->nb;
     free(stack->head->elem);
@@ -308,7 +314,7 @@ long int eval_list(struct stack *stack, struct arith_list *list, int *index)
 
 char *arith_expansion(char *string)
 {
-    struct arith_list *list = list_arithmetic(string);
+    struct arith_list *list = build_list(string);
     if (!list)
         return NULL;
     if (list->nb_nodes == 1)
@@ -317,7 +323,8 @@ char *arith_expansion(char *string)
     }
     int index = 0;
     struct stack *stack = init_stack();
-    long int r = eval_list(stack, list, &index);
+    struct stack *operators_stack = init_stack();
+    long int r = eval_list(stack, operators_stack, list, &index);
     free_arith_list(list);
     free_stack(stack);
     return itoa(r);;

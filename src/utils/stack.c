@@ -52,6 +52,8 @@ void *pop(struct stack *s)
 
 void *peek(struct stack *s)
 {
+    if (!s->head)
+        return NULL;
     return s->head->elem;
 }
 
