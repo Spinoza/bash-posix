@@ -126,6 +126,10 @@ void break_execution(struct stored_data *data, int break_nb)
     if (break_nb < data->nbparent)
     {
         data->brk += break_nb + 1;
+        /*for (int i = 0; i < break_nb; i++)
+        {
+            data->parent_list[data->nbparent - i] = NULL;
+        }*/
         data->nbparent-= break_nb;
     }
     else
@@ -164,15 +168,17 @@ struct node *instr_execution(struct node *n, int *res,
         if (!strcmp(command_call[0], "break"))
         {
             *res = 0;
-            if (command_call[1])
-                break_execution(data, atoi(command_call[1]));
-            else
+            //if (command_call[1])
+            //    break_execution(data, atoi(command_call[1]));
+            //else
                 break_execution(data, 0);
+            free_command(command_call);
             return NULL;
         }
         else if (!strcmp(command_call[0], "continue"))
         {
             struct node *continue_node = continue_execution(data);
+            free_command(command_call);
             if (continue_node)
                 return continue_node;
             else
