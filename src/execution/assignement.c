@@ -89,11 +89,8 @@ static int already_exists(char *name, char *value,
             return 0;
         if (!strcmp(name, a->name))
         {
-            if (name != a->name)
-                free(a->name);
             if (a->value)
                 free(a->value);
-            a->name = name;
             a->value = value;
             return 1;
         }
