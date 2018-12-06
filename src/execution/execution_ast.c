@@ -317,7 +317,7 @@ struct node *case_execution(struct node *n, struct stored_data *data)
                 cond_instr = condition->instr;
             if (!strcmp(elt_instr, cond_instr))
                 break;
-            if (!strcmp(elt_instr, "*"))
+            if (!strcmp(cond_instr, "*"))
                 break;
         }
         if (condition)

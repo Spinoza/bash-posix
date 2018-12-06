@@ -32,16 +32,6 @@
 |--------- Keep reading, take lists of token, merge them [X]
 |
 |--------History [X]
-
-|----v0.5 Current bugs
-|-------- Lexer [X]
-|---------- Parenthesis/Brackets at the beginning of words not recognized [X]
-|-------- History [X]
-|---------- Jump on non initialized value, causing some problems with huge calls [X]
-|-------- Loader [X]
-|---------- Position of the files [X]
-|---------AST build function [X]
-|---------- STOP condition [X]
 |
 |----v0.8[]
 |--------Tilde Expansion[]
@@ -67,13 +57,21 @@
 |--------Variable Substitution[]
 |
 |--------Quoting[]
+|------------ Simple Quoting[X]
+|------------ Escape Characters[]
 |
 |--------Path Expansion[]
 |
 |--------Arithmetic Expansion[]
+|------------ Computations[X]
+|------------ Inner Expansions[]
 |
 |--------Readline[]
 |
 |--------Aliases[]
 |
 |--------Path Expansion, challenge mode[]
+|
+|--------Current Bugs[]
+|------------ When assigning with quotes, need to remove whitespaces []
+|---------------- Example : e="    test   "; $e -> test
