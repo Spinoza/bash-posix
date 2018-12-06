@@ -65,6 +65,7 @@ static void print_alphabet(struct assignment **alias_tb)
         struct assignment *assign = getter->arr[i];
         fprintf(stdout, "alias %s='%s'\n", assign->name, assign->value);
     }
+    vector_destroy(getter);
     return;
 }
 
@@ -138,7 +139,6 @@ int my_alias(int number, char *args[], ...)
 
         else
         {
-            //FIXME: need to handle expansions though. (to see with Neganta and Leo)
             add_assignment(args[i], global.data->alias_tab);
         }
 
