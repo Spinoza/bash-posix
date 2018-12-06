@@ -41,6 +41,8 @@ struct stored_data *stored_data_init(void)
     new->param = NULL;
     new->nbparam = 0;
     new->f_tab = NULL;
+    new->parent_list = malloc(sizeof(struct node *));
+    new->nbparent = 0;
     new->var_tab = init_assignment();
     //FIXME: ne pas remove ces deux lignes !
     new->export_tab = init_assignment();

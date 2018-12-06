@@ -60,7 +60,8 @@ int if_cond(struct node *cond, struct stored_data *data)
     return res;
 }
 
-int pipe_aux(char **command, struct node *n, int fd[2], struct stored_data *data)
+int pipe_aux(char **command, struct node *n, int fd[2],
+struct stored_data *data)
 {
     struct node *oper_node = get_oper_node(n);
     int fd_next[2];
@@ -91,7 +92,8 @@ int pipe_aux(char **command, struct node *n, int fd[2], struct stored_data *data
         if (oper_node && oper_node->tokentype == PIPE)
         {
             struct node *next_oper_node = get_oper_node(oper_node->next);
-            char **command_next = to_execute(oper_node->next, next_oper_node, data);
+            char **command_next = to_execute(oper_node->next,
+            next_oper_node, data);
             status = pipe_aux(command_next, oper_node->next, fd_next, data);
         }
         waitpid(pid,&status,0);
@@ -112,6 +114,38 @@ int pipe_handling(char **command1, struct node *n, struct stored_data *data)
     return pipe_aux(command1, oper_node, fd, data);
 }
 
+
+struct node *break_execution(struct stored_data *data, int break_nb)
+{
+    if (!data->nbparent)
+    {
+        fprintf(stderr, "continue: only meaningful in a loop");
+        return NULL;
+    }
+    struct node *node;
+    if (break_nb < data->nbparent)
+    {
+        node = data->parent_list[data->nbparent - break_nb];
+        data->nbparent-= break_nb;
+    }
+    else
+    {
+        node = data->parent_list[0];
+        data->nbparent = 0;
+    }
+    return node->next;
+}
+
+struct node *continue_execution(struct stored_data *data)
+{
+    if (!data->nbparent)
+    {
+        fprintf(stderr, "continue: only meaningful in a loop");
+        return NULL;
+    }
+    return data->parent_list[(data->nbparent)--];
+}
+
 struct node *instr_execution(struct node *n, int *res,
         struct stored_data *data)
 {
@@ -127,9 +161,30 @@ struct node *instr_execution(struct node *n, int *res,
     }
     else
     {
+        if (!strcmp(command_call[0], "break"))
+        {
+            struct node *break_node;
+            if (command_call[1])
+                break_node = break_execution(data, atoi(command_call[1]));
+            else
+                break_node = break_execution(data, 0);
+            if (break_node)
+                return break_node;
+            else
+                *res = 0;
+        }
+        else if (!strcmp(command_call[0], "continue"))
+        {
+            struct node *continue_node = continue_execution(data);
+            if (continue_node)
+                return continue_node;
+            else
+                *res = 0;
+        }
+        else
+        {
         struct function *f = is_a_function(command_call[0], data->f_tab);
         struct node *func = NULL;
-
         if (f)
         {
             func = f->function_start;
@@ -150,6 +205,7 @@ struct node *instr_execution(struct node *n, int *res,
         }
         else
             *res = traversal_ast(func, res, data);
+        }
     }
     if (!pipe)
         free_command(command_call);
@@ -177,8 +233,6 @@ struct node *if_execution(struct node *n, int *res, struct stored_data *data)
 
 char **get_instruction_for (struct node *cond, struct stored_data *data)
 {
-    //no need to free inside instruction,
-    //as we did not malloc the instr
     int capacity = 2;
     char **instruction = calloc(capacity, sizeof(char *));
     int i = 0;
@@ -211,10 +265,12 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
     return instruction;
 }
 
-void add_parent(struct node *n, struct node *parent)
+void add_parent(struct node *n, struct stored_data *data)
 {
-    for (; n; n = n->next)
-        n->parent = parent;
+    data->nbparent++;
+    data->parent_list = realloc(data->parent_list,
+            sizeof(struct node *) * data->nbparent);
+    data->parent_list[data->nbparent - 1] = n;
 }
 
 int for_execution(struct node *n, int *res, struct stored_data *data)
@@ -226,7 +282,6 @@ int for_execution(struct node *n, int *res, struct stored_data *data)
         cond = cond->next;
         struct node *do_node = n->children->next->children;
         char **instruction = get_instruction_for (cond, data);
-        add_parent(do_node, cond);
         for (size_t i = 0; instruction[i]; i++)
         {
             add_assignment_split(elem->instr, instruction[i],
@@ -300,18 +355,24 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
             *res = traversal_ast(case_execution(n, data), res, data);
         if (n->type == A_WHILE)
         {
-            add_parent(n->children->next, n);
+            add_parent(n, data);
             while (if_cond(n, data) == 0)
                 traversal_ast(n->children->next, res, data);
+            data->parent_list[data->nbparent--] = NULL;
         }
         if (n->type == A_UNTIL)
         {
-            add_parent(n->children->next, n);
+            add_parent(n, data);
             while (if_cond(n, data))
                 traversal_ast(n->children->next, res, data);
+            data->parent_list[data->nbparent--] = NULL;
         }
         if (n->type == A_FOR)
+        {
+            add_parent(n, data);
             for_execution(n, res, data);
+            data->parent_list[data->nbparent--] = NULL;
+        }
         return traversal_ast(n->next,res, data);
     }
     return traversal_ast(n->children, res, data);
