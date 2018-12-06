@@ -38,6 +38,7 @@ add_library(builtins ${CMAKE_SOURCE_DIR}/src/builtins/exit.c
     ${CMAKE_SOURCE_DIR}/src/builtins/my_unalias.c
     ${CMAKE_SOURCE_DIR}/src/builtins/my_echo.c)
 target_link_libraries(builtins PRIVATE vectors)
+target_link_libraries(builtins PRIVATE hardbs)
 
 add_library(grammar ${CMAKE_SOURCE_DIR}/src/grammar/grammar_check.c
     ${CMAKE_SOURCE_DIR}/src/grammar/grammar_command.c
