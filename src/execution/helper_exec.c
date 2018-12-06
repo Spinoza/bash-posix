@@ -40,6 +40,9 @@ void free_data(struct stored_data *data)
 
 static void add_environ(struct stored_data *new)
 {
+    if(!environ)
+        return;
+
     int i = 0;
     while(environ[i])
     {
