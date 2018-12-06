@@ -7,7 +7,7 @@
 static int has_equal(char *word)
 {
     int i = 0;
-    while(word[i])
+    while (word[i])
     {
         if(word[i] == '=')
             return 1;
@@ -97,20 +97,12 @@ int my_export(int number, char *args[], ...)
                 }
                 else
                 {
-                    char *val = NULL;
-                    int ind = hash_function(args[i]);
-                    struct assignment *assign = global.data->var_tab[ind];
-                    while(assign != NULL && assign->name != NULL)
-                    {
-                        if(!strcmp(args[i], assign->name))
-                        {
-                            val = assign->value;
-                            break;
-                        }
-                        assign = assign->next;
-                    }
-
-                    add_assignment_split(args[i], val, global.data->export_tab);
+                    int len =strlen(args[i]);
+                    char *name = calloc(sizeof(char), len + 1);
+                    name = memcpy(name, args[i], len);
+                    char *value = get_assign(name, global.data);
+                    add_assignment_split(args[i], value,
+                            global.data->export_tab);
                 }
             }
         }

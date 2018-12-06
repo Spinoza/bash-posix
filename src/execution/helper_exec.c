@@ -67,6 +67,8 @@ struct stored_data *stored_data_init(void)
 static int copy_string(char *source, char **dest, int start_index,
         int *capacity)
 {
+    if (!source)
+        return start_index;
     int len = strlen(source);
     if (start_index + len >= *capacity)
     {
