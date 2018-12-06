@@ -32,6 +32,10 @@ struct builtins *init_builts(void)
     tab[3].builtin = my_alias;
     tab[4].name = "unalias";
     tab[4].builtin = my_unalias;
+    tab[5].name = "echo";
+    tab[5].builtin = my_echo;
+    tab[6].name = "export";
+    tab[6].builtin = my_export;
     return tab;
 }
 

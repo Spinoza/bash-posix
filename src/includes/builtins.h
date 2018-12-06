@@ -5,7 +5,7 @@
 #include "globals.h"
 #include "vector.h"
 
-#define NB_BUILTINS 5
+#define NB_BUILTINS 7
 
 struct builtins
 {

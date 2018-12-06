@@ -218,12 +218,12 @@ int my_echo(int number, char *args[], ...)
 
     if (n)
     {
-        fprintf(stdout, "%s", printfin);
+        fprintf(stdout, "%s", printfin ? printfin : "");
     }
 
     else
     {
-        fprintf(stdout, "%s\n", printfin);
+        fprintf(stdout, "%s\n", printfin ? printfin : "");
     }
     if (printfin)
     {
