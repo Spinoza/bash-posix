@@ -289,6 +289,7 @@ static struct token *read_characters(struct token *new, char *string,
             {
                 res[cur_index++] = string[*index];
                 current_type = ASSIGNMENT_W;
+                continue;
             }
             break;
         }
