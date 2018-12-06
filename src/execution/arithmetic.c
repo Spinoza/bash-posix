@@ -126,12 +126,13 @@ static struct arith_list *build_list(char *string)
     arith_list->list = calloc(10, sizeof(struct bt_node*));
     arith_list->capacity = 10;
     arith_list->nb_nodes = 0;
-    struct bt_node *new = calloc(1, sizeof(struct bt_node));
+    struct bt_node *new;
     int index = 0;
     enum oper prev_op = -1;
     int parenthesis = 0;
     while (string[index])
     {
+        new = calloc(1, sizeof(struct bt_node));
         if (string[index] == ' ')
             index = next_token(string, index);
         enum oper op = get_op(string, &index);
@@ -166,7 +167,6 @@ static struct arith_list *build_list(char *string)
         new->op = op;
         add_to_list(arith_list, new);
         prev_op = new->op;
-        new = calloc(1, sizeof(struct bt_node));
     }
     if (parenthesis != 0)
     {
@@ -218,16 +218,19 @@ static struct stack *eval_nodes(struct stack *stack,
         struct stack *operators_stack)
 {
     struct bt_node *right = pop(stack);
-    if (right->op == CLOSE_PAR_OPER)
-    {
-        free(right);
-        right = pop(stack);
-    }
     struct bt_node *oper = pop(operators_stack);
     struct bt_node *left = pop(stack);
     long int res = compute(left, oper, right);
     if (oper->op == DIVIDE && right->nb == 0)
+    {
+        free(right);
+        free(oper);
+        free(left);
         return NULL;
+    }
+    free(right);
+    free(oper);
+    free(left);
     struct bt_node *res_node = calloc(1, sizeof(struct bt_node));
     res_node->nb = res;
     return push(stack, res_node);
@@ -264,6 +267,13 @@ static int get_precedence(struct bt_node *node)
     return -1;
 }
 
+struct bt_node *copy_bt_node(struct bt_node *to_copy)
+{
+    struct bt_node *new = calloc(1, sizeof(struct bt_node));
+    new->nb = to_copy->nb;
+    new->op = to_copy->op;
+    return new;
+}
 /*
  * function to know if the next operator is a parenthesis
  */
@@ -282,7 +292,7 @@ long int eval_list(struct stack *stack, struct stack *operators_stack,
                 stack = eval_nodes(stack, operators_stack);
                 top = peek(operators_stack);
             }
-            pop(operators_stack);
+            free(pop(operators_stack));
             precedence = get_precedence(peek(operators_stack));
             *index = *index + 1;
             continue;
@@ -294,15 +304,15 @@ long int eval_list(struct stack *stack, struct stack *operators_stack,
                 stack = eval_nodes(stack, operators_stack);
             else
                 precedence = next_precedence;
-            operators_stack = push(operators_stack,current);
+            operators_stack = push(operators_stack, copy_bt_node(current));
         }
         if (stack && current->op == OPEN_PAR_OPER)
         {
             precedence = 0;
-            operators_stack = push(operators_stack,current);
+            operators_stack = push(operators_stack, copy_bt_node(current));
         }
         if (current->nb)
-            stack = push(stack, current);
+            stack = push(stack, copy_bt_node(current));
         *index = *index + 1;
     }
     if (!stack)
@@ -312,7 +322,6 @@ long int eval_list(struct stack *stack, struct stack *operators_stack,
         stack = eval_nodes(stack, operators_stack);
     }
     long int r = stack->head->elem->nb;
-    free(stack->head->elem);
     return r;
 }
 
@@ -329,7 +338,9 @@ char *arith_expansion(char *string)
     struct stack *stack = init_stack();
     struct stack *operators_stack = init_stack();
     long int r = eval_list(stack, operators_stack, list, &index);
+    free(stack->head->elem);
     free_arith_list(list);
     free_stack(stack);
+    free_stack(operators_stack);
     return itoa(r);;
 }

@@ -64,7 +64,6 @@ void empty_stack(struct stack *s)
         struct nS *head = s->head;
         s->size--;
         s->head = head->next;
-        free(head->elem);
         free(head);
     }
 
