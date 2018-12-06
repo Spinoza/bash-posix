@@ -6,8 +6,16 @@
 
 static int is_forbidden(char *name)
 {
-    char *forb[4] = { "IFS", "#", "PS1", "PS2" };
-    for (int i = 0; i < 4; i ++)
+    if (!name)
+        return 0;
+    char *forb[4] =
+    {
+        "IFS",
+        "#",
+        "PS1",
+        "PS2"
+    };
+    for (int i = 0; i < 4; i++)
     {
         if (!strcmp(forb[i], name))
             return 1;

@@ -285,9 +285,12 @@ int for_execution(struct node *n, int *res, struct stored_data *data)
         cond = cond->next;
         struct node *do_node = n->children->next->children;
         char **instruction = get_instruction_for (cond, data);
+        int len = strlen(elem->instr);
+        char *cpy_instr = calloc(len + 1, sizeof(char));
+        cpy_instr = memcpy(cpy_instr, elem->instr, len);
         for (size_t i = 0; instruction[i]; i++)
         {
-            add_assignment_split(elem->instr, instruction[i],
+            add_assignment_split(cpy_instr, instruction[i],
                     data->var_tab);
             *res = traversal_ast(do_node, res, data);
         }

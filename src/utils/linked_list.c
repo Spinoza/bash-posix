@@ -73,7 +73,6 @@ void free_list(struct linked_list *l)
             copy = NULL;
         }
     }
-
     free(l);
 }
 
