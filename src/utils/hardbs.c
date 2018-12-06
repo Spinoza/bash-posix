@@ -2,22 +2,24 @@
 #include <stdlib.h>
 #include <string.h>
 #include <hardbs.h>
+#include <wchar.h>
+#include <locale.h>
 
 static int mpow(int a, int b)
 {
     if (b == 0)
         return 1;
-
+    int c = a;
     while (b > 1)
     {
-        a *= a;
+        a *= c;
         b--;
     }
 
     return a;
 }
 
-static char convert_octal(int conv)
+static wchar_t convert_octal(int conv)
 {
     int res = 0;
     int b = 0;
@@ -30,11 +32,11 @@ static char convert_octal(int conv)
         b++;
     }
 
-    char c = res;
+    wchar_t c = res;
     return c;
 }
 
-static char convert_hexa(int conv)
+static wchar_t convert_hexa(int conv)
 {
     int res = 0;
     int b = 0;
@@ -47,7 +49,7 @@ static char convert_hexa(int conv)
         b++;
     }
 
-    char c = res;
+    wchar_t c = res;
     return c;
 }
 
@@ -73,7 +75,7 @@ int isforbidden(char c)
     return 0;
 }
 
-int back_zero(char *arg, char *printfin, int index, int *i)
+int back_zero(char *arg, wchar_t *printfin, int index, int *i)
 {
     char cpy[3] = {"\0"};
     int filled = 0;
@@ -93,7 +95,7 @@ int back_zero(char *arg, char *printfin, int index, int *i)
         hasfilled = 1;
     }
 
-    char c = convert_octal(atoi(cpy));
+    wchar_t c = convert_octal(atoi(cpy));
     printfin[index] = c;
     index++;
     if (hasfilled)
@@ -112,14 +114,14 @@ int back_zero(char *arg, char *printfin, int index, int *i)
 
 }
 
-int back_x(char *arg, char *printfin, int index, int *i)
+int back_x(char *arg, wchar_t *printfin, int index, int *i)
 {
     char cpy[2] = {"\0"};
     int filled = 0;
     int hasfilled = 0;
     int j = strlen(arg);
     int e = *i;
-    for (; (*i < j) && ((*i - e) < 4); (*i)++)
+    for (; (*i < j) && ((*i - e) < 2); (*i)++)
     {
         cpy[filled] = arg[*i];
         filled++;
@@ -132,7 +134,7 @@ int back_x(char *arg, char *printfin, int index, int *i)
         hasfilled = 1;
     }
 
-    char c = convert_hexa(atoi(cpy));
+    wchar_t c = convert_hexa(atoi(cpy));
     printfin[index] = c;
     index++;
     if (hasfilled)
@@ -151,14 +153,14 @@ int back_x(char *arg, char *printfin, int index, int *i)
 
 }
 
-int back_u(char *arg, char *printfin, int index, int *i)
+int back_u(char *arg, wchar_t *printfin, int index, int *i)
 {
     char cpy[4] = {"\0"};
     int filled = 0;
     int hasfilled = 0;
     int j = strlen(arg);
     int e = *i;
-    for (; (*i < j) && ((*i - e) < 8); (*i)++)
+    for (; (*i < j) && ((*i - e) < 4); (*i)++)
     {
         cpy[filled] = arg[*i];
         filled++;
@@ -171,7 +173,7 @@ int back_u(char *arg, char *printfin, int index, int *i)
         hasfilled = 1;
     }
 
-    char c = convert_hexa(atoi(cpy));
+    wchar_t c = convert_hexa(atoi(cpy));
     printfin[index] = c;
     index++;
     if (hasfilled)
@@ -190,14 +192,14 @@ int back_u(char *arg, char *printfin, int index, int *i)
 
 }
 
-int back_U(char *arg, char *printfin, int index, int *i)
+int back_U(char *arg,  wchar_t *printfin, int index, int *i)
 {
     char cpy[8] = {"\0"};
     int filled = 0;
     int hasfilled = 0;
     int j = strlen(arg);
     int e = *i;
-    for (; (*i < j) && ((*i - e) < 10); (*i)++)
+    for (; (*i < j) && ((*i - e) < 8); (*i)++)
     {
         cpy[filled] = arg[*i];
         filled++;
@@ -210,7 +212,7 @@ int back_U(char *arg, char *printfin, int index, int *i)
         hasfilled = 1;
     }
 
-    char c = convert_hexa(atoi(cpy));
+    wchar_t c = convert_hexa(atoi(cpy));
     printfin[index] = c;
     index++;
     if (hasfilled)

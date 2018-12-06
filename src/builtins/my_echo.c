@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
+#include <locale.h>
 #include "ast.h"
 #include "builtins.h"
 #include "hardbs.h"
@@ -29,7 +31,7 @@ static int is_echo_opt(char *arg, int *e, int *E, int *n)
     return 0;
 }
 
-static int handle_hardbs(char *arg, char *printfin, int index, int *cursor)
+static int handle_hardbs(char *arg, wchar_t *printfin, int index, int *cursor)
 {
     switch (arg[*cursor])
     {
@@ -60,7 +62,7 @@ static int handle_hardbs(char *arg, char *printfin, int index, int *cursor)
     }
 }
 
-static int match_bs(char *arg, char *printfin, int index, int *cursor)
+static int match_bs(char *arg, wchar_t *printfin, int index, int *cursor)
 {
 
      if (arg[*cursor] == 'a')
@@ -162,7 +164,7 @@ int my_echo(int number, char *args[], ...)
 
     int i = 1;
     int found = 0;
-    char *printfin = NULL;
+    wchar_t *printfin = NULL;
     int index = -1;
 
     while (args[i])
@@ -179,7 +181,7 @@ int my_echo(int number, char *args[], ...)
             found = 1;
             if (!printfin)
             {
-                printfin = calloc(fullength(args, i) + 1, sizeof(char));
+                printfin = calloc(fullength(args, i) + 1, sizeof(wchar_t));
                 index = 0;
             }
             int tomatch = strlen(args[i]);
@@ -218,12 +220,18 @@ int my_echo(int number, char *args[], ...)
 
     if (n)
     {
-        fprintf(stdout, "%s", printfin ? printfin : "");
+        if (printfin)
+            fprintf(stdout, "%ls", printfin);
+        else
+            fprintf(stdout, "%s", "");
     }
 
     else
     {
-        fprintf(stdout, "%s\n", printfin ? printfin : "");
+        if (printfin)
+            fprintf(stdout, "%ls\n", printfin);
+        else
+            fprintf(stdout, "%s", "");
     }
     if (printfin)
     {

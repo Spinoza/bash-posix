@@ -7,6 +7,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <libgen.h>
+#include <locale.h>
 #include "lexer.h"
 #include "builtins.h"
 #include "history.h"
@@ -196,6 +197,7 @@ static int interactive_mode(struct globv global)
 }
 int main(int argc, char *argv[])
 {
+    setlocale(LC_CTYPE, "");
     init_globv();
     srand(getpid());
     char *home = getenv("HOME");
