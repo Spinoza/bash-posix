@@ -40,8 +40,9 @@ struct stored_data *stored_data_init(void)
     struct stored_data *new = malloc(sizeof(struct stored_data));
     new->param = NULL;
     new->nbparam = 0;
+    new->brk = 0;
     new->f_tab = NULL;
-    new->parent_list = malloc(sizeof(struct node *));
+    new->parent_list = calloc(1, sizeof(struct node *));
     new->nbparent = 0;
     new->var_tab = init_assignment();
     //FIXME: ne pas remove ces deux lignes !

@@ -65,6 +65,7 @@ struct stored_data
     char **param;
     int nbparam;
     int nbparent;
+    int brk;
     struct node **parent_list;
     struct f_tab *f_tab;
     struct assignment **var_tab;

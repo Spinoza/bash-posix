@@ -115,25 +115,24 @@ int pipe_handling(char **command1, struct node *n, struct stored_data *data)
 }
 
 
-struct node *break_execution(struct stored_data *data, int break_nb)
+void break_execution(struct stored_data *data, int break_nb)
 {
+
     if (!data->nbparent)
     {
         fprintf(stderr, "continue: only meaningful in a loop");
-        return NULL;
+        return;
     }
-    struct node *node;
     if (break_nb < data->nbparent)
     {
-        node = data->parent_list[data->nbparent - break_nb];
+        data->brk += break_nb + 1;
         data->nbparent-= break_nb;
     }
     else
     {
-        node = data->parent_list[0];
+        data->brk += data->nbparent;
         data->nbparent = 0;
     }
-    return node->next;
 }
 
 struct node *continue_execution(struct stored_data *data)
@@ -143,7 +142,8 @@ struct node *continue_execution(struct stored_data *data)
         fprintf(stderr, "continue: only meaningful in a loop");
         return NULL;
     }
-    return data->parent_list[(data->nbparent)--];
+    data->nbparent --;
+    return data->parent_list[data->nbparent];
 }
 
 struct node *instr_execution(struct node *n, int *res,
@@ -163,15 +163,12 @@ struct node *instr_execution(struct node *n, int *res,
     {
         if (!strcmp(command_call[0], "break"))
         {
-            struct node *break_node;
+            *res = 0;
             if (command_call[1])
-                break_node = break_execution(data, atoi(command_call[1]));
+                break_execution(data, atoi(command_call[1]));
             else
-                break_node = break_execution(data, 0);
-            if (break_node)
-                return break_node;
-            else
-                *res = 0;
+                break_execution(data, 0);
+            return NULL;
         }
         else if (!strcmp(command_call[0], "continue"))
         {
@@ -183,28 +180,28 @@ struct node *instr_execution(struct node *n, int *res,
         }
         else
         {
-        struct function *f = is_a_function(command_call[0], data->f_tab);
-        struct node *func = NULL;
-        if (f)
-        {
-            func = f->function_start;
-            get_function_param(n, oper_node, data);
-        }
-        if (!func)
-        {
-            if (oper_node && oper_node->tokentype == PIPE)
+            struct function *f = is_a_function(command_call[0], data->f_tab);
+            struct node *func = NULL;
+            if (f)
             {
-                pipe = 1;
-                *res = pipe_handling(command_call, n, data);
-                while (oper_node && oper_node->tokentype == PIPE)
-                    oper_node = get_oper_node(oper_node->next);
-                oper = (oper_node ? oper_node->instr : "");
+                func = f->function_start;
+                get_function_param(n, oper_node, data);
+            }
+            if (!func)
+            {
+                if (oper_node && oper_node->tokentype == PIPE)
+                {
+                    pipe = 1;
+                    *res = pipe_handling(command_call, n, data);
+                    while (oper_node && oper_node->tokentype == PIPE)
+                        oper_node = get_oper_node(oper_node->next);
+                    oper = (oper_node ? oper_node->instr : "");
+                }
+                else
+                    *res = exec_command(command_call);
             }
             else
-                *res = exec_command(command_call);
-        }
-        else
-            *res = traversal_ast(func, res, data);
+                *res = traversal_ast(func, res, data);
         }
     }
     if (!pipe)
@@ -269,7 +266,7 @@ void add_parent(struct node *n, struct stored_data *data)
 {
     data->nbparent++;
     data->parent_list = realloc(data->parent_list,
-            sizeof(struct node *) * data->nbparent);
+            sizeof(struct node *) * (data->nbparent + 1));
     data->parent_list[data->nbparent - 1] = n;
 }
 
@@ -356,15 +353,19 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
         if (n->type == A_WHILE)
         {
             add_parent(n, data);
-            while (if_cond(n, data) == 0)
-                traversal_ast(n->children->next, res, data);
+            while (if_cond(n, data) == 0 && !data->brk)
+                *res = traversal_ast(n->children->next, res, data);
+            if (data->brk)
+                data->brk = 0;
             data->parent_list[data->nbparent--] = NULL;
         }
         if (n->type == A_UNTIL)
         {
             add_parent(n, data);
-            while (if_cond(n, data))
-                traversal_ast(n->children->next, res, data);
+            while (if_cond(n, data) && !data->brk)
+                *res = traversal_ast(n->children->next, res, data);
+            if (data->brk)
+                data->brk--;
             data->parent_list[data->nbparent--] = NULL;
         }
         if (n->type == A_FOR)
