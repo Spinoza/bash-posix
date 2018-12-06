@@ -29,114 +29,102 @@ static int is_echo_opt(char *arg, int *e, int *E, int *n)
     return 0;
 }
 
-static int handle_hardbs(char *arg, char *printfin, int index, size_t *i)
+static int handle_hardbs(char *arg, char *printfin, int index, int *cursor)
 {
-    if (arg[*i+1] && arg[*i] == '\\')
+    switch (arg[*cursor])
     {
-        switch (arg[*i+1])
-        {
-            case 'x':
-                (*i)++;
-                return back_x(arg, printfin, index, i);
-                break;
-            case 'u':
-                (*i)++;
-                return back_u(arg, printfin, index, i);
-                break;
-            case 'U':
-                (*i)++;
-                return back_U(arg, printfin, index, i);
-                break;
-            default:
-            {
-                for (; *i < strlen(arg) && !isforbidden(arg[*i]); (*i)++)
-                {
-                    printfin[index] = arg[*i];
-                    index++;
-                }
-                return index;
-            }
+        case 'x':
+            (*cursor) += 1;
+            return back_x(arg, printfin, index, cursor);
             break;
+        case 'u':
+            (*cursor) += 1;
+            return back_u(arg, printfin, index, cursor);
+            break;
+        case 'U':
+            (*cursor) += 1;
+            return back_U(arg, printfin, index, cursor);
+            break;
+        default:
+        {
+            printfin[index] = arg[*(cursor)-1];
+            index++;
+            int j = strlen(arg);
+            for (; *cursor < j && !isforbidden(arg[*cursor]); (*cursor)++)
+            {
+                printfin[index] = arg[*cursor];
+                index++;
+            }
+            return index;
         }
     }
-
-    for (; *i < strlen(arg) && !isforbidden(arg[*i]); (*i)++)
-    {
-        printfin[index] = arg[*i];
-        index++;
-    }
-    return index;
 }
 
-static int match_bs(char *arg, char *printfin, int index)
+static int match_bs(char *arg, char *printfin, int index, int *cursor)
 {
 
-    size_t i = 0;
-    while (i < strlen(arg))
+     if (arg[*cursor] == 'a')
+     {
+         printfin[index] = 7;
+         *cursor += 1;
+         index++;
+     }
+
+     else if (arg[*cursor] == 'b')
+     {
+         printfin[index] = 8;
+         *cursor += 1;
+         index++;
+     }
+
+     else if (arg[*cursor] == 'c')
+     {
+        return -10;
+     }
+
+     else if (arg[*cursor] == 'f')
+     {
+        printfin[index] = 12;
+        index++;
+        *cursor += 1;
+     }
+
+     else if (arg[*cursor] == 'n')
+     {
+        printfin[index] = 10;
+        index++;
+        *cursor += 1;
+     }
+
+    else if (arg[*cursor] == 'r')
     {
-        if (arg[i] == '\a')
-        {
-            printfin[index] = 7;
-            index++;
-            i++;
-        }
+        printfin[index] = 13;
+        index++;
+        *cursor += 1;
+    }
 
-        else if (arg[i] == '\b')
-        {
-            printfin[index] = 8;
-            index++;
-            i++;
-        }
+    else if (arg[*cursor] == 't')
+    {
+        printfin[index] = 9;
+        index++;
+        *cursor += 1;
+    }
 
-        else if (arg[i+1] && arg[i] == '\\'&& arg[i+1] == 'c')
-        {
-            return -10;
-        }
+    else if (arg[*cursor] == 'v')
+    {
+        printfin[index] = 11;
+        index ++;
+        *cursor += 1;
+    }
 
-        else if (arg[i] == '\f')
-        {
-            printfin[index] = 12;
-            index++;
-            i++;
-        }
+    else if (arg[*cursor] == '0')
+    {
+        index = back_zero(arg, printfin, index, cursor);
+    }
 
-        else if (arg[i] == '\n')
-        {
-            printfin[index] = 10;
-            index++;
-            i++;
-        }
-
-        else if (arg[i] == '\r')
-        {
-            printfin[index] = 13;
-            index++;
-            i++;
-        }
-
-        else if (arg[i] == '\t')
-        {
-            printfin[index] = 9;
-            index++;
-            i++;
-        }
-
-        else if (arg[i] == '\v')
-        {
-            printfin[index] = 11;
-            index ++;
-            i++;
-        }
-
-        else if (arg[i] == '\0')
-        {
-            index = back_zero(arg, printfin, index, &i);
-        }
-
-        else
-        {
-            index = handle_hardbs(arg, printfin, index, &i);
-        }
+    else
+    {
+        index = handle_hardbs(arg, printfin, index, cursor);
     }
     return index;
 }
@@ -193,19 +181,30 @@ int my_echo(int number, char *args[], ...)
                 printfin = calloc(fullength(args, i) + 1, sizeof(char));
                 index = 0;
             }
-            if (e || E)
+            int tomatch = strlen(args[i]);
+            int cursor = 0;
+            while (cursor < tomatch)
             {
-                index = match_bs(args[i], printfin, index);
-                if (index < 0)
+                if (args[i][cursor] == '\\' && (e || E) && args[i][cursor+1])
                 {
-                    n = 1;
-                    break;
+                    cursor++;
+                    index = match_bs(args[i], printfin, index, &cursor);
+                    if (index < 0)
+                    {
+                        n = 1;
+                        break;
+                    }
+                }
+                else
+                {
+                    printfin[index] = args[i][cursor];
+                    index++;
+                    cursor++;
                 }
             }
-            else
+            if (index < 0)
             {
-                strcat(printfin, args[i]);
-                index += strlen(args[i]);
+                break;
             }
             i++;
             if (args[i])

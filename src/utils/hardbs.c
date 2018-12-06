@@ -73,13 +73,14 @@ int isforbidden(char c)
     return 0;
 }
 
-int back_zero(char *arg, char *printfin, int index, size_t *i)
+int back_zero(char *arg, char *printfin, int index, int *i)
 {
     char cpy[3] = {"\0"};
     int filled = 0;
     int hasfilled = 0;
-    int j = *i;
-    for (;(*i < strlen(arg)) && ((*i - j) < 3); (*i)++)
+    int j = strlen(arg);
+    int e = *i;
+    for (;(*i < j) && ((*i - e) < 3); (*i)++)
     {
         cpy[filled] = arg[*i];
         filled++;
@@ -101,7 +102,7 @@ int back_zero(char *arg, char *printfin, int index, size_t *i)
     }
     else
     {
-        for (; *i < strlen(arg) && !isforbidden(arg[*i]); (*i)++)
+        for (; *i < j && !isforbidden(arg[*i]); (*i)++)
         {
             printfin[index] = arg[*i];
             index++;
@@ -111,13 +112,14 @@ int back_zero(char *arg, char *printfin, int index, size_t *i)
 
 }
 
-int back_x(char *arg, char *printfin, int index, size_t *i)
+int back_x(char *arg, char *printfin, int index, int *i)
 {
     char cpy[2] = {"\0"};
     int filled = 0;
     int hasfilled = 0;
-    int j = *i;
-    for (; (*i < strlen(arg)) && ((*i - j) < 4); (*i)++)
+    int j = strlen(arg);
+    int e = *i;
+    for (; (*i < j) && ((*i - e) < 4); (*i)++)
     {
         cpy[filled] = arg[*i];
         filled++;
@@ -139,7 +141,7 @@ int back_x(char *arg, char *printfin, int index, size_t *i)
     }
     else
     {
-        for (; *i < strlen(arg) && !isforbidden(arg[*i]); (*i)++)
+        for (; *i < j && !isforbidden(arg[*i]); (*i)++)
         {
             printfin[index] = arg[*i];
             index++;
@@ -149,13 +151,14 @@ int back_x(char *arg, char *printfin, int index, size_t *i)
 
 }
 
-int back_u(char *arg, char *printfin, int index, size_t *i)
+int back_u(char *arg, char *printfin, int index, int *i)
 {
     char cpy[4] = {"\0"};
     int filled = 0;
     int hasfilled = 0;
-    int j = *i;
-    for (; (*i < strlen(arg)) && ((*i - j) < 8); (*i)++)
+    int j = strlen(arg);
+    int e = *i;
+    for (; (*i < j) && ((*i - e) < 8); (*i)++)
     {
         cpy[filled] = arg[*i];
         filled++;
@@ -177,7 +180,7 @@ int back_u(char *arg, char *printfin, int index, size_t *i)
     }
     else
     {
-        for (; *i < strlen(arg) && !isforbidden(arg[*i]); (*i)++)
+        for (; *i < j && !isforbidden(arg[*i]); (*i)++)
         {
             printfin[index] = arg[*i];
             index++;
@@ -187,13 +190,14 @@ int back_u(char *arg, char *printfin, int index, size_t *i)
 
 }
 
-int back_U(char *arg, char *printfin, int index, size_t *i)
+int back_U(char *arg, char *printfin, int index, int *i)
 {
     char cpy[8] = {"\0"};
     int filled = 0;
     int hasfilled = 0;
-    int j = *i;
-    for (; (*i < strlen(arg)) && ((*i - j) < 10); (*i)++)
+    int j = strlen(arg);
+    int e = *i;
+    for (; (*i < j) && ((*i - e) < 10); (*i)++)
     {
         cpy[filled] = arg[*i];
         filled++;
@@ -215,7 +219,7 @@ int back_U(char *arg, char *printfin, int index, size_t *i)
     }
     else
     {
-        for (;*i < strlen(arg) && !isforbidden(arg[*i]); (*i)++)
+        for (;*i < j && !isforbidden(arg[*i]); (*i)++)
         {
             printfin[index] = arg[*i];
             index++;
