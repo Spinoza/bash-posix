@@ -9,6 +9,8 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+extern char **environ;
+
 void free_data(struct stored_data *data)
 {
     if (!data)
@@ -36,6 +38,17 @@ void free_data(struct stored_data *data)
     free(data);
 }
 
+static void add_environ(struct stored_data *new)
+{
+    int i = 0;
+    while(environ[i])
+    {
+        add_assignment(environ[i], new->var_tab);
+        add_assignment(environ[i], new->export_tab);
+        i++;
+    }
+}
+
 struct stored_data *stored_data_init(void)
 {
     struct stored_data *new = malloc(sizeof(struct stored_data));
@@ -61,6 +74,7 @@ struct stored_data *stored_data_init(void)
     add_assignment_split("IFS", ifs, new->var_tab);
     add_assignment_split("PS1", PS1, new->var_tab);
     add_assignment_split("PS2", PS2, new->var_tab);
+    add_environ(new);
     return new;
 }
 
