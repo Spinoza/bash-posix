@@ -103,7 +103,7 @@ int my_export(int number, char *args[], ...)
                     char *value = get_assign(name, global.data);
                     add_assignment_split(args[i], value,
                             global.data->export_tab);
-                }
+               }
             }
         }
         i++;
