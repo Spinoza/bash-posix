@@ -47,7 +47,6 @@ target_link_libraries(grammar PRIVATE lexer)
 target_link_libraries(grammar PRIVATE tty)
 
 add_library(execution ${CMAKE_SOURCE_DIR}/src/execution/execution_ast.c
-    ${CMAKE_SOURCE_DIR}/src/execution/arithmetic.c
     ${CMAKE_SOURCE_DIR}/src/execution/helper_exec.c
     ${CMAKE_SOURCE_DIR}/src/execution/assignement.c
     ${CMAKE_SOURCE_DIR}/src/execution/get_assignement.c
