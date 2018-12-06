@@ -16,7 +16,7 @@ do
     fi;
     if [ "${!i}" = "--timeout" -o "${!i}" = "-t" ]; then
         x=$(($i + 1))
-        timeout=$x
+        timeout=${!x}
     fi;
     if [ "${!i}" = "--sanity" -o "${!i}" = "-s" ]; then
         sanity=1

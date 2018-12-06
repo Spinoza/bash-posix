@@ -148,6 +148,7 @@ class YamlItem(pytest.Item):
 class BashDiffItem(YamlItem):
     def __init__(self, name, parent, spec):
         super().__init__(name,parent,spec)
+        my_timeout = int(self.config.getoption("--timeout"))
         self.name = name
         tmp = self.command.decode()
         args = ["bash", "--posix", "-c"]
@@ -156,7 +157,7 @@ class BashDiffItem(YamlItem):
                 stdout=subprocess.PIPE,\
                 stderr=subprocess.PIPE,\
                 stdin=subprocess.PIPE)
-        out, err = bash.communicate()
+        out, err = bash.communicate(timeout= my_timeout)
         if "stdout" in self.expected:
             self.expected["stdout"] = out
         if "stderr" in self.expected:
