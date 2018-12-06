@@ -50,6 +50,7 @@ struct node
     char *instr; /**< The name of the node (can be the name of the token contained)*/
     enum ntype type; /**< The type of the node*/
     enum type tokentype; /**< The type of token it contains*/
+    struct node *parent; /**< The node that called the current one*/
     struct node *children; /**< The pointer to the first child*/
     struct node *next; /**< The pointer to the left sibling*/
 };

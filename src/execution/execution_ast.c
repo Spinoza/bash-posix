@@ -211,6 +211,12 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
     return instruction;
 }
 
+void add_parent(struct node *n, struct node *parent)
+{
+    for (; n; n = n->next)
+        n->parent = parent;
+}
+
 int for_execution(struct node *n, int *res, struct stored_data *data)
 {
     struct node *elem = n->children->children;
@@ -220,6 +226,7 @@ int for_execution(struct node *n, int *res, struct stored_data *data)
         cond = cond->next;
         struct node *do_node = n->children->next->children;
         char **instruction = get_instruction_for (cond, data);
+        add_parent(do_node, cond);
         for (size_t i = 0; instruction[i]; i++)
         {
             add_assignment_split(elem->instr, instruction[i],
@@ -293,11 +300,13 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
             *res = traversal_ast(case_execution(n, data), res, data);
         if (n->type == A_WHILE)
         {
+            add_parent(n->children->next, n);
             while (if_cond(n, data) == 0)
                 traversal_ast(n->children->next, res, data);
         }
         if (n->type == A_UNTIL)
         {
+            add_parent(n->children->next, n);
             while (if_cond(n, data))
                 traversal_ast(n->children->next, res, data);
         }

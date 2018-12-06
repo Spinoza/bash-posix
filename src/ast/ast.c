@@ -92,6 +92,7 @@ static struct node* init_node(char *instr, enum type type)
     node->instr = instr;
     node->tokentype = type;
     node->type = node_getype(type);
+    node->parent = NULL;
     node->children = NULL;
     node->next = NULL;
 
