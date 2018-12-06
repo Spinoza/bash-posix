@@ -124,6 +124,7 @@ int my_export(int number, char *args[], ...)
                 fprintf(stdout, "\n");
             }
         }
+        vector_destroy(print);
     }
     return 0;
 }
