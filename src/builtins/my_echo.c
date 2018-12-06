@@ -119,6 +119,7 @@ static int match_bs(char *arg, char *printfin, int index, int *cursor)
 
     else if (arg[*cursor] == '0')
     {
+        *cursor += 1;
         index = back_zero(arg, printfin, index, cursor);
     }
 
