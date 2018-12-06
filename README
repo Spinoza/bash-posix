@@ -54,6 +54,13 @@ Thus, it can handle :
         - take a file as input with redirection
         - creates a ~/.42sh_history file and reads from it
 	- loads /etc/.42shrc and ~/.42shrc
+        - assignment of variables and expansion with '$'
+	- exit builtin
+	- echo builtin (without quoting) with all its options.
+	- cd builtin
+	- export builtin
+	- alias and unalias builtins
+	- shopt implemented with its -s -u and -q options
 
 Moreover, even if it is not fully usable yet, its parser is able to check for the grammar-compliance of any sequence of token given as an input.
 
