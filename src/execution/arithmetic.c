@@ -15,7 +15,13 @@ static int nbdigits(int r)
 }
 static char *itoa(int nb)
 {
-    int s = nbdigits(nb);
+    int negative = 0;
+    if (nb < 0)
+    {
+        negative = 1;
+        nb *= -1;
+    }
+    int s = nbdigits(nb) + negative;
     char *number = malloc(sizeof(char) * (s + 1));
     if (nb == 0)
     {
@@ -23,11 +29,13 @@ static char *itoa(int nb)
         number[1] = '\0';
         return number;
     }
-    for (int i = s-1; i >= 0; i--)
+    for (int i = s-1; i >= negative; i--)
     {
         number[i] = '0' + nb % 10;
         nb /= 10;
     }
+    if (negative)
+        number[0] = '-';
     number[s] = '\0';
     return number;
 }
@@ -128,6 +136,11 @@ static struct arith_list *list_arithmetic(char *string)
         if (string[index] == ' ')
             index = next_token(string, index);
         enum oper op = get_op(string, &index);
+        if (prev_op != 0 && (op == PLUS || op == MINUS))
+        {
+            op = 0; //Operator was actually a sign for the next number
+            index--;
+        }
         if (prev_op == 0)
         {
             if (!op || op == OPEN_PAR_OPER || op == CLOSE_PAR_OPER)
