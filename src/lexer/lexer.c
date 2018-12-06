@@ -285,13 +285,9 @@ static struct token *read_characters(struct token *new, char *string,
                 res[cur_index++] = string[*index];
                 continue;
             }
-            if (string[*index] == '=')
-            {
-                res[cur_index++] = string[*index];
-                current_type = ASSIGNMENT_W;
-                continue;
-            }
-            break;
+            if (string[*index] != '=')
+                break;
+            current_type = ASSIGNMENT_W;
         }
         res[cur_index++] = string[*index];
     }
