@@ -14,6 +14,14 @@ pipe_easy:
                 stderr:
                 rvalue:
 
+bad_pipe:
+        type: "bash diff"
+        command: "echo | ls"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
 three_pipe:
         type: "bash diff"
         command: "ls | cat -e | less"
