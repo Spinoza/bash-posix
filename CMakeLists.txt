@@ -73,7 +73,7 @@ add_library(options ${CMAKE_SOURCE_DIR}/src/utils/options.c)
 
 
 add_executable(42sh ${CMAKE_SOURCE_DIR}/src/42sh.c)
-#target_link_libraries(42sh asan)
+##target_link_libraries(42sh asan)
 target_link_libraries(42sh execution)
 target_link_libraries(42sh ast)
 target_link_libraries(42sh options)

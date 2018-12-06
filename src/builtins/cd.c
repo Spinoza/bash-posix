@@ -54,7 +54,10 @@ int my_cd(int number, char *args[], ...)
         int ret = chdir(getenv("HOME"));
         if (ret == -1)
            return 1;
-        change_pwd(getenv("PWD"));
+        char *pwd = getenv("PWD");
+        if (!pwd)
+            return 1;
+        change_pwd(pwd);
         return 0;
     }
     if (args[1][0] == '/')

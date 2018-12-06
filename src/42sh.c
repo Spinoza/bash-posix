@@ -46,6 +46,8 @@ static int norc_opt(void)
 {
     char *arg1[] = {"/etc/42shrc", NULL};
     char *home = getenv("HOME");
+    if (!home)
+        return 1;
     char *path = calloc(strlen(home) + 9, sizeof(char));
     strcpy(path, home);
     strcat(path, "/.42shrc");
@@ -170,6 +172,11 @@ static int interactive_mode(struct globv global)
             {
                 add_history(listadd);
                 char *home = getenv("HOME");
+                if (!home)
+                {
+                    free(listadd);
+                    continue;
+                }
                 char *path = calloc(strlen(home) + 15, sizeof(char));
                 strcpy(path, home);
                 strcat(path, "/.42sh_history");
@@ -201,18 +208,21 @@ int main(int argc, char *argv[])
     init_globv();
     srand(getpid());
     char *home = getenv("HOME");
-    char *path = calloc(strlen(home) + 15, sizeof(char));
-    strcpy(path, home);
-    strcat(path, "/.42sh_history");
-    FILE *history = fopen(path, "r+");
-    if (!history)
+    if (home)
     {
-        history = fopen(path, "w+");
+        char *path = calloc(strlen(home) + 15, sizeof(char));
+        strcpy(path, home);
+        strcat(path, "/.42sh_history");
+        FILE *history = fopen(path, "r+");
+        if (!history)
+        {
+            history = fopen(path, "w+");
+        }
+        if (history)
+            fclose(history);
+        free(path);
+        path = NULL;
     }
-    if (history)
-        fclose(history);
-    free(path);
-    path = NULL;
     if (!global.options)
         errx(1, "Parsing error: memory full.");
     int index = options_parser(argc, argv, global.options);
@@ -255,20 +265,23 @@ int main(int argc, char *argv[])
         errx(1, "Lexer error. Is your input conform to grammar ?");
     }
     char *home2 = getenv("HOME");
-    char *path2 = calloc(strlen(home2) + 15, sizeof(char));
-    strcpy(path2, home2);
-    strcat(path2, "./42sh_history");
-    history = fopen(path2, "a");
-    char *toks = from_tok_toS(tokens);
-    if (history)
+    if (home)
     {
-        fwrite(toks, 1, strlen(toks), history);
-        fwrite("\n", 1, 1, history);
-        fclose(history);
+        char *path2 = calloc(strlen(home2) + 15, sizeof(char));
+        strcpy(path2, home2);
+        strcat(path2, "./42sh_history");
+        FILE *history = fopen(path2, "a");
+        char *toks = from_tok_toS(tokens);
+        if (history)
+        {
+            fwrite(toks, 1, strlen(toks), history);
+            fwrite("\n", 1, 1, history);
+            fclose(history);
+        }
+        free(path2);
+        path2 = NULL;
+        free(toks);
     }
-    free(path2);
-    path2 = NULL;
-    free(toks);
     struct node *ast = build_ast(tokens);
     global.ast_root = ast;
     if (global.options->ast_print == TRUE)

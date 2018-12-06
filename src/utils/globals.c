@@ -11,8 +11,16 @@ void init_globv(void)
     global.data = stored_data_init();
     global.options = option_init();
     global.oldPWD = NULL;
-    global.PWD = strcpy(calloc(strlen(getenv("PWD")) + 1, sizeof(char))
-    ,getenv("PWD"));
+    char *pwd = getenv("PWD");
+    if (!pwd)
+    {
+        global.PWD = NULL;
+    }
+    else
+    {
+        global.PWD = strcpy(calloc(strlen(pwd) + 1, sizeof(char))
+    ,pwd);
+    }
 }
 
 void free_glob(void)
@@ -31,6 +39,9 @@ void free_glob(void)
 
 void change_pwd(char *newPID)
 {
+    if (!newPID)
+        return;
+
     if (!global.PWD)
     {
         global.PWD = calloc(strlen(newPID) + 1, sizeof(char));
