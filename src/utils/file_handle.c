@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <string.h>
 #include "lexer.h"
+#include "builtins.h"
 #include "file_handle.h"
 #include <err.h>
 
@@ -103,6 +104,8 @@ struct linked_list *read_fil(char *path)
 
 static int is_empty(char *line)
 {
+    if (!line)
+        return 1;
     for (size_t j = 0; j < strlen(line); j++)
     {
         if (line[j] != ' ' && line[j] != '\n')
@@ -120,14 +123,24 @@ struct linked_list *reading(FILE *file)
     char *line = NULL;
     size_t i = 0;
     int res = 0;
-    getline(&line, &i, file);
+    res = getline(&line, &i, file);
     if (res == -1)
-        errx(1, "incoherent input.");
-    while (is_empty(line))
     {
         free(line);
         line = NULL;
-        getline(&line, &i, file);
+        errx(1, "incoherent input.");
+    }
+    while (res != -1 && is_empty(line))
+    {
+        free(line);
+        line = NULL;
+        res = getline(&line, &i, file);
+    }
+    if (res == -1)
+    {
+        free(line);
+        char *argE[] = { "exit", NULL };
+        my_exit(2, argE, 0);
     }
     if (line[strlen(line) - 1] == '\n')
     {
