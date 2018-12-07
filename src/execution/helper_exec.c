@@ -240,6 +240,7 @@ int exec_command(char **string)
             status = WEXITSTATUS(status);
         if (status == 127)
             fprintf(stderr,"42sh : %s : command not found.\n",string[0]);
+        free_command(string);
         return status;
     }
 }
