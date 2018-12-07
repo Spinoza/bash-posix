@@ -266,3 +266,28 @@ break_until_then_command:
                 stdout:
                 stderr:
                 rvalue:
+
+simple_alias:
+        type: "bash diff"
+        command: "alias toto=ls; toto"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+alias_then_unalias:
+        type: "bash diff"
+        command: "alias toto=ls; toto; unalias toto; toto"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+alias_on_diffrent_level:
+        type: "bash diff"
+        command: "alias toto=ls; toto; alias bla=toto; bla"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
