@@ -76,50 +76,50 @@ sanity_string="--valgrind=$sanity"
 timeout_string="--timeout=$timeout"
 
 if [ $all -eq 1 ]; then
-    echo -e "${PURPLE}Starting all tests.\n${NC}"
+    echo -e "${PURPLE}Starting all tests${NC}"
     pytest "../test_suite/test_files/" $sanity_string $timeout_string
     echo
 fi;
 
 if [ $commands -eq 1 ]; then
-    echo -e "${PURPLE}Starting tests on simple commands.\n${NC}"
+    echo -e "${PURPLE}Starting tests on simple commands${NC}"
     pytest $timeout_string "../test_suite/test_files/test_commands.yml" $sanity_string
     echo
 fi;
 
 
 if [ $loops -eq 1 ]; then
-    echo -e "${PURPLE}Starting tests on loops.\n${NC}"
+    echo -e "${PURPLE}Starting tests on loops${NC}"
     pytest -s $timeout_string "../test_suite/test_files/test_loops.yml" $sanity_string
     echo
 fi;
 
 if [ $cases -eq 1 ]; then
-    echo -e "${PURPLE}Starting tests on case statements.\n${NC}"
+    echo -e "${PURPLE}Starting tests on case statements${NC}"
     pytest $timeout_string "../test_suite/test_files/test_cases.yml" $sanity_string
     echo
 fi;
 
 if [ $ifs -eq 1 ]; then
-    echo -e "${PURPLE}Starting tests on if statements.\n${NC}"
+    echo -e "${PURPLE}Starting tests on if statements${NC}"
     pytest $timeout_string "../test_suite/test_files/test_if.yml" $sanity_string
     echo
 fi;
 
 if [ $func -eq 1 ]; then
-    echo -e "${PURPLE}Starting tests on functions.\n${NC}"
+    echo -e "${PURPLE}Starting tests on functions${NC}"
     pytest $timeout_string "../test_suite/test_files/test_func.yml" $sanity_string
     echo
 fi;
 
 if [ $pipes -eq 1 ]; then
-    echo -e "${PURPLE}Starting tests on pipes.\n${NC}"
+    echo -e "${PURPLE}Starting tests on pipes${NC}"
     pytest $timeout_string "../test_suite/test_files/test_pipes.yml" $sanity_string
     echo
 fi;
 
 if [ $builtins -eq 1 ]; then
-    echo -e "${PURPLE}Starting tests on builtins.\n${NC}"
+    echo -e "${PURPLE}Starting tests on builtins${NC}"
     pytest $timeout_string "../test_suite/test_files/test_builtins.yml" $sanity_string
     echo
 fi;

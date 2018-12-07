@@ -9,7 +9,7 @@ easy_echo:
 easy_echo_semicolon:
         type: "bash diff"
         command: "echo test;"
-         expected:
+        expected:
                 stdout:
                 stderr:
                 rvalue:
@@ -41,7 +41,7 @@ cd_no_old_pwd:
 several_cd:
         type: "bash diff"
         command: "cd ..; cd -"
-	expected:
+        expected:
                 stdout:
                 stderr:
                 rvalue:
