@@ -58,7 +58,7 @@ void function_stored(struct node *n, struct stored_data *data)
 
 
 void get_function_param(struct node *child, struct node *oper_node
-        , struct stored_data *data)
+        , struct stored_data **data)
 {
     struct node *iter = child->next;
     char **result = calloc(1, sizeof(char *));
@@ -66,22 +66,25 @@ void get_function_param(struct node *child, struct node *oper_node
     char *instr = NULL;
     for (; iter && iter != oper_node; i++, iter = iter->next)
     {
-        instr = set_string(iter->instr, data);
+        instr = set_string(iter->instr, *data);
         result = realloc(result, (i + 1) * sizeof(char *));
         result[i] = instr;
     }
     result = realloc(result, (i + 1) * sizeof(char *));
     result[i] = NULL;
-    data->nbparam = i;
-    data->param = result;
+    (*data)->nbparam = i;
+    (*data)->param = result;
 }
 
 struct node *func_execution(struct function *f, struct node *oper_node,
         int *res, struct node *n)
 {
     struct node *func = f->function_start;
-    get_function_param(n, oper_node, global.data);
+    get_function_param(n, oper_node, &global.data);
     *res = traversal_ast(func, res, global.data);
+    free_command(global.data->param);
+    if (!oper_node)
+        return NULL;
     if ((!strcmp(oper_node->instr, "&&") && !(*res))
             || (!strcmp(oper_node->instr, "||") && *(res))
             || ((!strcmp(oper_node->instr, ";")
