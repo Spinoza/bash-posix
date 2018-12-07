@@ -8,6 +8,7 @@ struct globv
 {
     int res;
     struct node *ast_root;
+    struct vector *aliastab;
     struct stored_data *data;
     struct option *options;
     char *oldPWD;

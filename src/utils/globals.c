@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include "vector.h"
 #include "globals.h"
 #include "helper_exec.h"
 
@@ -8,6 +9,7 @@ void init_globv(void)
 {
     global.ast_root = NULL;
     global.res = 0;
+    global.aliastab = vector_create();
     global.data = stored_data_init();
     global.options = option_init();
     global.oldPWD = NULL;
@@ -35,6 +37,8 @@ void free_glob(void)
         free_data(global.data);
     if (global.options)
         free(global.options);
+    if (global.aliastab)
+        vector_destroy(global.aliastab);
 }
 
 void change_pwd(char *newPID)
