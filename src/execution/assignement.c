@@ -1,39 +1,19 @@
 #define _GNU_SOURCE
 #include "ast_assignement.h"
+#include "execution_ast.h"
+#include "globals.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-
-static int is_forbidden(char *name)
-{
-    if (!name)
-        return 0;
-    char *forb[4] =
-    {
-        "IFS",
-        "#",
-        "PS1",
-        "PS2"
-    };
-    for (int i = 0; i < 4; i++)
-    {
-        if (!strcmp(forb[i], name))
-            return 1;
-    }
-    return 0;
-}
 
 struct assignment **init_assignment(void)
 {
     struct assignment **a_tab = calloc(HASH_TAB_SIZE,
             sizeof(struct assignment *));
     for (int i = 0; i < HASH_TAB_SIZE; i++)
-    {
         a_tab[i] = calloc(1, sizeof(struct assignment));
-    }
     return a_tab;
 }
-
 void free_assignments(struct assignment **tab)
 {
     for (size_t i = 0; i < HASH_TAB_SIZE; i++)
@@ -48,7 +28,7 @@ void free_assignments(struct assignment **tab)
                 free(to_free->value);
                 to_free->value = NULL;
             }
-            if (to_free->name && !is_forbidden(to_free->name))
+            if (to_free->name)
             {
                 free(to_free->name);
                 to_free->name = NULL;
@@ -75,7 +55,13 @@ static struct assignment *to_assign(char *name, char *value)
 {
     struct assignment *new = calloc(1, sizeof(struct assignment));
     new->name = name;
-    new->value = value;
+    char *recursive_value = value;
+    if (value[0] == '$')
+    {
+        recursive_value = get_assign(value + 1, global.data);
+        free(value);
+    }
+    new->value = recursive_value;
     return new;
 }
 
@@ -89,7 +75,7 @@ static int already_exists(char *name, char *value,
             return 0;
         if (!strcmp(name, a->name))
         {
-            if (!is_forbidden(a->name) && name != a->name)
+            if (name != a->name)
                 free(a->name);
             if (a->value)
                 free(a->value);
