@@ -164,7 +164,11 @@ class BashDiffItem(YamlItem):
         if "stderr" in self.expected:
             self.expected["stderr"] = err
         if "rvalue" in self.expected:
-            self.expected["rvalue"] = bash.returncode
+            if self.expected["rvalue"] is None:
+                self.expected["rvalue"] = bash.returncode
+            else:
+                self.expected["rvalue"] = int(self.expected["rvalue"])
+
         bash.kill()
 
 class OutputDiffItem(YamlItem):

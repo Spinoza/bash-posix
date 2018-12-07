@@ -53,7 +53,7 @@ starting_elif:
         expected:
                 stdout:
                 stderr:
-                rvalue:
+                rvalue: "2"
 
 if_inside_if:
         type: "bash diff"
@@ -78,7 +78,7 @@ if_wrong_syntax:
         expected:
                 stdout:
                 stderr:
-                rvalue:
+                rvalue: "2"
 
 elif_wrong_syntax:
         type: "bash diff"
@@ -86,7 +86,7 @@ elif_wrong_syntax:
         expected:
                 stdout:
                 stderr:
-                rvalue:
+                rvalue: "2"
 
 if_operators_or:
         type: "bash diff"
@@ -139,7 +139,7 @@ elif_operators_and:
 
 elif_inside_elif:
         type: "bash diff"
-        command: "if false; then echo true; elif true; then if false; then echo wow; elif true; then ls; else echo false; fi;"
+        command: "if false; then echo true; elif true; then if false; then echo wow; elif true; then ls; else echo false; fi; fi;"
         expected:
                 stdout:
                 stderr:
