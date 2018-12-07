@@ -69,12 +69,18 @@ struct stored_data *stored_data_init(void)
     //Shinyo: ajout des variables PS1 et PS2
     char *PS1 = calloc(7, sizeof(char));
     char *PS2 = calloc(3, sizeof(char));
-    strcpy(PS1, "42sh$ ");
-    strcpy(PS2, "> ");
-    ifs[0] = ' ';
-    add_assignment_split("IFS", ifs, new->var_tab);
-    add_assignment_split("PS1", PS1, new->var_tab);
-    add_assignment_split("PS2", PS2, new->var_tab);
+    PS1 = memcpy(PS1, "42sh$ ", 6);
+    PS2 = memcpy(PS2, "> ", 2);
+    ifs = memcpy(ifs, " ", 1);
+    char *PS1_name = calloc(4,sizeof(char));
+    PS1_name = memcpy(PS1_name, "PS1", 3);
+    add_assignment_split(PS1_name, PS1, new->var_tab);
+    char *PS2_name = calloc(4,sizeof(char));
+    PS2_name = memcpy(PS2_name, "PS2", 3);
+    add_assignment_split(PS2_name, PS2, new->var_tab);
+    char *IFS_name = calloc(4,sizeof(char));
+    IFS_name = memcpy(IFS_name, "IFS", 3);
+    add_assignment_split(IFS_name, ifs, new->var_tab);
     add_environ(new);
     return new;
 }
@@ -220,7 +226,10 @@ int exec_command(char **string)
 {
     int r_builtin = is_builtin(string);
     if (r_builtin != -1)
+    {
+        free_command(string);
         return r_builtin;
+    }
     pid_t pid = fork();
     if (pid == -1)//error
     {
