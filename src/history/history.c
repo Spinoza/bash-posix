@@ -7,6 +7,26 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+void set_history(void)
+{
+    char *home = getenv("HOME");
+    if (home)
+    {
+        char *path = calloc(strlen(home) + 15, sizeof(char));
+        strcpy(path, home);
+        strcat(path, "/.42sh_history");
+        FILE *history = fopen(path, "r+");
+        if (!history)
+        {
+            history = fopen(path, "w+");
+        }
+        if (history)
+            fclose(history);
+        free(path);
+        path = NULL;
+    }
+}
+
 void init_interact(void)
 {
     char *home = getenv("HOME");

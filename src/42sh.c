@@ -207,22 +207,7 @@ int main(int argc, char *argv[])
     setlocale(LC_CTYPE, "");
     init_globv();
     srand(getpid());
-    char *home = getenv("HOME");
-    if (home)
-    {
-        char *path = calloc(strlen(home) + 15, sizeof(char));
-        strcpy(path, home);
-        strcat(path, "/.42sh_history");
-        FILE *history = fopen(path, "r+");
-        if (!history)
-        {
-            history = fopen(path, "w+");
-        }
-        if (history)
-            fclose(history);
-        free(path);
-        path = NULL;
-    }
+    set_history();
     if (!global.options)
         errx(1, "Parsing error: memory full.");
     int index = options_parser(argc, argv, global.options);
@@ -263,24 +248,6 @@ int main(int argc, char *argv[])
     if (!isgramm)
     {
         errx(1, "Lexer error. Is your input conform to grammar ?");
-    }
-    char *home2 = getenv("HOME");
-    if (home)
-    {
-        char *path2 = calloc(strlen(home2) + 15, sizeof(char));
-        strcpy(path2, home2);
-        strcat(path2, "./42sh_history");
-        FILE *history = fopen(path2, "a");
-        char *toks = from_tok_toS(tokens);
-        if (history)
-        {
-            fwrite(toks, 1, strlen(toks), history);
-            fwrite("\n", 1, 1, history);
-            fclose(history);
-        }
-        free(path2);
-        path2 = NULL;
-        free(toks);
     }
     struct node *ast = build_ast(tokens);
     global.ast_root = ast;

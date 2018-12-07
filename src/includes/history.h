@@ -17,4 +17,5 @@
   */
 void init_interact(void);
 
+void set_history(void);
 #endif /* ! HISTORY_H */
