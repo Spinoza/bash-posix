@@ -1,7 +1,7 @@
 easy_echo:
         type: "bash diff"
         command: "echo test"
-         expected:
+        expected:
                 stdout:
                 stderr:
                 rvalue:
@@ -227,6 +227,68 @@ shopt_s_q:
 shopt_sq_uq_print:
         type: "bash diff"
         command:  "shopt -sq xpg_echo; shopt xpg_echo; shopt -uq xpg_echo"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+alias_simple:
+        type: "bash diff"
+        command:  "alias toto=ls; toto"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+alias_then_alias:
+        type: "bash diff"
+        command:  "alias toto=ls; alias toto"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+multi_alias_then_multi_alias:
+        type: "bash diff"
+        command:  "alias toto=ls ju=pad pad=op; alias toto ju pad"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+alias_unkown:
+        type: "bash diff"
+        command:  "alias t;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+alias_p:
+        type: "bash diff"
+        command:  "alias -p"
+        expected:
+                stderr:
+                rvalue:
+
+unalias_alone:
+        type: "bash diff"
+        command:  "unalias"
+        expected:
+                stderr:
+                rvalue:
+
+alias_command_unalias_command:
+        type: "bash diff"
+        command:  "alias toto=ls; toto; unalias toto; toto"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+alias_command_unalias_command:
+        type: "bash diff"
+        command:  "alias toto=ls; unalias -a; toto"
         expected:
                 stdout:
                 stderr:
