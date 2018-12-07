@@ -128,7 +128,7 @@ struct node *instr_execution(struct node *n, int *res,
         //else
         if (command_call[1])
         {
-            break_execution(data, command_call[1]);
+            break_execution(data, atoi(command_call[1]));
         }
         else
             break_execution(data, 1);
