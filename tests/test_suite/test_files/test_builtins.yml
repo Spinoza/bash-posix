@@ -6,6 +6,15 @@ easy_echo:
                 stderr:
                 rvalue:
 
+easy_echo_semicolon:
+        type: "bash diff"
+        command: "echo test;"
+         expected:
+                stdout:
+                stderr:
+                rvalue:
+
+
 break_while:
         type: "bash diff"
         command: "while true; do break; done;"
@@ -60,6 +69,15 @@ several_hard_cd:
                 stdout:
                 stderr:
                 rvalue:
+
+cd_too_many:
+        type: "bash diff"
+        command: "cd bla bla"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
 
 simple_export:
         type: "bash diff"
@@ -158,17 +176,17 @@ exit_bad_ret_code:
                 stderr:
                 rvalue:
 
-simple_exit:
+exit_too_many:
         type: "bash diff"
-        command: "exit"
+        command: "exit 2 3"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-simple_exit:
+fail_call_exit:
         type: "bash diff"
-        command: "exit"
+        command: "cd dfljghzolgfh; exit"
         expected:
                 stdout:
                 stderr:
@@ -234,14 +252,6 @@ shopt_invalid_option:
         expected:
                 rvalue:
 
-
-easy_echo_semicolon:
-        type: "bash diff"
-        command: "echo test;"
-         expected:
-                stdout:
-                stderr:
-                rvalue:
 
 break_until:
         type: "bash diff"
