@@ -1,0 +1,16 @@
+easy_echo:
+        type: "bash diff"
+        command: "echo test"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+easy_echo_semicolon:
+        type: "bash diff"
+        command: "echo test;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
