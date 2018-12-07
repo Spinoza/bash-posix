@@ -216,9 +216,11 @@ int is_builtin(char **string)
     return -1;
 }
 
-
 int exec_command(char **string)
 {
+    int r_builtin = is_builtin(string);
+    if (r_builtin != -1)
+        return r_builtin;
     pid_t pid = fork();
     if (pid == -1)//error
     {

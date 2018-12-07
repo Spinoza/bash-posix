@@ -10,4 +10,7 @@ void function_stored(struct node *n, struct stored_data *data);
 
 void get_function_param(struct node *child, struct node *oper_node,
         struct stored_data *data);
+
+struct node *func_execution(struct function *f, struct node *oper_node,
+        int *res, struct node *n);
 #endif

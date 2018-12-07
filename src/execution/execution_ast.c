@@ -59,6 +59,11 @@ int pipe_aux(char **command, struct node *n, int fd[2],
             dup2(fd_next[1], STDOUT_FILENO);
             close(fd_next[1]);
         }
+        int r_builtin = is_builtin(command);
+        if (r_builtin != -1)
+        {
+            exit(r_builtin);
+        }
         int r = execvp(command[0], command);
         exit(r);
     }
@@ -90,88 +95,9 @@ int pipe_handling(char **command1, struct node *n, struct stored_data *data)
     return pipe_aux(command1, oper_node, fd, data);
 }
 
-void break_execution(struct stored_data *data, int break_nb)
+struct node *get_next_node(struct node *oper_node, int *res)
 {
-
-    if (!data->nbparent)
-    {
-        fprintf(stderr, "continue: only meaningful in a loop");
-        return;
-    }
-    data->brk -= (break_nb);
-    data->nbparent -= break_nb;
-    if (data->nbparent < 0)
-        data->nbparent = 0;
-}
-
-struct node *continue_execution(struct stored_data *data)
-{
-    if (!data->nbparent)
-    {
-        fprintf(stderr, "continue: only meaningful in a loop");
-        return NULL;
-    }
-    data->nbparent --;
-    return data->parent_list[data->nbparent];
-}
-
-struct node *instr_execution(struct node *n, int *res,
-        struct stored_data *data)
-{
-    /*check redirection*/
-    struct node *oper_node = get_oper_node(n);
-    char *oper = (oper_node ? oper_node->instr : "");
-    char **command_call = to_execute(n, oper_node, data);
-    struct function *f = is_a_function(command_call[0], data->f_tab);
-    struct node *func = NULL;
-    if (f)
-    {
-        func = f->function_start;
-        get_function_param(n, oper_node, data);
-        *res = traversal_ast(func, res, data);
-        if (oper_node)
-            return oper_node->next;
-        if (!oper_node)
-            return NULL;
-    }
-    if (oper_node && oper_node->tokentype == PIPE)
-    {
-        pipe = 1;
-        *res = pipe_handling(command_call, n, data);
-        while (oper_node && oper_node->tokentype == PIPE)
-            oper_node = get_oper_node(oper_node->next);
-        oper = (oper_node ? oper_node->instr : "");
-    }
-    else
-        *res = exec_command(command_call);
-    int r_builtin = is_builtin(command_call);
-    if (r_builtin != -1)
-    {
-        *res = r_builtin;
-    }
-    else
-    {
-        if (!strcmp(command_call[0], "break"))
-        {
-            *res = 0;
-            if (command_call[1])
-                break_execution(data, atoi(command_call[1]));
-            else
-                break_execution(data, 1);
-            free_command(command_call);
-            return NULL;
-        }
-        else if (!strcmp(command_call[0], "continue"))
-        {
-            //struct node *continue_node = continue_execution(data);
-            free_command(command_call);
-            //if (continue_node)
-            return NULL;
-        }
-        else
-        {
-        }
-    }
+    char *oper = oper_node->instr;
     if ((!strcmp(oper,"&&") && !(*res))
             || (!strcmp(oper,"||") && (*res)))
         return oper_node->next;
@@ -179,27 +105,53 @@ struct node *instr_execution(struct node *n, int *res,
         return oper_node->next;
     return NULL;
 }
+struct node *instr_execution(struct node *n, int *res,
+        struct stored_data *data)
+{
+    /*check redirection*/
+    struct node *oper_node = get_oper_node(n);
+    char **command_call = to_execute(n, oper_node, data);
+    struct function *f = is_a_function(command_call[0], data->f_tab);
+    if (f)
+    {
+        return func_execution(f, oper_node, res, n);
+    }
+    if (!strcmp(command_call[0], "break"))
+    {
+        *res = 0;
+        //if (command_call[1])
+        //    break_execution(data, atoi(command_call[1]));
+        //else
+        break_execution(data, 0);
+        free_command(command_call);
+        return NULL;
+    }
+    else if (!strcmp(command_call[0], "continue"))
+    {
+        struct node *continue_node = continue_execution(data);
+        free_command(command_call);
+        if (continue_node)
+            return continue_node;
+        else
+            *res = 0;
+    }
+    if (oper_node && oper_node->tokentype == PIPE)
+    {
+        *res = pipe_handling(command_call, n, data);
+        while (oper_node && oper_node->tokentype == PIPE)
+            oper_node = get_oper_node(oper_node->next);
+    }
+    else
+        *res = exec_command(command_call);
+    return get_next_node(oper_node, res);
+}
 
 int if_cond(struct node *cond, struct stored_data *data)
 {
-    struct node *condition = cond->children;
+    struct node *condition = cond->children->children;
     int res = 0;
-
-    for (struct node *iter = condition->children; iter;)
-    {
-        struct node *oper_node = get_oper_node(iter);
-        char **command_call = to_execute(iter, oper_node, data);
-        res = instr_execution(iter, res, data);
-        free_command(command_call);
-        if (oper_node == NULL
-                || oper_node->tokentype == SEMICOLON
-                || oper_node->tokentype == AND)
-            break;
-        char *oper = oper_node->instr;
-        if ((!strcmp(oper,"&&") && res) || (!strcmp(oper,"||") && !res))
-            break;
-        iter = oper_node->next;
-    }
+    while (condition)
+        condition = instr_execution(condition, &res, data);
     return res;
 }
 
@@ -211,6 +163,7 @@ struct node *if_execution(struct node *n, int *res, struct stored_data *data)
         return n->children->next;
     else //if res != 0, the exec returned an error
     {
+        *res = 0;
         if (n->children->next->next)
             return n->children->next->next;
         else

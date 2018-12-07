@@ -84,6 +84,8 @@ struct stored_data
 char *get_assign_var(char *name, struct assignment **alias_tab);
 char *get_assign(char *name, struct stored_data *data);
 int execution_ast(struct node *n, struct stored_data *data);
+struct node *continue_execution(struct stored_data *data);
+void break_execution(struct stored_data *data, int break_nb);
 
 /**
   *\fn int traversal_ast(struct node *n, int *res, struct f_tab **f_tab)

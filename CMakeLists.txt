@@ -52,6 +52,8 @@ add_library(arithmetic ${CMAKE_SOURCE_DIR}/src/execution/arithmetic.c)
 target_link_libraries(arithmetic PRIVATE stack)
 
 add_library(execution ${CMAKE_SOURCE_DIR}/src/execution/execution_ast.c
+    ${CMAKE_SOURCE_DIR}/src/builtins/break.c
+    ${CMAKE_SOURCE_DIR}/src/builtins/continue.c
     ${CMAKE_SOURCE_DIR}/src/execution/helper_exec.c
     ${CMAKE_SOURCE_DIR}/src/execution/assignement.c
     ${CMAKE_SOURCE_DIR}/src/execution/get_assignement.c

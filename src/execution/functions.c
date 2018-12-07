@@ -1,4 +1,5 @@
 #include "functions.h"
+#include "globals.h"
 #include <string.h>
 #include "helper_exec.h"
 #include <stdio.h>
@@ -74,3 +75,18 @@ void get_function_param(struct node *child, struct node *oper_node
     data->nbparam = i;
     data->param = result;
 }
+
+struct node *func_execution(struct function *f, struct node *oper_node,
+        int *res, struct node *n)
+{
+    struct node *func = f->function_start;
+    get_function_param(n, oper_node, global.data);
+    *res = traversal_ast(func, res, global.data);
+    if ((!strcmp(oper_node->instr, "&&") && !(*res))
+            || (!strcmp(oper_node->instr, "||") && *(res))
+            || ((!strcmp(oper_node->instr, ";")
+            || !strcmp(oper_node->instr, "&")) && oper_node->next))
+        return oper_node->next;
+    return NULL;
+}
+
