@@ -172,7 +172,11 @@ int special_character(char c, int quoting, enum type context)
 {
     switch (c)
     {
+        case '\n':
+            return !quoting;
         case ' ':
+            return !quoting;
+        case '\t': // tab character
             return !quoting;
         case '(':
             return !quoting;
