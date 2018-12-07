@@ -101,20 +101,39 @@ struct linked_list *read_fil(char *path)
     return toret;
 }
 
+static int is_empty(char *line)
+{
+    for (size_t j = 0; j < strlen(line); j++)
+    {
+        if (line[j] != ' ' && line[j] != '\n')
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 struct linked_list *reading(FILE *file)
 {
+    struct linked_list *tokens;
     char *line = NULL;
     size_t i = 0;
     int res = 0;
     getline(&line, &i, file);
     if (res == -1)
         errx(1, "incoherent input.");
+    while (is_empty(line))
+    {
+        free(line);
+        getline(&line, &i, file);
+    }
     if (line[strlen(line) - 1] == '\n')
     {
         line[strlen(line) - 1] = '\0';
     }
 
-    struct linked_list *tokens = lexer_c(line);
+    tokens = lexer_c(line);
     free(line);
     line = NULL;
     while ( (res = getline(&line, &i, file)) != -1)
