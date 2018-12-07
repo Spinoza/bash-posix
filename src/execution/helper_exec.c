@@ -43,7 +43,7 @@ static void add_environ(struct stored_data *new)
     if (!environ)
         return;
     int i = 0;
-    while(environ[i])
+    while (environ[i])
     {
         add_assignment(environ[i], new->var_tab);
         add_assignment(environ[i], new->export_tab);
@@ -250,7 +250,11 @@ int exec_command(char **string)
     {
         int status = 0;
         waitpid(pid, &status, 0);
-        if (status == 127 || status == 65280)
+        if (status == 65280)
+            status = 127;
+        else
+            status = WEXITSTATUS(status);
+        if (status == 127)
             fprintf(stderr,"42sh : %s : command not found.\n",string[0]);
         return status;
     }
