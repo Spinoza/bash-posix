@@ -1,0 +1,237 @@
+easy_assignement:
+        type: "bash diff"
+        command: "a=2; echo $a;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+re_assign:
+        type: "bash diff"
+        command: "a=2; a=3; echo $a;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+multiple_assignement:
+        type: "bash diff"
+        command: "a=2; b=3dgkpf; c=4; d=5; e=6; f=18; g=20; echo $a $b $c $d $e $f $g;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+
+multiple_assignment_tricky:
+        type: "bash diff"
+        command: "a=2; b=3fkjdhng; c=4; d=5; e=6; f=18; g=20; echo $a$b$c$d$e$f$g"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+multiple_assignement_emptyones:
+        type: "bash diff"
+        command: "a=2; b=32; c=4; d=5; e=6; f=18; g=20; echo $a$blolwow$c$d$e$f$g"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+args@_unset:
+        type: "bash diff"
+        command: "echo $@;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+args#_unset:
+        type: "bash diff"
+        command: "echo $#;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+return_value_unset:
+        type: "bash diff"
+        command: "echo $?;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+return_value_wrong_file:
+        type: "bash diff"
+        command: "ls -dsjfk; echo $?;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+dollars:
+        type: "bash diff"
+        command: "echo $$"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+
+uid:
+        type: "bash diff"
+        command: "echo $UID"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+oldpwd_unset:
+        type: "bash diff"
+        command: "echo $OLDPWD;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+cd_oldpwd:
+        type: "bash diff"
+        command: "cd test; echo $OLDPWD;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+shellopts:
+        type: "bash diff"
+        command: "echo $SHELLOPTS;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+
+
+IFS_unset:
+        type: "bash diff"
+        command: "echo $IFS"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+IFS_set:
+        type: "bash diff"
+        command: "IFS=123; echo $IFS;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+try_set_nbargs:
+        type: "bash diff"
+        command: "#=dhkd; echo $#;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+
+returnvalue_ls:
+        type: "bash diff"
+        command: "ls; echo $?;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+param_@:
+        type: "bash diff"
+        command: "func(){ echo $@; }; func a b c d e;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+param_*:
+        type: "bash diff"
+        command: "func(){ echo $*; }; func a b c d e;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+param:
+        type: "bash diff"
+        command: "func(){ echo $1; echo $2 $3; }; func a b c;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+param_not_enough:
+        type: "bash diff"
+        command: "func(){ echo $1; echo $2 $3; }; func a b;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+
+param_too_much:
+        type: "bash diff"
+        command: "func(){ echo $1; echo $2 $3; }; func a b c d;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+nb_param:
+        type: "bash diff"
+        command: "func(){ echo $#; }; func a b c;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+function_redefinition:
+        type: "bash diff"
+        command: "func(){ echo $#; }; func(){ ls -la; }; func a b c;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+for_dollar_i:
+        type: "bash diff"
+        command: "for i in 1 2 3; echo $i; done;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+func_args_dollar_i:
+        type: "bash diff"
+        command: "func(){ for i in $@; do echo $i; done; }; func a b c; ls;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+func_while_break:
+        type: "bash diff"
+        command: "func(){ while true; do echo $@; break; done; }; func;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+func_while_break_args:
+        type: "bash diff"
+        command: "func(){ while true; do echo $@; break; done; }; func a b ;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
