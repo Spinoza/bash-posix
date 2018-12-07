@@ -38,7 +38,6 @@ char *get_assignment(char *name)
             return a->value;
         a = a->next;
     }
-
     return NULL;
 }
 
@@ -80,7 +79,6 @@ static int norc_opt(void)
             exit(r);
         }
     }
-
     else
     {
         int status = 0;
@@ -247,7 +245,7 @@ int main(int argc, char *argv[])
     int isgramm = grammar_check(tokens);
     if (!isgramm)
     {
-        errx(1, "Lexer error. Is your input conform to grammar ?");
+        errx(2, "Lexer error. Is your input conform to grammar ?");
     }
     struct node *ast = build_ast(tokens);
     global.ast_root = ast;
