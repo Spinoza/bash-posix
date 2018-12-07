@@ -46,6 +46,7 @@ class YamlItem(pytest.Item):
         check = self.config.getoption("--check")
         if sanity == "1":
             args.append("valgrind")
+            args.append("--leak-check=full")
             args.append("--error-exitcode=1")
 
         cwd = os.getcwd()

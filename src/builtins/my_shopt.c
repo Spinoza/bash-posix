@@ -48,7 +48,7 @@ static int set_opt(char *opt, int *q, int *s, int *u)
 
         else
         {
-            fprintf(stderr, "42sh: shopt: -%c: invalid option\n", opt[i]);
+            fprintf(stderr, "shopt: -%c: invalid option\n", opt[i]);
             fprintf(stderr, "shopt: usage: [-qsu] [optname...]\n");
             return 1;
         }
@@ -306,7 +306,7 @@ int my_shopt(int number, char *args[], ...)
     {
         if (s && u)
         {
-            fprintf(stderr, "42sh: shopt: cannot set and unset shell options simultaneously.\n");
+            fprintf(stderr, "shopt: cannot set and unset an option at the same time.\n");
             va_end(ap);
             return 1;
         }
@@ -330,7 +330,7 @@ int my_shopt(int number, char *args[], ...)
             found = 1;
             if (!is_opt(args[i]))
             {
-                fprintf(stderr, "42sh: shopt:  %s: invalid shell option name\n", args[i]);
+                fprintf(stderr, "shopt:  %s: invalid option name\n", args[i]);
                 retcode = 1;
             }
             else

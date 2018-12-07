@@ -14,7 +14,6 @@ easy_echo_semicolon:
                 stderr:
                 rvalue:
 
-
 break_while:
         type: "bash diff"
         command: "while true; do break; done;"
@@ -69,15 +68,6 @@ several_hard_cd:
                 stdout:
                 stderr:
                 rvalue:
-
-cd_too_many:
-        type: "bash diff"
-        command: "cd bla bla"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
 
 simple_export:
         type: "bash diff"
@@ -176,144 +166,94 @@ exit_bad_ret_code:
                 stderr:
                 rvalue:
 
-exit_too_many:
+simple_exit:
         type: "bash diff"
-        command: "exit 2 3"
+        command: "exit"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-fail_call_exit:
+simple_exit:
         type: "bash diff"
-        command: "cd dfljghzolgfh; exit"
+        command: "exit"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-simple_shopt_s:
+simple_exit:
         type: "bash diff"
-        command: "shopt -s xpg_echo; shopt xpg_echo"
+        command: "exit"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-simple_shopt_s_u:
+simple_exit:
         type: "bash diff"
-        command: "shopt -s xpg_echo; shopt -u xpg_echo; shopt xpg_echo"
+        command: "exit"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-simple_shopt_q:
+simple_exit:
         type: "bash diff"
-        command: "shopt -q xpg_echo;"
+        command: "exit"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-shopt_s_q:
+simple_exit:
         type: "bash diff"
-        command: "shopt -sq xpg_echo; shopt xpg_echo"
+        command: "exit"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-shopt_sq_uq_print:
+simple_exit:
         type: "bash diff"
-        command:  "shopt -sq xpg_echo; shopt xpg_echo; shopt -uq xpg_echo"
+        command: "exit"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-alias_simple:
+simple_exit:
         type: "bash diff"
-        command:  "alias toto=ls; toto"
+        command: "exit"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-alias_then_alias:
+simple_exit:
         type: "bash diff"
-        command:  "alias toto=ls; alias toto"
+        command: "exit"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-multi_alias_then_multi_alias:
+simple_exit:
         type: "bash diff"
-        command:  "alias toto=ls ju=pad pad=op; alias toto ju pad"
+        command: "exit"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-alias_unkown:
+
+easy_echo_semicolon:
         type: "bash diff"
-        command:  "alias t;"
+        command: "echo test;"
         expected:
                 stdout:
                 stderr:
                 rvalue:
-
-alias_p:
-        type: "bash diff"
-        command:  "alias -p"
-        expected:
-                stderr:
-                rvalue:
-
-unalias_alone:
-        type: "bash diff"
-        command:  "unalias"
-        expected:
-                stderr:
-                rvalue:
-
-alias_command_unalias_command:
-        type: "bash diff"
-        command:  "alias toto=ls; toto; unalias toto; toto"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
-alias_command_unalias_command:
-        type: "bash diff"
-        command:  "alias toto=ls; unalias -a; toto"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
-bad_option_name:
-        type: "bash diff"
-        command: "shopt wqassa"
-        expected:
-                rvalue:
-
-shopt_su:
-        type: "bash diff"
-        command: "shopt -su"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
-shopt_invalid_option:
-        type: "bash diff"
-        command: "shopt -v"
-        expected:
-                rvalue:
-
 
 break_until:
         type: "bash diff"
@@ -338,28 +278,3 @@ break_until_then_command:
                 stdout:
                 stderr:
                 rvalue:
-
-simple_alias:
-        type: "bash diff"
-        command: "alias toto=ls; toto"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
-alias_then_unalias:
-        type: "bash diff"
-        command: "alias toto=ls; toto; unalias toto; toto"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
-alias_on_diffrent_level:
-        type: "bash diff"
-        command: "alias toto=ls; toto; alias bla=toto; bla"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
