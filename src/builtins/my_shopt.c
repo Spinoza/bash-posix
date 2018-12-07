@@ -8,14 +8,14 @@
 
 static int print_everything(struct option *opt)
 {
-    fprintf(stdout, "ast-print         %s\n", opt->ast_print == TRUE ? "on" : "off");
-    fprintf(stdout, "dotglob           %s\n", opt->dotglob == TRUE ? "on" : "off");
-    fprintf(stdout, "expand_aliases    %s\n", opt->expand_aliases == TRUE ? "on" : "off");
-    fprintf(stdout, "extglob           %s\n", opt->extglob == TRUE ? "on" : "off");
-    fprintf(stdout, "nocaseglob        %s\n", opt->nocaseglob == TRUE ? "on" : "off");
-    fprintf(stdout, "nullglob          %s\n", opt->nullglob == TRUE ? "on" : "off");
-    fprintf(stdout, "sourcepath        %s\n", opt->sourcepath == TRUE ? "on" : "off");
-    fprintf(stdout, "xpg_echo          %s\n", opt->xpg_echo == TRUE ? "on" : "off");
+    fprintf(stdout, "ast-print        \t%s\n", opt->ast_print == TRUE ? "on" : "off");
+    fprintf(stdout, "dotglob       \t%s\n", opt->dotglob == TRUE ? "on" : "off");
+    fprintf(stdout, "expand_aliases    \t%s\n", opt->expand_aliases == TRUE ? "on" : "off");
+    fprintf(stdout, "extglob           \t%s\n", opt->extglob == TRUE ? "on" : "off");
+    fprintf(stdout, "nocaseglob        \t%s\n", opt->nocaseglob == TRUE ? "on" : "off");
+    fprintf(stdout, "nullglob          \t%s\n", opt->nullglob == TRUE ? "on" : "off");
+    fprintf(stdout, "sourcepath        \t%s\n", opt->sourcepath == TRUE ? "on" : "off");
+    fprintf(stdout, "xpg_echo          \t%s\n", opt->xpg_echo == TRUE ? "on" : "off");
     return 0;
 }
 
@@ -71,7 +71,7 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "ast-print    %s\n", ops->ast_print == TRUE ? "on" : "off");
+            fprintf(stdout, "ast-print    \t%s\n", ops->ast_print == TRUE ? "on" : "off");
         }
         else
         {
@@ -91,7 +91,7 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "dotglob    %s\n", ops->dotglob == TRUE ? "on" : "off");
+            fprintf(stdout, "dotglob    \t%s\n", ops->dotglob == TRUE ? "on" : "off");
         }
 
         else
@@ -112,7 +112,7 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "expand_aliases    %s\n", ops->expand_aliases == TRUE ? "on" : "off");
+            fprintf(stdout, "expand_aliases   \t%s\n", ops->expand_aliases == TRUE ? "on" : "off");
         }
 
         else
@@ -133,7 +133,7 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "extglob    %s\n", ops->extglob == TRUE ? "on" : "off");
+            fprintf(stdout, "extglob    \t%s\n", ops->extglob == TRUE ? "on" : "off");
         }
         else
         {
@@ -153,7 +153,7 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "nocaseglob    %s\n", ops->nocaseglob == TRUE ? "on" : "off");
+            fprintf(stdout, "nocaseglob   \t%s\n", ops->nocaseglob == TRUE ? "on" : "off");
         }
         else
         {
@@ -193,7 +193,7 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "sourcepath    %s\n", ops->sourcepath == TRUE ? "on" : "off");
+            fprintf(stdout, "sourcepath    \t%s\n", ops->sourcepath == TRUE ? "on" : "off");
         }
         else
         {
