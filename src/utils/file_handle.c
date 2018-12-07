@@ -126,6 +126,7 @@ struct linked_list *reading(FILE *file)
     while (is_empty(line))
     {
         free(line);
+        line = NULL;
         getline(&line, &i, file);
     }
     if (line[strlen(line) - 1] == '\n')
