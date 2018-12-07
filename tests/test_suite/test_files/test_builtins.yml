@@ -174,68 +174,64 @@ simple_exit:
                 stderr:
                 rvalue:
 
-simple_exit:
+simple_shopt_s:
         type: "bash diff"
-        command: "exit"
+        command: "shopt -s xpg_echo; shopt xpg_echo"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-simple_exit:
+simple_shopt_s_u:
         type: "bash diff"
-        command: "exit"
+        command: "shopt -s xpg_echo; shopt -u xpg_echo; shopt xpg_echo"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-simple_exit:
+simple_shopt_q:
         type: "bash diff"
-        command: "exit"
+        command: "shopt -q xpg_echo;"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-simple_exit:
+shopt_s_q:
         type: "bash diff"
-        command: "exit"
+        command: "shopt -sq xpg_echo; shopt xpg_echo"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-simple_exit:
+shopt_sq_uq_print:
         type: "bash diff"
-        command: "exit"
+        command:  "shopt -sq xpg_echo; shopt xpg_echo; shopt -uq xpg_echo"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-simple_exit:
+bad_option_name:
         type: "bash diff"
-        command: "exit"
+        command: "shopt wqassa"
+        expected:
+                rvalue:
+
+shopt_su:
+        type: "bash diff"
+        command: "shopt -su"
         expected:
                 stdout:
                 stderr:
                 rvalue:
 
-simple_exit:
+shopt_invalid_option:
         type: "bash diff"
-        command: "exit"
+        command: "shopt -v"
         expected:
-                stdout:
-                stderr:
-                rvalue:
-
-simple_exit:
-        type: "bash diff"
-        command: "exit"
-        expected:
-                stdout:
-                stderr:
                 rvalue:
 
 
