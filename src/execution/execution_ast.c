@@ -126,18 +126,20 @@ struct node *instr_execution(struct node *n, int *res,
         //if (command_call[1])
         //    break_execution(data, atoi(command_call[1]));
         //else
-        break_execution(data, 0);
+        if (command_call[1])
+        {
+            break_execution(data, command_call[1]);
+        }
+        else
+            break_execution(data, 1);
         free_command(command_call);
         return NULL;
     }
     else if (!strcmp(command_call[0], "continue"))
     {
-        struct node *continue_node = continue_execution(data);
         free_command(command_call);
-        if (continue_node)
-            return continue_node;
-        else
-            *res = 0;
+        *res = 0;
+        return NULL;
     }
     if (oper_node && oper_node->tokentype == PIPE)
     {
