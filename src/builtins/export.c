@@ -114,7 +114,7 @@ int my_export(int number, char *args[], ...)
         for (ssize_t i = 0; i < print->size; i++)
         {
             struct assignment *assign = print->arr[i];
-            fprintf(stdout, "declare -x %s", assign->name);
+            fprintf(stdout, "export %s", assign->name);
             if(assign->value)
             {
                 fprintf(stdout, "=\"%s\"\n", assign->value);
