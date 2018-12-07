@@ -13,6 +13,231 @@ break_while:
                 stdout:
                 stderr:
                 rvalue:
+easy_cd:
+        type: "bash diff"
+        command: "cd ..;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+cd_no_old_pwd:
+        type: "bash diff"
+        command: "cd -"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+several_cd:
+        type: "bash diff"
+        command: "cd ..; cd -"
+	expected:
+                stdout:
+                stderr:
+                rvalue:
+
+medium_cd:
+        type: "bash diff"
+        command: "cd .././"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+hard_cd:
+        type: "bash diff"
+        command: "cd ../../.././././../."
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+several_hard_cd:
+        type: "bash diff"
+        command: "cd .././../././../.; cd -"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+simple_export:
+        type: "bash diff"
+        command: "export"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+export_p:
+        type: "bash diff"
+        command: "export -p"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+export_n_no_arg:
+        type: "bash diff"
+        command: "export -n"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+export_p_n_no_arg:
+        type: "bash diff"
+        command: "export -p -n; export -n -p"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+export_p_arg:
+        type: "bash diff"
+        command: "export -p toto=1; export"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+
+export_n_arg:
+        type: "bash diff"
+        command: "export -n toto; export"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+export_p_n_arg:
+        type: "bash diff"
+        command: "export -p -n toto; export"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+export_p_arg_then_n_arg:
+        type: "bash diff"
+        command: "export -p toto=1; export -n toto; export"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+export_var_already-assigned:
+        type: "bash diff"
+        command: "toto=1; export; export toto; export"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+simple_exit:
+        type: "bash diff"
+        command: "exit"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+exit_ret_code:
+        type: "bash diff"
+        command: "exit 2"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+exit_bad_ret_code:
+        type: "bash diff"
+        command: "exit i2"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+simple_exit:
+        type: "bash diff"
+        command: "exit"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+simple_exit:
+        type: "bash diff"
+        command: "exit"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+simple_exit:
+        type: "bash diff"
+        command: "exit"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+simple_exit:
+        type: "bash diff"
+        command: "exit"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+simple_exit:
+        type: "bash diff"
+        command: "exit"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+simple_exit:
+        type: "bash diff"
+        command: "exit"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+simple_exit:
+        type: "bash diff"
+        command: "exit"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+simple_exit:
+        type: "bash diff"
+        command: "exit"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+simple_exit:
+        type: "bash diff"
+        command: "exit"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+simple_exit:
+        type: "bash diff"
+        command: "exit"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
 
 easy_echo_semicolon:
         type: "bash diff"
