@@ -106,6 +106,14 @@ static int match_bs(char *arg, wchar_t *printfin, int index, int *cursor)
         *cursor += 1;
     }
 
+    else if (arg[*cursor] == 'e' || arg[*cursor] == 'E')
+    {
+        if (arg[*(cursor+1)] == '\\')
+            *cursor += 3;
+        else
+            *cursor += 2;
+    }
+
     else if (arg[*cursor] == 't')
     {
         printfin[index] = 9;

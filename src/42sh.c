@@ -213,7 +213,7 @@ int main(int argc, char *argv[])
     int index = options_parser(argc, argv, global.options);
     if (global.options->version == TRUE)
     {
-        printf("Version 0.5\n");
+        printf("Version 0.9\n");
         free_glob();
         return 0;
     }
