@@ -61,7 +61,7 @@ int if_cond(struct node *cond, struct stored_data *data)
 }
 
 int pipe_aux(char **command, struct node *n, int fd[2],
-struct stored_data *data)
+        struct stored_data *data)
 {
     struct node *oper_node = get_oper_node(n);
     int fd_next[2];
@@ -93,7 +93,7 @@ struct stored_data *data)
         {
             struct node *next_oper_node = get_oper_node(oper_node->next);
             char **command_next = to_execute(oper_node->next,
-            next_oper_node, data);
+                    next_oper_node, data);
             status = pipe_aux(command_next, oper_node->next, fd_next, data);
         }
         waitpid(pid,&status,0);
@@ -122,16 +122,10 @@ void break_execution(struct stored_data *data, int break_nb)
         fprintf(stderr, "continue: only meaningful in a loop");
         return;
     }
-    if (break_nb < data->nbparent)
-    {
-        data->brk -= (break_nb);
-        data->nbparent -= break_nb;
-    }
-    else
-    {
-        data->brk += data->nbparent;
+    data->brk -= (break_nb);
+    data->nbparent -= break_nb;
+    if (data->nbparent < 0)
         data->nbparent = 0;
-    }
 }
 
 struct node *continue_execution(struct stored_data *data)
@@ -163,21 +157,19 @@ struct node *instr_execution(struct node *n, int *res,
         if (!strcmp(command_call[0], "break"))
         {
             *res = 0;
-            //if (command_call[1])
-            //    break_execution(data, atoi(command_call[1]));
-            //else
+            if (command_call[1])
+                break_execution(data, atoi(command_call[1]));
+            else
                 break_execution(data, 1);
             free_command(command_call);
             return NULL;
         }
         else if (!strcmp(command_call[0], "continue"))
         {
-            struct node *continue_node = continue_execution(data);
+            //struct node *continue_node = continue_execution(data);
             free_command(command_call);
-            if (continue_node)
-                return continue_node;
-            else
-                *res = 0;
+            //if (continue_node)
+            return NULL;
         }
         else
         {
@@ -285,17 +277,17 @@ int for_execution(struct node *n, int *res, struct stored_data *data)
         cpy_instr = memcpy(cpy_instr, elem->instr, len);
         if (!instruction[0])
             free(cpy_instr);
-        data->brk ++;
+        data->brk++;
         for (size_t i = 0; instruction[i] && data->brk > 0; i++)
         {
             add_assignment_split(cpy_instr, instruction[i],
-            data->var_tab);
+                    data->var_tab);
             add_parent(n, data);
             *res = traversal_ast(do_node, res, data);
-             if (data->brk)
-                 data->brk --;
             data->parent_list[data->nbparent--] = NULL;
         }
+        if (data->brk)
+            data->brk--;
         free(instruction);
     }
     return *res;
@@ -335,6 +327,8 @@ struct node *case_execution(struct node *n, struct stored_data *data)
 
 int traversal_ast(struct node *n, int *res, struct stored_data *data)
 {
+    if (data->brk < 0)
+        data->brk = 0;
     global.res = *res;
     if (!n)
         return *res;
@@ -364,16 +358,18 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
         if (n->type == A_WHILE)
         {
             add_parent(n, data);
-            while (if_cond(n, data) == 0 && !data->brk)
+            data->brk++;
+            while (if_cond(n, data) == 0 && data->brk > 0)
                 *res = traversal_ast(n->children->next, res, data);
             if (data->brk)
-                data->brk = 0;
+                data->brk--;
             data->parent_list[data->nbparent--] = NULL;
         }
         if (n->type == A_UNTIL)
         {
             add_parent(n, data);
-            while (if_cond(n, data) && !data->brk)
+            data->brk++;
+            while (if_cond(n, data) && data->brk > 0)
                 *res = traversal_ast(n->children->next, res, data);
             if (data->brk)
                 data->brk--;
