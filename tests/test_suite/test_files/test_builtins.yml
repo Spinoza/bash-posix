@@ -339,9 +339,111 @@ break_until_then_command:
                 stderr:
                 rvalue:
 
-simple_alias:
+easy_special_words:
         type: "bash diff"
-        command: "alias toto=ls; toto"
+        command: "echo if then do while;"
+         expected:
+                stdout:
+                stderr:
+                rvalue:
+echo_assign:
+        type: "bash diff"
+        command: "a=2; echo $a;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+break_negative:
+        type: "bash diff"
+        command: "while true; do break -1; done; echo wow;"
+         expected:
+                stdout:
+                stderr:
+                rvalue:
+
+loop_echo_break:
+        type: "bash diff"
+        command: "while true; do echo wow; break; done;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+break_2:
+        type: "bash diff"
+        command: "while true; do while true; do break 2; done; done; echo wow;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+while_until_break_2:
+        type: "bash diff"
+        command: "while true; do until false; do break 2; done; done; ls -la;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+while_for_break_2:
+        type: "bash diff"
+        command: "while true; do for i in 1 2 3; do break 2; done; done; ls;"
+         expected:
+                stdout:
+                stderr:
+                rvalue:
+
+break_too_hight:
+        type: "bash diff"
+        command: "while true; do for i in 1 2 3; do break 5; done; done; ls;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+break_0:
+        type: "bash diff"
+        command: "while true; do for i in 1 2 3; do echo ew; break 0; echo wow;"
+         expected:
+                stdout:
+                stderr:
+                rvalue:
+
+for_break:
+        type: "bash diff"
+        command: "for i in 1 2 3; do break; done;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+for__echo_break:
+        type: "bash diff"
+        command: "for i in 1 2 3; do echo wow; break; done;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+for_echo_continue_echo:
+        type: "bash diff"
+        command: "for i in 1 2 3; do echo wow; continue; echo ew; done"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+for_continue:
+        type: "bash diff"
+        command: "for i in 1 2 3; do continue; done"
+         expected:
+                stdout:
+                stderr:
+                rvalue:
+
+alias:
+        type: "bash diff"
+        command: "alias p=pwd; p;"
         expected:
                 stdout:
                 stderr:
@@ -355,6 +457,22 @@ alias_then_unalias:
                 stderr:
                 rvalue:
 
+alias_quotes:
+        type: "bash diff"
+        command: "alias ls= " ls -la " ; ls;"
+         expected:
+                stdout:
+                stderr:
+                rvalue:
+
+alias_unalias:
+        type: "bash diff"
+        command: "alias ls="ls -la " ; ls; unalias ls;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
 alias_on_diffrent_level:
         type: "bash diff"
         command: "alias toto=ls; toto; alias bla=toto; bla"
@@ -363,3 +481,81 @@ alias_on_diffrent_level:
                 stderr:
                 rvalue:
 
+break_until_then_command:
+        type: "bash diff"
+        command: "until false; do break; done;ls;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+break:
+        type: "bash diff"
+        command: "break"
+         expected:
+                stdout:
+                stderr:
+                rvalue:
+
+continue:
+        type: "bash diff"
+        command: "continue"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+cd:
+        type: "bash diff"
+        command: "cd"
+         expected:
+                stdout:
+                stderr:
+                rvalue:
+
+cd_..:
+        type: "bash diff"
+        command: "cd .."
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+cd_-:
+        type: "bash diff"
+        command: "cd -"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+exit:
+        type: "bash diff"
+        command: "exit"
+         expected:
+                stdout:
+                stderr:
+                rvalue:
+
+exit_1:
+        type: "bash diff"
+        command: "exit 1"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+command_exit:
+        type: "bash diff"
+        command: "ls; exit;"
+         expected:
+                stdout:
+                stderr:
+                rvalue:
+
+while_exit:
+        type: "bash diff"
+        command: "while true; do exit; done"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
