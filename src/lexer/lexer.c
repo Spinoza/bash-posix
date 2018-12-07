@@ -172,6 +172,8 @@ int special_character(char c, int quoting, enum type context)
 {
     switch (c)
     {
+        case '#':
+            return 1;
         case '\n':
             return !quoting;
         case ' ':
@@ -257,6 +259,12 @@ static int check_special_words(char *string, char **list)
     return WORD;
 }
 
+void remove_comment(char *string, int *index)
+{
+    if (string[*index] != '#')
+        return;
+    for (; string[*index] && string[*index] != '\n'; *index = *index + 1);
+}
 static struct token *read_characters(struct token *new, char *string,
         int *index, char **list, enum type context)
 {
@@ -280,6 +288,8 @@ static struct token *read_characters(struct token *new, char *string,
         }
         if (special_character(*(string + *index), quoting, context))
         {
+            if (string[*index] == '#')
+                remove_comment(string, index);
             if ((string[*index] == ')' && string[*index + 1] == ')')
                     || (string[*index] == '(' && string[*index + 1] == '('))
             {
