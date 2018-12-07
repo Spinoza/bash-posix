@@ -97,8 +97,6 @@ int pipe_handling(char **command1, struct node *n, struct stored_data *data)
 
 struct node *get_next_node(struct node *oper_node, int *res)
 {
-    if (!oper_node)
-        return NULL;
     char *oper = oper_node->instr;
     if ((!strcmp(oper,"&&") && !(*res))
             || (!strcmp(oper,"||") && (*res)))
@@ -116,9 +114,7 @@ struct node *instr_execution(struct node *n, int *res,
     struct function *f = is_a_function(command_call[0], data->f_tab);
     if (f)
     {
-        free_command(command_call);
-        struct node *next_node = func_execution(f, oper_node, res, n);
-        return next_node;
+        return func_execution(f, oper_node, res, n);
     }
     if (!strcmp(command_call[0], "break"))
     {
@@ -292,6 +288,8 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
         {
             function_stored(n, data);
             int r = traversal_ast(next_node(n), res, data);
+            if (data->param)
+                free_command(data->param);
             return r;
         }
         if (n->type == A_INSTRUCT)

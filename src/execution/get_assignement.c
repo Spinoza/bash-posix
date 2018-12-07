@@ -91,12 +91,7 @@ char *get_assign_var(char *name, struct assignment **a_tab)
         if (!a->name)
             return "";
         if (!strcmp_expand(name, a->name))
-        {
-            char *recursive_value = get_assign_var(a->value, a_tab);
-            if (!strcmp(recursive_value, ""))
-                return a->value;
-            return recursive_value;
-        }
+            return a->value;
     }
     return "";
 }
