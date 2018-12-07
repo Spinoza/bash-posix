@@ -69,7 +69,6 @@ several_hard_cd:
                 stdout:
                 stderr:
                 rvalue:
-
 cd_too_many:
         type: "bash diff"
         command: "cd bla bla"
@@ -86,7 +85,6 @@ simple_export:
                 stdout:
                 stderr:
                 rvalue:
-
 export_p:
         type: "bash diff"
         command: "export -p"
@@ -342,7 +340,7 @@ break_until_then_command:
 easy_special_words:
         type: "bash diff"
         command: "echo if then do while;"
-         expected:
+        expected:
                 stdout:
                 stderr:
                 rvalue:
@@ -357,7 +355,7 @@ echo_assign:
 break_negative:
         type: "bash diff"
         command: "while true; do break -1; done; echo wow;"
-         expected:
+        expected:
                 stdout:
                 stderr:
                 rvalue:
@@ -389,7 +387,7 @@ while_until_break_2:
 while_for_break_2:
         type: "bash diff"
         command: "while true; do for i in 1 2 3; do break 2; done; done; ls;"
-         expected:
+        expected:
                 stdout:
                 stderr:
                 rvalue:
@@ -405,7 +403,7 @@ break_too_hight:
 break_0:
         type: "bash diff"
         command: "while true; do for i in 1 2 3; do echo ew; break 0; echo wow;"
-         expected:
+        expected:
                 stdout:
                 stderr:
                 rvalue:
@@ -436,7 +434,7 @@ for_echo_continue_echo:
 for_continue:
         type: "bash diff"
         command: "for i in 1 2 3; do continue; done"
-         expected:
+        expected:
                 stdout:
                 stderr:
                 rvalue:
@@ -459,15 +457,15 @@ alias_then_unalias:
 
 alias_quotes:
         type: "bash diff"
-        command: "alias ls= " ls -la " ; ls;"
-         expected:
+        command: "alias ls='ls -la' ; ls;"
+        expected:
                 stdout:
                 stderr:
                 rvalue:
 
 alias_unalias:
         type: "bash diff"
-        command: "alias ls="ls -la " ; ls; unalias ls;"
+        command: "alias ls='ls -la'; ls; unalias ls;"
         expected:
                 stdout:
                 stderr:
@@ -491,7 +489,7 @@ break_until_then_command:
 break:
         type: "bash diff"
         command: "break"
-         expected:
+        expected:
                 stdout:
                 stderr:
                 rvalue:
@@ -507,7 +505,7 @@ continue:
 cd:
         type: "bash diff"
         command: "cd"
-         expected:
+        expected:
                 stdout:
                 stderr:
                 rvalue:
@@ -531,7 +529,7 @@ cd_-:
 exit:
         type: "bash diff"
         command: "exit"
-         expected:
+        expected:
                 stdout:
                 stderr:
                 rvalue:
@@ -547,7 +545,7 @@ exit_1:
 command_exit:
         type: "bash diff"
         command: "ls; exit;"
-         expected:
+        expected:
                 stdout:
                 stderr:
                 rvalue:
