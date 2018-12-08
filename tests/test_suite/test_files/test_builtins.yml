@@ -30,14 +30,6 @@ easy_cd:
                 stderr:
                 rvalue:
 
-cd_no_old_pwd:
-        type: "bash diff"
-        command: "cd -"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
 several_cd:
         type: "bash diff"
         command: "cd ..; cd -"
@@ -505,22 +497,6 @@ continue:
 cd:
         type: "bash diff"
         command: "cd"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
-cd_..:
-        type: "bash diff"
-        command: "cd .."
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
-cd_-:
-        type: "bash diff"
-        command: "cd -"
         expected:
                 stdout:
                 stderr:

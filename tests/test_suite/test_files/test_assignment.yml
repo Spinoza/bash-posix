@@ -98,7 +98,7 @@ oldpwd_unset:
 
 cd_oldpwd:
         type: "bash diff"
-        command: "cd test; echo $OLDPWD;"
+        command: "cd ..; echo $OLDPWD;"
         expected:
                 stdout:
                 stderr:
