@@ -259,7 +259,7 @@ int main(int argc, char *argv[])
     {
         tokens = lexer_c(global.options->arg_c);
     }
-    print_list(tokens);
+//    print_list(tokens);
     int isgramm = grammar_check(tokens);
     if (!isgramm)
     {
