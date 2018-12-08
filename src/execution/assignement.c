@@ -43,7 +43,8 @@ void free_assignments(struct assignment **tab)
 //return the position in the hash table
 int hash_function(char *string)
 {
-
+    if (string[0] == '\0')
+        return 0;
     float r = 0;
     int i = 0;
     for ( ; *(string + i); i++)
