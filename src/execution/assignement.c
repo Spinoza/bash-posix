@@ -81,14 +81,19 @@ static int already_exists(char *name, char *value,
             }
             if (a->value)
             {
-                int i = 0;
-                for (; global.data->nbparam > i
-                        && a->value != global.data->param[i]; i++);
-                if (i == global.data->nbparam)
+                if (global.data && global.data->nbparam)
                 {
-                    free(a->value);
-                    a->value = NULL;
+                    int i = 0;
+                    for (; global.data->nbparam > i
+                            && a->value != global.data->param[i]; i++);
+                    if (i == global.data->nbparam)
+                    {
+                        free(a->value);
+                        a->value = NULL;
+                    }
                 }
+                else
+                    free(a->value);
             }
             a->name = name;
             a->value = value;

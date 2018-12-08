@@ -30,12 +30,10 @@ void free_data(struct stored_data *data)
     {
         free(data->builtins);
     }
-    if (data->nbparent >= 0)
-        free(data->parent_list);
+    free(data->parent_list);
     free_assignments(data->var_tab);
     free_assignments(data->alias_tab);
     free_assignments(data->export_tab);
-    free(data->parent_list);
     free(data);
 }
 
@@ -155,6 +153,8 @@ char *set_string(char *instr, struct stored_data *data)
                 assigned_value = get_assign(name, data);
             }
             k = copy_string(assigned_value, &string, k, capacity);
+            if (!strcmp(name, "UID"))
+                free(assigned_value);
             free(name);
         }
         else

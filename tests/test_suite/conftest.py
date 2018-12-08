@@ -46,8 +46,7 @@ class YamlItem(pytest.Item):
         check = self.config.getoption("--check")
         if sanity == "1":
             args.append("valgrind")
-            args.append("--leak-check=full")
-            args.append("--error-exitcode=1")
+            args.append("--track-fds=yes")
 
         cwd = os.getcwd()
         if type(self) is BashDiffItem or type(self) is OutputDiffItem:
@@ -68,6 +67,8 @@ class YamlItem(pytest.Item):
         r = process.returncode
         process.kill()
         if sanity == '1':
+            if "FILE DESCRIPTORS: 3 open at exit." not in err:
+                raise ValgrindException(err,self.command,self.name)
             if "All heap blocks were freed -- no leaks are possible" not in err:
                 raise ValgrindException(err,self.command,self.name)
             if "ERROR SUMMARY: 0 errors from 0 contexts" not in err:
