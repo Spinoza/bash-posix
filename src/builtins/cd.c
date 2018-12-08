@@ -24,6 +24,7 @@ static int find_path(char *arg)
             {
                 char *cpy = calloc(strlen(global.oldPWD) + 1, sizeof(char));
                 strcpy(cpy, global.oldPWD);
+                fprintf(stdout, "%s\n", global.oldPWD);
                 change_pwd(cpy);
                 free(cpy);
             }
