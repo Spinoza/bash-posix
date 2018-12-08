@@ -39,9 +39,9 @@ struct builtins *init_builts(void)
     return tab;
 }
 
-int my_exit(int number, char *args[],  ...)
+int my_exit(char *args[],  ...)
 {
-    number = number;
+
     va_list ap;
     va_start(ap, args);
 

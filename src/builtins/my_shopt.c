@@ -279,9 +279,9 @@ static int is_opt(char *optn)
 
 }
 
-int my_shopt(int number, char *args[], ...)
+int my_shopt(char *args[], ...)
 {
-    number = number;
+
 
     va_list ap;
     va_start(ap, args);

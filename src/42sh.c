@@ -163,7 +163,7 @@ static int interactive_mode(struct globv global)
         {
             printf("exit\n");
             char *ex[] = { "exit", NULL};
-            my_exit(2, ex, 0);
+            my_exit(ex, 0);
         }
         struct linked_list *tokens = lexer_c(line);
         int isgramm = grammar_check(tokens);

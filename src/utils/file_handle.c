@@ -140,7 +140,7 @@ struct linked_list *reading(FILE *file)
     {
         free(line);
         char *argE[] = { "exit", NULL };
-        my_exit(2, argE, 0);
+        my_exit(argE, 0);
     }
     if (line[strlen(line) - 1] == '\n')
     {

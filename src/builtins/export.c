@@ -23,9 +23,8 @@ static void free_assign(struct assignment *assign)
     free(assign);
 }
 
-int my_export(int number, char *args[], ...)
+int my_export(char *args[], ...)
 {
-    number = number;
     int i = 1;
     int n = 0;
     int file = 0;

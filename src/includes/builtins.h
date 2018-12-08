@@ -11,7 +11,7 @@ struct builtins
 {
     char *name;
     //FIXME: potentiellement enlever l'int numb, peu utile ?
-    int (*builtin)(int numb, char *args[], ...);
+    int (*builtin)(char *args[], ...);
 };
 
 struct vector *get_assigns_sorted(struct assignment **table);
@@ -19,11 +19,11 @@ struct builtins *init_builts(void);
 void add_aliases(void);
 
 
-int my_exit(int number, char *args[], ...);
-int my_shopt(int number, char *args[], ...);
-int my_cd(int number, char *args[], ...);
-int my_alias(int number, char *args[], ...);
-int my_unalias(int number, char *args[], ...);
-int my_echo(int number, char *args[], ...);
-int my_export(int number, char *args[], ...);
+int my_exit(char *args[], ...);
+int my_shopt(char *args[], ...);
+int my_cd(char *args[], ...);
+int my_alias(char *args[], ...);
+int my_unalias(char *args[], ...);
+int my_echo(char *args[], ...);
+int my_export(char *args[], ...);
 #endif /* ! BUILTIN_H */

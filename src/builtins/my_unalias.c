@@ -127,9 +127,9 @@ static int removed_vec(char *toremove)
     return 0;
 }
 
-int my_unalias(int number, char *args[], ...)
+int my_unalias(char *args[], ...)
 {
-    number = number;
+
     if (!args[1])
     {
         fprintf(stderr, "unalias: usage: unalias [-a] name [name...]\n");

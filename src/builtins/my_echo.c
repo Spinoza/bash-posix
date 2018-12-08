@@ -157,9 +157,9 @@ static size_t fullength(char *args[], int i)
     return length;
 }
 
-int my_echo(int number, char *args[], ...)
+int my_echo(char *args[], ...)
 {
-    number = number;
+
 
     if (!args[1])
     {

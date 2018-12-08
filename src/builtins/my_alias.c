@@ -120,9 +120,9 @@ void add_aliases(void)
     global.aliastab->size = 0;
 }
 
-int my_alias(int number, char *args[], ...)
+int my_alias(char *args[], ...)
 {
-    number = number;
+
     if (!args[1])
     {
         print_alphabet(global.data->alias_tab);

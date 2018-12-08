@@ -41,9 +41,9 @@ static int find_path(char *arg)
     return 0;
 }
 
-int my_cd(int number, char *args[], ...)
+int my_cd(char *args[], ...)
 {
-    number = number;
+
     if (args[1] != NULL && args[2] != NULL)
    {
         fprintf(stderr, "cd: Too many arguments\n");

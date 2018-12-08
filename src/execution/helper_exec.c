@@ -228,9 +228,9 @@ int is_builtin(char **string)
         {
             int r = 0;
             if (!strcmp(string[0], "exit"))
-                r = global.data->builtins[i].builtin(2, string, global.res);
+                r = global.data->builtins[i].builtin(string, global.res);
             else
-                r = global.data->builtins[i].builtin(2, string);
+                r = global.data->builtins[i].builtin(string);
             return r;
         }
     }
