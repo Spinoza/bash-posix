@@ -7,7 +7,7 @@
 static int is_conform(struct nL *tok)
 {
     char *args[9] = { ">", "<", ">>", ">&", "<&", ">|", "<>"
-                , "!", "function"};
+        , "!", "function"};
 
     for (int i = 0; i < 7; i++)
     {
@@ -183,7 +183,7 @@ struct nL *g_rulefor (struct nL *tok)
     if (!tok)
         return NULL;
     if (!(tok->elem->type == WORD || tok->elem->type == EXPAND_W)
-        ||(is_conform(tok)!= 0))
+            ||(is_conform(tok)!= 0))
         return NULL;
     tok = tok->next;
     if (!tok)
@@ -224,7 +224,7 @@ struct nL *g_rulefor (struct nL *tok)
             if (!tok)
                 return NULL;
             while ((tok->elem->type == WORD || tok->elem->type == EXPAND_W)
-                &&(is_conform(tok) == 0))
+                    &&(is_conform(tok) == 0))
             {
                 tok = tok->next;
                 if (!tok)

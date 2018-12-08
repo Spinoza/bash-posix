@@ -46,7 +46,7 @@ int my_cd(char *args[], ...)
 {
 
     if (args[1] != NULL && args[2] != NULL)
-   {
+    {
         fprintf(stderr, "cd: Too many arguments\n");
         return 1;
     }
@@ -54,7 +54,7 @@ int my_cd(char *args[], ...)
     {
         int ret = chdir(getenv("HOME"));
         if (ret == -1)
-           return 1;
+            return 1;
         char *pwd = getenv("PWD");
         if (!pwd)
             return 1;

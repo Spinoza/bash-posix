@@ -40,33 +40,13 @@ struct node *next_node(struct node *n)
     return NULL;
 }
 
-/*
-int *fill_fd (struct node *oper_node)
-{
-    int fd[2];
-    fd[0] = STDIN_FILENO;
-    *fd[1] = STDOUT_FILENO;
-    int file_descriptor = -1;
-    if (oper_node && oper_node->tokentype == REDIRECTION)
-    {
-        if (!strcmp(oper_node->instr,"<")
-                || !strcmp(oper_node->instr, ">"))
-            file_descriptor =
-                open(oper_node->next->instr, O_RDWR ||O_CREAT);
-        if (!strcmp(oper_node->instr,"<"))
-            *fd[0] = file_descriptor;
-        else
-            *fd[1] = file_descriptor;
-    }
-    return fd;
-}*/
+
 
 int redirection_aux(char **command, struct node *n, int fd[2],
         struct stored_data *data)
 {
     struct node *oper_node = get_oper_node(n);
     int fd_next[2];
-    //fill_fd(&fd_next, oper_node);
     pid_t pid = fork();
     int status = 0;
     if (pid == -1)//error
