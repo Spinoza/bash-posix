@@ -128,7 +128,7 @@ struct linked_list *reading(FILE *file)
     {
         free(line);
         line = NULL;
-        errx(1, "incoherent input.");
+        return NULL;
     }
     while (res != -1 && is_empty(line))
     {
