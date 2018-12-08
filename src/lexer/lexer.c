@@ -184,7 +184,7 @@ int special_character(char c, int quoting, enum type context)
     switch (c)
     {
         case '#':
-            return !quoting;
+            return 1;
         case '\n':
             return !quoting;
         case ' ':
@@ -192,15 +192,15 @@ int special_character(char c, int quoting, enum type context)
         case '\t': // tab character
             return !quoting;
         case '(':
-            return !quoting;
+            return 1;
         case ')':
-            return !quoting;
+            return 1;
         case '{':
-            return !quoting;
+            return 1;
         case '}':
             return !quoting;
         case ';':
-            return !quoting;
+            return 1;
         case '=':
             return context != WORD;
         case '&':
@@ -349,7 +349,7 @@ static struct token *read_characters(struct token *new, char *string,
     {
         if (*(string + *index) == '\'' || *(string + *index) == '\"')
         {
-            quoting = !quoting;
+            quoting -= quoting;
             continue;
         }
         if (special_character(*(string + *index), quoting, context))
