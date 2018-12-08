@@ -84,21 +84,25 @@ int strcmp_expand(char *name, char *toexpand)
 
 char *get_assign_var(char *name, struct assignment **a_tab)
 {
+    if (!name)
+    {
+        return NULL;
+    }
     int pos = hash_function(name);
     struct assignment *a = a_tab[pos];
     for ( ; a ; a = a ->next)
     {
         if (!a->name)
-            return "";
+            return NULL;
         if (!strcmp_expand(name, a->name))
         {
             char *recursive_value = get_assign_var(a->value, a_tab);
-            if (!strcmp(recursive_value, ""))
+            if (!recursive_value)
                 return a->value;
             return recursive_value;
         }
     }
-    return "";
+    return NULL;
 }
 
 char *get_assign(char *name, struct stored_data *data)

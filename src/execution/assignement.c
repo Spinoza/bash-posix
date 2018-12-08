@@ -56,7 +56,7 @@ static struct assignment *to_assign(char *name, char *value)
     struct assignment *new = calloc(1, sizeof(struct assignment));
     new->name = name;
     char *recursive_value = value;
-    if (value[0] == '$')
+    if (value && value[0] == '$')
     {
         recursive_value = get_assign(value + 1, global.data);
         free(value);

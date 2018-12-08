@@ -101,7 +101,7 @@ int my_export(int number, char *args[], ...)
                     char *name = calloc(sizeof(char), len + 1);
                     name = memcpy(name, args[i], len);
                     char *value = get_assign(name, global.data);
-                    add_assignment_split(args[i], value,
+                    add_assignment_split(name, value,
                             global.data->export_tab);
                }
             }
