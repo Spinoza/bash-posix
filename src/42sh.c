@@ -152,10 +152,13 @@ static int interactive_mode(struct globv global)
         handle_signals();
         char *line;
         char *PS1 = get_assignment("PS1");
+        int fileSave = STDOUT_FILENO;
+        dup2(STDERR_FILENO, STDOUT_FILENO);
         if (!PS1)
             line = readline("42sh$ ");
         else
             line = readline(PS1);
+        dup2(fileSave, STDOUT_FILENO);
         if (!line)
         {
             printf("exit\n");
