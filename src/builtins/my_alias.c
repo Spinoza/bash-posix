@@ -83,7 +83,7 @@ static int print_alias(char *arg)
 
         if (!strcmp(a->name, arg))
         {
-            fprintf(stdout, "alias %s='%s'\n", arg, a->value);
+            fprintf(stdout, "alias %s='%s'\n", arg, a->value ? a->value : "\0");
             return 0;
         }
     }
