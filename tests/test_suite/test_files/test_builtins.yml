@@ -402,7 +402,7 @@ break_too_hight:
 
 break_0:
         type: "bash diff"
-        command: "while true; do for i in 1 2 3; do echo ew; break 0; echo wow;"
+        command: "while true; do for i in 1 2 3; do echo ew; break 0; done; echo wow; done"
         expected:
                 stdout:
                 stderr:
