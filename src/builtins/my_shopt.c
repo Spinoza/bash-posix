@@ -304,6 +304,8 @@ int my_shopt(char *args[], ...)
 
     while (args[i])
     {
+        int vuO = set_opt(args[i], &q, &s, &u);
+
         if (s && u)
         {
             fprintf(stderr, "shopt: cannot set and unset an option at the same time.\n");
@@ -312,7 +314,6 @@ int my_shopt(char *args[], ...)
         }
 
 
-        int vuO = set_opt(args[i], &q, &s, &u);
 
         if (vuO == 0 && !found)
         {
