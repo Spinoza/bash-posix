@@ -206,7 +206,7 @@ function_redefinition:
 
 for_dollar_i:
         type: "bash diff"
-        command: "for i in 1 2 3; echo $i; done;"
+        command: "for i in 1 2 3; do echo $i; done;"
         expected:
                 stdout:
                 stderr:
