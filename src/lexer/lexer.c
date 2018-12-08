@@ -272,14 +272,18 @@ static struct token *set_specials(struct token *new, char *string,
                 {
                     cmp[i] = string[*index];
                 }
-                break;
+                else
+                {
+                    *index = *index + 1;
+                    break;
+                }
             }
             else
             {
                 if (cmp[0] == string[*index] && i == 1)
                 {
                     cmp[1] = string[*index];
-                    //*index = *index + 1;
+                    *index = *index + 1;
                 }
                 break;
             }
