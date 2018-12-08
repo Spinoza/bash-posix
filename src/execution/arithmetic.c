@@ -297,7 +297,7 @@ long int eval_list(struct stack *stack, struct stack *operators_stack,
             *index = *index + 1;
             continue;
         }
-        if (stack && !current->nb && current->op != OPEN_PAR_OPER)
+        if (stack && current->op && current->op != OPEN_PAR_OPER)
         {
             int next_precedence = get_precedence(current);
             if (next_precedence <= precedence)
@@ -310,7 +310,7 @@ long int eval_list(struct stack *stack, struct stack *operators_stack,
             precedence = 0;
             operators_stack = push(operators_stack, copy_bt_node(current));
         }
-        if (current->nb)
+        if (!current->op)
             stack = push(stack, copy_bt_node(current));
         *index = *index + 1;
     }

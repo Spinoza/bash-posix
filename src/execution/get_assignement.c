@@ -1,5 +1,6 @@
 #define _GNU_SOURCE
 #include "execution_ast.h"
+#include "arithmetic.h"
 #include "globals.h"
 #include <string.h>
 #include <stdlib.h>
@@ -107,6 +108,8 @@ char *get_assign_var(char *name, struct assignment **a_tab)
 
 char *get_assign(char *name, struct stored_data *data)
 {
+    if (name[0] == '(' && name[1] == '(')
+        return arith_expansion(name);
     if (!strcmp_expand(name, "#"))
         return inttochar(data->nbparam);
     if (!strcmp_expand(name, "$"))
