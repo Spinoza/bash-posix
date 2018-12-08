@@ -85,6 +85,48 @@ static int remove_all(void)
     return 0;
 }
 
+static int isidentical(char *s1, char *s2)
+{
+    size_t i = 0;
+    for (; (s1[i] != '=') && i < strlen(s1) && i < strlen(s2); i++)
+    {
+        if (s1[i] != s2[i])
+        {
+            return 0;
+        }
+    }
+
+    if (s1[i] == '=')
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+static int removed_vec(char *toremove)
+{
+    if (!toremove || !global.aliastab)
+    {
+        return 0;
+    }
+    for (ssize_t i = 0; i < global.aliastab->size; i++)
+    {
+        if (global.aliastab->arr[i])
+        {
+            if (!isidentical(global.aliastab->arr[i], toremove))
+            {
+                break;
+            }
+            free(global.aliastab->arr[i]);
+            global.aliastab->arr[i] = NULL;
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 int my_unalias(int number, char *args[], ...)
 {
     number = number;
@@ -113,6 +155,11 @@ int my_unalias(int number, char *args[], ...)
         else
         {
             found = 1;
+            if (removed_vec(args[i]))
+            {
+                i++;
+                continue;
+            }
             if (retcode == 0)
                 retcode = remove_assignment(args[i]);
             else
