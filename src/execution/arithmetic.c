@@ -59,7 +59,7 @@ static enum oper get_op(char *string, int *index)
     if (!string)
         return 0;
     //z is here to match with the enum
-    char *list_op = "z+-*/~^&|() ";
+    char *list_op = "z+-*/~^zz() ";
     for (int i = 0; *(list_op + i); i++)
     {
         if (string[*index] == list_op[i])
@@ -73,15 +73,25 @@ static enum oper get_op(char *string, int *index)
         *index = *index + 2;
         return POWER;
     }
-    if (string[*index] == '&' && string[*index + 1] == '&')
+    if (string[*index] == '&')
     {
-        *index = *index + 2;
-        return AND_OPER;
+        *index = *index + 1;
+        if (string[*index] == '&')
+        {
+            *index = *index + 1;
+            return AND_OPER;
+        }
+        return BIT_AND;
     }
-    if (string[*index] == '|' && string[*index + 1] == '|')
+    if (string[*index] == '|')
     {
-        *index = *index + 2;
-        return OR_OPER;
+        *index = *index + 1;
+        if (string[*index] == '|')
+        {
+            *index = *index + 1;
+            return OR_OPER;
+        }
+        return BIT_OR;
     }
     return 0;
 }
