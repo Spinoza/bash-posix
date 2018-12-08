@@ -18,7 +18,7 @@ static size_t nbdigits(int r)
 char *inttochar(int nb)
 {
     size_t s = nbdigits(nb);
-    char *number = malloc(sizeof(char) * (s + 1));
+    char *number = malloc(sizeof(char) * (s + 2));
     if (nb == 0)
     {
         number[0] = '0';
@@ -118,10 +118,7 @@ char *get_assign(char *name, struct stored_data *data)
     if (!strcmp_expand(name, "RANDOM"))
         return get_random();
     if (!strcmp_expand(name, "UID"))
-    {
-        int uid = getuid();
-        return inttochar(uid);
-    }
+        return inttochar(getuid());
     if (isanumber(name) != -1)
         return get_param(name, data);
     return get_assign_var(name, data->var_tab);
