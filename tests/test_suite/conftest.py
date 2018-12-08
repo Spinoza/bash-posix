@@ -4,7 +4,7 @@ import yaml
 import os
 def pytest_addoption(parser):
     parser.addoption("--valgrind", action="store", default="2")
-    parser.addoption("--timeout", action="store", default="1")
+    parser.addoption("--timeout", action="store", default="5")
     parser.addoption("--check", action="store", default="0")
 
 def pytest_collect_file(parent, path, *args, **kwargs):

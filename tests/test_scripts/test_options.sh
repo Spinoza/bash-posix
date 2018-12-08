@@ -7,6 +7,8 @@ pipes=0
 func=0
 all=0
 builtins=0
+assignments=0
+arithmetic=0
 timeout=5
 
 PURPLE='\033[1;35m'
@@ -15,7 +17,7 @@ NC='\033[0m'
 for (( i=1; i<=$#; i++))
 do
     if [ "${!i}" = "--list" -o "${!i}" = "-l" ]; then
-        echo -e "List of test categories to call with -c <category> : \n    commands\n    cases\n    loops\n    if\n    pipes\n    functions\n    builtins"
+        echo -e "List of test categories to call with -c <category> : \n    commands\n    cases\n    loops\n    if\n    pipes\n    functions\n    builtins\n    arithmetic\n    assignments"
     fi;
     if [ "${!i}" = "--timeout" -o "${!i}" = "-t" ]; then
         x=$(($i + 1))
@@ -57,6 +59,14 @@ do
 
             if [ "${!j}" = "builtins" ]; then
                 builtins=1
+            fi;
+
+            if [ "${!j}" = "assignments" ]; then
+                assignments=1
+            fi;
+
+            if [ "${!j}" = "arithmetic" ]; then
+                arithmetic=1
             fi;
         done
     fi;
@@ -123,6 +133,20 @@ if [ $builtins -eq 1 ]; then
     pytest $timeout_string "../test_suite/test_files/test_builtins.yml" $sanity_string
     echo
 fi;
+
+if [ $assignments -eq 1 ]; then
+    echo -e "${PURPLE}Starting tests on assigments.\n${NC}"
+    pytest $timeout_string "../test_suite/test_files/test_assignment.yml" $sanity_string
+    echo
+fi;
+
+
+if [ $arithmetic -eq 1 ]; then
+    echo -e "${PURPLE}Starting tests on arithmetic.\n${NC}"
+    pytest $timeout_string "../test_suite/test_files/test_arithmetic.yml" $sanity_string
+    echo
+fi;
+
 
 
 deactivate
