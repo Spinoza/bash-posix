@@ -153,7 +153,8 @@ char *set_string(char *instr, struct stored_data *data)
                 assigned_value = get_assign(name, data);
             }
             k = copy_string(assigned_value, &string, k, capacity);
-            if (!strcmp(name, "UID") || !strcmp(name,"?"))
+            if (!strcmp(name, "UID") || !strcmp(name,"?")
+                    || !strcmp(name, "$") || !strcmp(name, "#"))
                 free(assigned_value);
             free(name);
         }
