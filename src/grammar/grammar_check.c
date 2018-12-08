@@ -162,7 +162,11 @@ struct nL  *g_list(struct nL *tok)
 
 int grammar_check (struct linked_list *tokens)
 {
+    if (!tokens)
+        return 0;
     struct nL *tok = tokens->head;
+    if (!tok)
+        return 0;
     if (tok->elem->type == ENDOF)
         return 1;
 

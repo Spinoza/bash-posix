@@ -259,13 +259,12 @@ int main(int argc, char *argv[])
     {
         tokens = lexer_c(global.options->arg_c);
     }
-//    print_list(tokens);
     int isgramm = grammar_check(tokens);
     if (!isgramm)
     {
-        fprintf(stderr, "42sh: unexpected token.");
-        char *argE = { "exit", "2", NULL };
-        my_exit(argE, 0);
+        free_list(tokens);
+        free_glob();
+        errx(2, "lexer: unexpected token.");
     }
     struct node *ast = build_ast(tokens);
     global.ast_root = ast;

@@ -8,7 +8,7 @@ func:
 
 func_multiple_statements:
         type: "bash diff"
-        command: "func() { ls -la; echo wow; ls;} func;"
+        command: "func() { ls -la; echo wow; ls; } ; func;"
         expected:
                 stdout:
                 stderr:
@@ -32,7 +32,7 @@ while_true_func_calls:
 
 func_multiple_definition:
         type: "bash diff"
-        command: "func() { echo oups; } ; func () { echo wow; } ; func ();"
+        command: "func() { echo oups; } ; func () { echo wow; } ; func;"
         expected:
                 stdout:
                 stderr:
@@ -41,7 +41,7 @@ func_multiple_definition:
 
 func_pipe:
         type: "bash diff"
-        command: "func() { echo pipe; ls | cat -e; } ; func ();"
+        command: "func() { echo pipe; ls | cat -e; } ; func;"
         expected:
                 stdout:
                 stderr:
@@ -49,7 +49,7 @@ func_pipe:
 
 func_if:
         type: "bash diff"
-        command: "func() { if true; then echo true; else echo false; fi; } ; func ();"
+        command: "func() { if true; then echo true; else echo false; fi; } ; func;"
         expected:
                 stdout:
                 stderr:
@@ -57,7 +57,7 @@ func_if:
 
 func_case:
         type: "bash diff"
-        command: "func() {case true in true) echo true; ;; esac } ; func ();"
+        command: "func() { case true in true) echo true; ;; esac } ; func;"
         expected:
                 stdout:
                 stderr:
