@@ -123,9 +123,6 @@ struct node *instr_execution(struct node *n, int *res,
     if (!strcmp(command_call[0], "break"))
     {
         *res = 0;
-        //if (command_call[1])
-        //    break_execution(data, atoi(command_call[1]));
-        //else
         if (command_call[1])
         {
             break_execution(data, atoi(command_call[1]));
@@ -184,8 +181,8 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
     int i = 0;
     for (; cond && cond->tokentype != SEMICOLON; cond = cond->next, i++)
     {
-        if (cond->tokentype == EXPAND_W
-                && (cond->instr[0] == '@' || cond->instr[0] == '*'))
+        if (cond->instr[0] == '$'
+            && (cond->instr[1] == '@' || cond->instr[1] == '*'))
         {
             if (i + data->nbparam >= capacity)
             {

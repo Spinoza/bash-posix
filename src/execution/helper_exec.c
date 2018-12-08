@@ -200,9 +200,24 @@ char **to_execute(struct node *child, struct node *oper_node
     char *instr = NULL;
     for (; iter && iter != oper_node; i++, iter = iter->next)
     {
-        instr = set_string(iter->instr, data);
-        result = realloc(result, (i + 1) * sizeof(char *));
-        result[i] = instr;
+        if (strcmp(iter->instr,"$@") && strcmp(iter->instr,"$*"))
+        {
+            instr = set_string(iter->instr, data);
+            result = realloc(result, (i + 1) * sizeof(char *));
+            result[i] = instr;
+        }
+        else
+        {
+            result = realloc(result, (i + data->nbparam)* sizeof(char *));
+            for (int j = 0; j < data->nbparam; j++, i++)
+            {
+                int len = strlen(data->param[j]);
+                instr = calloc(len + 1, sizeof(char));
+                instr = memcpy(instr, data->param[j], len);
+                result[i] = instr;
+            }
+            i--;
+        }
     }
     result = realloc(result, (i + 1) * sizeof(char *));
     result[i] = NULL;
