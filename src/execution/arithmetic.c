@@ -59,7 +59,7 @@ static enum oper get_op(char *string, int *index)
     if (!string)
         return 0;
     //z is here to match with the enum
-    char *list_op = "z+-*/~() ";
+    char *list_op = "z+-*/~^&|() ";
     for (int i = 0; *(list_op + i); i++)
     {
         if (string[*index] == list_op[i])
@@ -71,7 +71,7 @@ static enum oper get_op(char *string, int *index)
     if (string[*index] == '*' && string[*index + 1] == '*')
     {
         *index = *index + 2;
-        return AND_OPER;
+        return POWER;
     }
     if (string[*index] == '&' && string[*index + 1] == '&')
     {
@@ -203,21 +203,32 @@ static int power(double nb, long int exp, double res)
     return power(nb, exp - 1, res * nb);
 }
 
+// this function is here to convert double values to int for bitwise operations
+static int bit_operations(int left, int right, enum oper op)
+{
+    if (op == BIT_XOR)
+        return left ^ right;
+    if (op == BIT_AND)
+        return left & right;
+    return left | right;
+}
 static double compute(struct bt_node *left, struct bt_node *oper,
         struct bt_node *right)
 {
-    double res = 0;
     switch (oper->op)
     {
+        case BIT_XOR:
+            return bit_operations(left->nb, right->nb, oper->op);
+        case BIT_AND:
+            return bit_operations(left->nb, right->nb, oper->op);
+        case BIT_OR:
+            return bit_operations(left->nb, right->nb, oper->op);
         case PLUS:
-            res =left->nb + right->nb;
-            break;
+            return left->nb + right->nb;
         case MINUS:
-            res = left->nb - right->nb;
-            break;
+            return left->nb - right->nb;
         case MULTIPLY:
-            res =left->nb * right->nb;
-            break;
+            return left->nb * right->nb;
         case DIVIDE:
             if (!right->nb)
             {
@@ -226,24 +237,20 @@ static double compute(struct bt_node *left, struct bt_node *oper,
                 global.data->builtins[0].builtin(NULL, global.res);
                 return 0;
             }
-            res = left->nb / right->nb;
-            break;
+            return left->nb / right->nb;
         case POWER:
-            res = power(left->nb, right->nb, 1);
-            break;
+            return power(left->nb, right->nb, 1);
         case AND_OPER:
-            res = left->nb && right->nb;
-            break;
+            return left->nb && right->nb;
         case OR_OPER:
-            res = left->nb || right->nb;
-            break;
+            return left->nb || right->nb;
         default:
             global.res = 2;
             fprintf(stderr,"42sh: arithmetic expansion, bad operator.\n");
             global.data->builtins[0].builtin(NULL, global.res);
             return -1;
     }
-    return res;
+    return -1;
 }
 
 static struct stack *eval_nodes(struct stack *stack,
@@ -296,6 +303,12 @@ static int get_precedence(struct bt_node *node)
             return 3;
         case CLOSE_PAR_OPER:
             return 4;
+        case BIT_XOR:
+            return 3;
+        case BIT_AND:
+            return 3;
+        case BIT_OR:
+            return 3;
         default:
             return 1;
     }
