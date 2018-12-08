@@ -263,7 +263,9 @@ int main(int argc, char *argv[])
     int isgramm = grammar_check(tokens);
     if (!isgramm)
     {
-        errx(2, "Lexer error. Is your input conform to grammar ?");
+        fprintf(stderr, "42sh: unexpected token.");
+        char *argE = { "exit", "2", NULL };
+        my_exit(argE, 0);
     }
     struct node *ast = build_ast(tokens);
     global.ast_root = ast;
