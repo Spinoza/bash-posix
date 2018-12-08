@@ -35,6 +35,7 @@ void free_data(struct stored_data *data)
     free_assignments(data->var_tab);
     free_assignments(data->alias_tab);
     free_assignments(data->export_tab);
+    free(data->parent_list);
     free(data);
 }
 

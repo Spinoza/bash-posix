@@ -191,7 +191,11 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
                 instruction = realloc(instruction, capacity * sizeof(char *));
             }
             for (int j = 0 ; j < data->nbparam; j++, i++)
-                instruction[i] = data->param[j];
+            {
+                int len = strlen(data->param[j]);
+                instruction[i] = calloc(len + 1, sizeof(char));
+                instruction[i] = memcpy(instruction[i], data->param[j], len);
+            }
             i--;
         }
         else

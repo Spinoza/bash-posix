@@ -76,9 +76,20 @@ static int already_exists(char *name, char *value,
         if (!strcmp(name, a->name))
         {
             if (name != a->name)
+            {
                 free(a->name);
+            }
             if (a->value)
-                free(a->value);
+            {
+                int i = 0;
+                for (; global.data->nbparam > i
+                        && a->value != global.data->param[i]; i++);
+                if (i == global.data->nbparam)
+                {
+                    free(a->value);
+                    a->value = NULL;
+                }
+            }
             a->name = name;
             a->value = value;
             return 1;
