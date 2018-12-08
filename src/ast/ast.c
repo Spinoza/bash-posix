@@ -55,6 +55,8 @@ static enum ntype node_getype(enum type type)
             return A_CONDITION;
         case 24:
             return A_ROOT;
+        case 25:
+            return A_REDIR;
         case 31:
             return A_FUNCTION;
         default:
@@ -154,7 +156,8 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         }
         return tok;
     }
-    if (r->type == A_INSTRUCT || r->type == A_PIPE || r->type == A_IN)
+    if (r->type == A_INSTRUCT || r->type == A_PIPE || r->type == A_IN
+    || r->type == A_REDIR)
     {
         return tok;
     }

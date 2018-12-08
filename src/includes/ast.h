@@ -34,7 +34,7 @@ enum ntype
     A_IN, /**< Node that separates comparing from comprared instructions */
     A_ELIF, /**< Cf A_IF*/
     A_PIPE, /**< Siblings must be executed with a pipe between them */
-    A_FUNCTION /**< Tree that will declare a function*/
+    A_FUNCTION, /**< Tree that will declare a function*/
     A_REDIR /**< Siblings must be executed with a redirection between them */
 };
 
