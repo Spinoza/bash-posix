@@ -8,6 +8,7 @@
 #include <readline/history.h>
 #include <libgen.h>
 #include <locale.h>
+#include <signal.h>
 #include "lexer.h"
 #include "builtins.h"
 #include "history.h"
@@ -129,6 +130,17 @@ static char * from_tok_toS(struct linked_list *tokens)
     return final;
 }
 
+static void sig_handling(__attribute__((unused))int signum)
+{
+    return;
+}
+
+static void handle_signals()
+{
+    signal(SIGINT, sig_handling);
+    signal(SIGTSTP, sig_handling);
+}
+
 static int interactive_mode(struct globv global)
 {
     using_history();
@@ -137,6 +149,7 @@ static int interactive_mode(struct globv global)
     char *listadd = NULL;
     while (1)
     {
+        handle_signals();
         char *line;
         char *PS1 = get_assignment("PS1");
         if (!PS1)
