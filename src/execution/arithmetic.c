@@ -1,6 +1,8 @@
 #include "arithmetic.h"
 #include "stack.h"
 #include "ast.h"
+#include "globals.h"
+#include "builtins.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -170,7 +172,7 @@ static struct arith_list *build_list(char *string)
     }
     if (parenthesis != 0)
     {
-        fprintf(stderr, "42sh: arithmetic expansion missing a parenthesis");
+        fprintf(stderr, "42sh: arithmetic expansion missing a parenthesis\n");
         free_arith_list(arith_list);
         return NULL;
     }
@@ -202,6 +204,13 @@ static double compute(struct bt_node *left, struct bt_node *oper,
             res =left->nb * right->nb;
             break;
         case DIVIDE:
+            if (!right->nb)
+            {
+                global.res = 127;
+                fprintf(stderr,"42sh: division by 0.\n");
+                global.data->builtins[0].builtin(NULL, global.res);
+                return 0;
+            }
             res = left->nb / right->nb;
             break;
         case POWER:

@@ -49,7 +49,7 @@ int my_exit(char *args[],  ...)
     int retcode = va_arg(ap, int);
     int i = 1;
 
-    while (args[i] && strcmp(args[i], ";"))
+    while (args && args[i] && strcmp(args[i], ";"))
     {
         if (found)
         {
