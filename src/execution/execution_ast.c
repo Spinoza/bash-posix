@@ -182,6 +182,7 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
     for (; cond && cond->tokentype != SEMICOLON; cond = cond->next, i++)
     {
         if (cond->instr[0] == '$'
+            && cond->instr[1]
             && (cond->instr[1] == '@' || cond->instr[1] == '*'))
         {
             if (i + data->nbparam >= capacity)
@@ -189,8 +190,8 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
                 capacity = (i + data->nbparam) * 2;
                 instruction = realloc(instruction, capacity * sizeof(char *));
             }
-            for (; i < data->nbparam; i++)
-                instruction[i] = data->param[i];
+            for (int j = 0 ; j < data->nbparam; j++, i++)
+                instruction[i] = data->param[j];
             i--;
         }
         else

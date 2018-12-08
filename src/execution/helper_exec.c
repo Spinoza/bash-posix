@@ -30,7 +30,7 @@ void free_data(struct stored_data *data)
     {
         free(data->builtins);
     }
-    if (data->nbparent >= 0)
+    if (data->nbparent > 0)
         free(data->parent_list);
     free_assignments(data->var_tab);
     free_assignments(data->alias_tab);
@@ -114,25 +114,6 @@ static int copy_string(char *source, char **dest, int start_index,
  * current capacity of result string.
  * */
 
-char *append_parameters(char *string, int *capacity, int *k,
-        struct stored_data *data)
-{
-    for (int i = 0; data->param[i]; i++)
-    {
-        *k = copy_string(data->param[i], &string, *k, capacity);
-        if (*k + 2 >= *capacity)
-        {
-            *capacity *=2;
-            string = realloc(string, sizeof(char) * *capacity);
-        }
-        if (data->param[i + 1])
-        {
-            string[*k] = ' ';
-            *k = *k + 1;
-        }
-    }
-    return string;
-}
 char *set_string(char *instr, struct stored_data *data)
 {
     int len = strlen(instr) + 1;
@@ -155,30 +136,25 @@ char *set_string(char *instr, struct stored_data *data)
         }
         if (after_dollar)
         {
-            if (instr[i] == '@' || instr[i] == '*')
-                string = append_parameters(string, capacity, &k, data);
+            char *assigned_value = NULL;
+            char *name = NULL;
+            if (instr[i] >= '0' && instr[i] <= '9')
+            {
+                name = calloc(2, sizeof(char));
+                name[0] = instr[i];
+                assigned_value = get_assign(name, data);
+            }
             else
             {
-                char *assigned_value = NULL;
-                char *name = NULL;
-                if (instr[i] >= '0' && instr[i] <= '9')
-                {
-                    name = calloc(2, sizeof(char));
-                    name[0] = instr[i];
-                    assigned_value = get_assign(name, data);
-                }
-                else
-                {
-                    name = calloc(len, sizeof(char));
-                    for (int j = 0; *(instr + i) && *(instr + i) != '$';
-                            i++, j++)
-                        name[j] = instr[i];
-                    i--;
-                    assigned_value = get_assign(name, data);
-                }
-                k = copy_string(assigned_value, &string, k, capacity);
-                free(name);
+                name = calloc(len, sizeof(char));
+                for (int j = 0; *(instr + i) && *(instr + i) != '$';
+                        i++, j++)
+                    name[j] = instr[i];
+                i--;
+                assigned_value = get_assign(name, data);
             }
+            k = copy_string(assigned_value, &string, k, capacity);
+            free(name);
         }
         else
         {
@@ -231,7 +207,6 @@ char **to_execute(struct node *child, struct node *oper_node
     }
     return result;
 }
-
 
 void free_command(char **string)
 {
