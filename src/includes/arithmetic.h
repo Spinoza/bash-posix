@@ -8,10 +8,15 @@ enum oper
     MINUS, // precedence 1
     MULTIPLY, // precedence 2
     DIVIDE, // precedence 2
-    POWER, // precedence 3
     TILDE, // precedence 3
     OPEN_PAR_OPER, // precedence 0
     CLOSE_PAR_OPER, //precedence 4
+    POWER, // precedence 3
+    AND_OPER,
+    OR_OPER,
+    //NOT_OPER,
+    //BIT_AND,
+    //BIT_OR,
     WHITE_SPACE //Used in get_op function
 };
 

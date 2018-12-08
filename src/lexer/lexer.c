@@ -184,7 +184,7 @@ int special_character(char c, int quoting, enum type context)
     switch (c)
     {
         case '#':
-            return 1;
+            return !quoting;
         case '\n':
             return !quoting;
         case ' ':
@@ -196,21 +196,21 @@ int special_character(char c, int quoting, enum type context)
         case ')':
             return !quoting;
         case '{':
-            return 1;
+            return !quoting;
         case '}':
-            return 1;
+            return !quoting;
         case ';':
-            return 1;
+            return !quoting;
         case '=':
             return context != WORD;
         case '&':
-            return 1;
+            return !quoting;
         case '|':
-            return 1;
+            return !quoting;
         case '>':
-            return 1;
+            return !quoting;
         case '<':
-            return 1;
+            return !quoting;
         default:
             return 0;
     }

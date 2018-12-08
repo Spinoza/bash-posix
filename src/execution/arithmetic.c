@@ -59,7 +59,7 @@ static enum oper get_op(char *string, int *index)
     if (!string)
         return 0;
     //z is here to match with the enum
-    char *list_op = "z+-*/^~() ";
+    char *list_op = "z+-*/~() ";
     for (int i = 0; *(list_op + i); i++)
     {
         if (string[*index] == list_op[i])
@@ -67,6 +67,21 @@ static enum oper get_op(char *string, int *index)
             *index = *index + 1;
             return i;
         }
+    }
+    if (string[*index] == '*' && string[*index + 1] == '*')
+    {
+        *index = *index + 2;
+        return AND_OPER;
+    }
+    if (string[*index] == '&' && string[*index + 1] == '&')
+    {
+        *index = *index + 2;
+        return AND_OPER;
+    }
+    if (string[*index] == '|' && string[*index + 1] == '|')
+    {
+        *index = *index + 2;
+        return OR_OPER;
     }
     return 0;
 }
@@ -216,8 +231,16 @@ static double compute(struct bt_node *left, struct bt_node *oper,
         case POWER:
             res = power(left->nb, right->nb, 1);
             break;
+        case AND_OPER:
+            res = left->nb && right->nb;
+            break;
+        case OR_OPER:
+            res = left->nb || right->nb;
+            break;
         default:
+            global.res = 2;
             fprintf(stderr,"42sh: arithmetic expansion, bad operator.\n");
+            global.data->builtins[0].builtin(NULL, global.res);
             return -1;
     }
     return res;
@@ -228,7 +251,9 @@ static struct stack *eval_nodes(struct stack *stack,
 {
     struct bt_node *right = pop(stack);
     struct bt_node *oper = pop(operators_stack);
-    struct bt_node *left = pop(stack);
+    struct bt_node *left = NULL;
+    if (stack->head)
+        left = pop(stack);
     long int res = compute(left, oper, right);
     if (oper->op == DIVIDE && right->nb == 0)
     {
@@ -251,6 +276,8 @@ static int get_precedence(struct bt_node *node)
         return 0;
     switch (node->op)
     {
+        case OPEN_PAR_OPER:
+            return 0;
         case NOT_AN_OP:
             return -1;
         case WHITE_SPACE:
@@ -267,13 +294,11 @@ static int get_precedence(struct bt_node *node)
             return 3;
         case POWER:
             return 3;
-        case OPEN_PAR_OPER:
-            return 0;
         case CLOSE_PAR_OPER:
             return 4;
+        default:
+            return 1;
     }
-    fprintf(stderr,"42sh: bad operator in arithmetic expression");
-    return -1;
 }
 
 struct bt_node *copy_bt_node(struct bt_node *to_copy)
