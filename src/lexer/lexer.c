@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define LIST_LENGTH 31
+#define LIST_LENGTH 42
 #define REDIR_LENGTH 9
 
 static struct token *token_init(void)
@@ -165,6 +165,17 @@ static char **init_list(void)
     *(list + 28) = "{";
     *(list + 29) = "}";
     *(list + 30) = ";;";
+    *(list + 31) = "";
+    *(list + 32) = "";
+    *(list + 33) = ">";
+    *(list + 34) = "<";
+    *(list + 35) = "<<";
+    *(list + 36) = ">>";
+    *(list + 37) = "<<-";
+    *(list + 38) = ">&";
+    *(list + 39) = "<&";
+    *(list + 40) = ">|";
+    *(list + 41) = "<>";
     return list;
 }
 
@@ -196,6 +207,10 @@ int special_character(char c, int quoting, enum type context)
             return 1;
         case '|':
             return 1;
+        case '>':
+            return 1;
+        case '<':
+            return 1;
         default:
             return 0;
     }
@@ -210,29 +225,77 @@ static struct token *set_token(struct token *new, char *res, int cur_index,
     return new;
 }
 
+static int redirection_char(char c, char pre, int i)
+{
+    if (i == 1)
+    {
+        switch (c)
+        {
+            case '>':
+                return 1;
+            case '<':
+                if(pre == '<')
+                    return 1;
+                break;
+            case '&':
+                return 1;
+            case '|':
+                if(pre == '>')
+                    return 1;
+                break;
+        }
+    }
+    else
+    {
+        if(c == '-' && pre == '<' && i == 2)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 static struct token *set_specials(struct token *new, char *string,
         int *index, char **list)
 {
-    char *cmp = calloc(3, sizeof(char));
+    char *cmp = calloc(4, sizeof(char));
+    int i = 0;
     for (; string[*index]; *index = *index + 1)
     {
         if (!cmp[0])
             cmp[0] = string[*index];
         else
         {
-            if (cmp[0] == string[*index])
+            if(cmp[0] == '<' || cmp[0] == '>')
             {
-                cmp[1] = string[*index];
-                *index = *index + 1;
+                if(redirection_char(string[*index], string[*index - 1], i))
+                {
+                    cmp[i] = string[*index];
+                }
+                break;
             }
-            break;
+            else
+            {
+                if (cmp[0] == string[*index] && i == 1)
+                {
+                    cmp[1] = string[*index];
+                    //*index = *index + 1;
+                }
+                break;
+            }
         }
+        i++;
     }
     for (int i = 0; i < LIST_LENGTH; i++)
     {
         if (!strcmp(cmp, list[i]))
         {
-            new->type = i;
+            if(i >= 33)
+                new->type = 25;
+            else
+            {
+                new->type = i;
+            }
             new->name = cmp;
             break;
         }
