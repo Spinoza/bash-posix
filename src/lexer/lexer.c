@@ -85,16 +85,16 @@ void print_enum(enum type type)
                 printf("HEREDOC");
                 break;
         case 22:
-                printf("REDIRECTION");
-                break;
-        case 23:
                 printf("IONUMBER");
                 break;
-        case 24:
+        case 23:
                 printf("CONDITION");
                 break;
-        case 25:
+        case 24:
                 printf("ROOT");
+                break;
+        case 25:
+                printf("REDIRECTION");
                 break;
         case 26:
                 printf("OPEN_PAR");
@@ -294,7 +294,7 @@ static struct token *set_specials(struct token *new, char *string,
         if (!strcmp(cmp, list[i]))
         {
             if(i >= 33)
-                new->type = 22;
+                new->type = 25;
             else
             {
                 new->type = i;
