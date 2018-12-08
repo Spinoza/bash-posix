@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -37,13 +39,26 @@ struct node *next_node(struct node *n)
         return oper_node->next;
     return NULL;
 }
+
 /*
-void fill_fd (int fd[2], struct node *oper_node)
+int *fill_fd (struct node *oper_node)
 {
+    int fd[2];
+    fd[0] = STDIN_FILENO;
+    *fd[1] = STDOUT_FILENO;
+    int file_descriptor = -1;
     if (oper_node && oper_node->tokentype == REDIRECTION)
     {
-
+        if (!strcmp(oper_node->instr,"<")
+                || !strcmp(oper_node->instr, ">"))
+            file_descriptor =
+                open(oper_node->next->instr, O_RDWR ||O_CREAT);
+        if (!strcmp(oper_node->instr,"<"))
+            *fd[0] = file_descriptor;
+        else
+            *fd[1] = file_descriptor;
     }
+    return fd;
 }*/
 
 int redirection_aux(char **command, struct node *n, int fd[2],
@@ -51,7 +66,7 @@ int redirection_aux(char **command, struct node *n, int fd[2],
 {
     struct node *oper_node = get_oper_node(n);
     int fd_next[2];
-    //fill_fd(fd, oper_node);
+    //fill_fd(&fd_next, oper_node);
     pid_t pid = fork();
     int status = 0;
     if (pid == -1)//error
@@ -225,7 +240,7 @@ struct node *instr_execution(struct node *n, int *res,
     }
     else if (oper_node && oper_node->tokentype == REDIRECTION)
     {
-       // *res = redirection_handling(command_call, n, data);
+        // *res = redirection_handling(command_call, n, data);
         close_fds();
         while (oper_node && oper_node->tokentype == REDIRECTION)
             oper_node = get_oper_node(oper_node->next);
@@ -268,8 +283,8 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
     for (; cond && cond->tokentype != SEMICOLON; cond = cond->next, i++)
     {
         if (cond->instr[0] == '$'
-            && cond->instr[1]
-            && (cond->instr[1] == '@' || cond->instr[1] == '*'))
+                && cond->instr[1]
+                && (cond->instr[1] == '@' || cond->instr[1] == '*'))
         {
             if (i + data->nbparam >= capacity)
             {
@@ -326,16 +341,22 @@ int for_execution(struct node *n, int *res, struct stored_data *data)
         add_parent(n, data);
         for (size_t i = 0; instruction[i] && data->brk > 0; i++)
         {
-            add_assignment_split(cpy_instr, instruction[i],
+            int l = strlen(instruction[i]);
+            char *value = calloc(l + 1, sizeof(char));
+            value = memcpy(value, instruction[i], l);
+            add_assignment_split(cpy_instr, value,
                     data->var_tab);
             *res = traversal_ast(do_node, res, data);
             if (data->nbparent >= 0)
                 data->parent_list[data->nbparent--] = NULL;
         }
-        data->parent_list[data->nbparent--] = NULL;
+        if (data->nbparent > 0)
+            data->parent_list[data->nbparent--] = NULL;
+        else
+            data->parent_list[0] = NULL;
         if (data->brk)
             data->brk--;
-        free(instruction);
+        free_command(instruction);
     }
     return *res;
 }
@@ -406,8 +427,7 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
             data->brk++;
             while (if_cond(n, data) == 0 && data->brk > 0)
                 *res = traversal_ast(n->children->next, res, data);
-            if (data->brk)
-                data->brk--;
+           data->brk--;
             if (data->nbparent >= 0)
                 data->parent_list[data->nbparent--] = NULL;
         }
@@ -417,17 +437,15 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
             data->brk++;
             while (if_cond(n, data) && data->brk > 0)
                 *res = traversal_ast(n->children->next, res, data);
-            if (data->brk)
+            if (data->nbparent)
+            {
                 data->brk--;
             if (data->nbparent >= 0)
                 data->parent_list[data->nbparent--] = NULL;
         }
         if (n->type == A_FOR)
         {
-            add_parent(n, data);
             for_execution(n, res, data);
-            if (data->nbparent >= 0)
-                data->parent_list[data->nbparent--] = NULL;
         }
         return traversal_ast(n->next,res, data);
     }
