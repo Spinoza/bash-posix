@@ -295,7 +295,7 @@ static struct token *set_specials(struct token *new, char *string,
         if (!strcmp(cmp, list[i]))
         {
             if(i >= 33)
-                new->type = 25;
+                new->type = 22;
             else
             {
                 new->type = i;
