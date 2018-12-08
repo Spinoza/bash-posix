@@ -192,6 +192,7 @@ static int interactive_mode(struct globv global)
             if (global.options->ast_print == TRUE)
                 print_ast(ast);
             retcode = execution_ast(ast, global.data);
+            add_aliases();
             free_node(global.ast_root);
             global.ast_root = NULL;
             ast = NULL;
@@ -252,6 +253,7 @@ int main(int argc, char *argv[])
     if (global.options->ast_print == TRUE)
         print_ast(ast);
     int res = execution_ast(ast, global.data);
+    add_aliases();
     free_list(tokens);
     free_glob();
     return res;

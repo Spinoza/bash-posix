@@ -104,6 +104,22 @@ static int contain_equal(char *string)
     return 0;
 }
 
+void add_aliases(void)
+{
+    for (ssize_t i = 0; i < global.aliastab->size; i++)
+    {
+        if (global.aliastab->arr[i])
+        {
+            char *toadd = global.aliastab->arr[i];
+            add_assignment(toadd, global.data->alias_tab);
+            free(global.aliastab->arr[i]);
+            global.aliastab->arr[i] = NULL;
+        }
+    }
+
+    global.aliastab->size = 0;
+}
+
 int my_alias(int number, char *args[], ...)
 {
     number = number;
@@ -139,7 +155,9 @@ int my_alias(int number, char *args[], ...)
 
         else
         {
-            add_assignment(args[i], global.data->alias_tab);
+            char *cpy = calloc(strlen(args[i]) + 1, sizeof(char));
+            strcpy(cpy, args[i]);
+            vector_append(global.aliastab, cpy);
         }
 
         i++;
