@@ -274,7 +274,6 @@ static struct token *set_specials(struct token *new, char *string,
                 }
                 else
                 {
-                    *index = *index + 1;
                     break;
                 }
             }
