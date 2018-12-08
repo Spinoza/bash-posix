@@ -427,7 +427,7 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
             data->brk++;
             while (if_cond(n, data) == 0 && data->brk > 0)
                 *res = traversal_ast(n->children->next, res, data);
-           data->brk--;
+            data->brk--;
             if (data->nbparent >= 0)
                 data->parent_list[data->nbparent--] = NULL;
         }
@@ -437,9 +437,7 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
             data->brk++;
             while (if_cond(n, data) && data->brk > 0)
                 *res = traversal_ast(n->children->next, res, data);
-            if (data->nbparent)
-            {
-                data->brk--;
+            data->brk--;
             if (data->nbparent >= 0)
                 data->parent_list[data->nbparent--] = NULL;
         }

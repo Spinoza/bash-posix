@@ -25,7 +25,7 @@ void function_stored(struct node *n, struct stored_data *data)
         data->f_tab->capacity = 10;
         data->f_tab->f = calloc(10, sizeof(struct function*));
     }
-    struct function *func = is_a_function(n->instr, data->f_tab);
+    struct function *func = is_a_function(n->children->instr, data->f_tab);
     if (func)
     {
         free_node_copy(func->function_start);
