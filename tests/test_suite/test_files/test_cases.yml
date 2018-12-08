@@ -16,7 +16,7 @@ case_two_choices:
 
 case_many_choices:
         type: "bash diff"
-        command: "case last in false) echo false; ;; true) echo true; esac not) echo not; ;; here) echo here; ;; never) echo never; ;; last) echo last; ;; esac"
+        command: "case last in false) echo false; ;; true) echo true; ;; not) echo not; ;; here) echo here; ;; never) echo never; ;; last) echo last; ;; esac"
         expected:
                 stdout:
                 stderr:
@@ -79,7 +79,7 @@ if_nested_for_nested_case_followed:
                 rvalue:
 nothing_good:
         type: "bash diff"
-        command: "case a in b) if false; then echo bonsoir; else echo bonjour; fi; ;; c) for v in 2 3 4 5 6; do echo nope; done; ;; esac; for a in 1 2 3 4; do if false; then echo bonsoir; elif false; then echo bonjour; elif false; then echo aha; else; echo ok; fi; done"
+        command: "case a in b) if false; then echo bonsoir; else echo bonjour; fi; ;; c) for v in 2 3 4 5 6; do echo nope; done; ;; esac; for a in 1 2 3 4; do if false; then echo bonsoir; elif false; then echo bonjour; elif false; then echo aha; else echo ok; fi; done"
         expected:
                 stdout:
                 stderr:
