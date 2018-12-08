@@ -35,6 +35,7 @@ enum ntype
     A_ELIF, /**< Cf A_IF*/
     A_PIPE, /**< Siblings must be executed with a pipe between them */
     A_FUNCTION /**< Tree that will declare a function*/
+    A_REDIR /**< Siblings must be executed with a redirection between them */
 };
 
 /**
