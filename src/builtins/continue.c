@@ -14,5 +14,3 @@ struct node *continue_execution(struct stored_data *data)
     data->nbparent --;
     return data->parent_list[data->nbparent];
 }
-
-

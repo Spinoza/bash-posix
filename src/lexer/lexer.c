@@ -234,20 +234,20 @@ static int redirection_char(char c, char pre, int i)
             case '>':
                 return 1;
             case '<':
-                if(pre == '<')
+                if (pre == '<')
                     return 1;
                 break;
             case '&':
                 return 1;
             case '|':
-                if(pre == '>')
+                if (pre == '>')
                     return 1;
                 break;
         }
     }
     else
     {
-        if(c == '-' && pre == '<' && i == 2)
+        if (c == '-' && pre == '<' && i == 2)
         {
             return 1;
         }
@@ -266,9 +266,9 @@ static struct token *set_specials(struct token *new, char *string,
             cmp[0] = string[*index];
         else
         {
-            if(cmp[0] == '<' || cmp[0] == '>')
+            if (cmp[0] == '<' || cmp[0] == '>')
             {
-                if(redirection_char(string[*index], string[*index - 1], i))
+                if (redirection_char(string[*index], string[*index - 1], i))
                 {
                     cmp[i] = string[*index];
                 }
@@ -293,7 +293,7 @@ static struct token *set_specials(struct token *new, char *string,
     {
         if (!strcmp(cmp, list[i]))
         {
-            if(i >= 33)
+            if (i >= 33)
                 new->type = 25;
             else
             {

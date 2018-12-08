@@ -23,7 +23,8 @@ struct node *get_oper_node(struct node *start)
                 || iter->tokentype == LOGICAL_OR
                 || iter->tokentype == SEMICOLON
                 || iter->tokentype == AND
-                || iter->tokentype == PIPE)
+                || iter->tokentype == PIPE
+                || iter->tokentype == REDIRECTION)
             return iter;
     }
     return NULL;
@@ -36,6 +37,77 @@ struct node *next_node(struct node *n)
         return oper_node->next;
     return NULL;
 }
+/*
+void fill_fd (int fd[2], struct node *oper_node)
+{
+    if (oper_node && oper_node->tokentype == REDIRECTION)
+    {
+
+    }
+}*/
+
+int redirection_aux(char **command, struct node *n, int fd[2],
+        struct stored_data *data)
+{
+    struct node *oper_node = get_oper_node(n);
+    int fd_next[2];
+    //fill_fd(fd, oper_node);
+    pid_t pid = fork();
+    int status = 0;
+    if (pid == -1)//error
+    {
+        fprintf(stderr,"42sh : fork : An error occured.\n");
+        exit(1);
+    }
+    if (pid == 0)
+    {
+        dup2(fd[0], STDIN_FILENO);
+        close(fd[1]);
+        if (oper_node && oper_node->tokentype == REDIRECTION)
+        {
+            close(fd_next[0]);
+            dup2(fd_next[1], STDOUT_FILENO);
+            close(fd_next[1]);
+        }
+        int r_builtin = is_builtin(command);
+        if (r_builtin != -1)
+        {
+            exit(r_builtin);
+        }
+        int r = execvp(command[0], command);
+        exit(r);
+    }
+    else
+    {
+        close(fd_next[1]);
+        close(fd_next[0]);
+        close(fd[0]);
+        close(fd[1]);
+        if (oper_node && oper_node->tokentype == REDIRECTION)
+        {
+            struct node *next_oper_node = get_oper_node(oper_node->next);
+            char **command_next = to_execute(oper_node->next,
+                    next_oper_node, data);
+            status = redirection_aux(command_next, oper_node->next, fd_next, data);
+        }
+        waitpid(pid,&status,0);
+        if (status == 127)
+            fprintf(stderr,"42sh : %s : \
+                    command not found.\n", command[0]);
+    }
+    free_command(command);
+    return status;
+}
+
+int redirection_handling(char **command1, struct node *n, struct stored_data *data)
+{
+    struct node *oper_node = get_oper_node(n);
+    int fd[2];
+    fd[0] = 0;
+    fd[1] = 1;
+    return redirection_aux(command1, oper_node, fd, data);
+}
+
 int pipe_aux(char **command, struct node *n, int fd[2],
         struct stored_data *data)
 {
@@ -95,6 +167,12 @@ int pipe_handling(char **command1, struct node *n, struct stored_data *data)
     return pipe_aux(command1, oper_node, fd, data);
 }
 
+void close_fds(void)
+{
+    for (int i = 3; close(i) != -1; i++)
+        continue;
+}
+
 struct node *get_next_node(struct node *oper_node, int *res)
 {
     if (!oper_node)
@@ -141,7 +219,15 @@ struct node *instr_execution(struct node *n, int *res,
     if (oper_node && oper_node->tokentype == PIPE)
     {
         *res = pipe_handling(command_call, n, data);
+        close_fds();
         while (oper_node && oper_node->tokentype == PIPE)
+            oper_node = get_oper_node(oper_node->next);
+    }
+    else if (oper_node && oper_node->tokentype == REDIRECTION)
+    {
+       // *res = redirection_handling(command_call, n, data);
+        close_fds();
+        while (oper_node && oper_node->tokentype == REDIRECTION)
             oper_node = get_oper_node(oper_node->next);
     }
     else
@@ -236,14 +322,14 @@ int for_execution(struct node *n, int *res, struct stored_data *data)
         if (!instruction[0])
             free(cpy_instr);
         data->brk++;
+        add_parent(n, data);
         for (size_t i = 0; instruction[i] && data->brk > 0; i++)
         {
             add_assignment_split(cpy_instr, instruction[i],
                     data->var_tab);
-            add_parent(n, data);
             *res = traversal_ast(do_node, res, data);
-            data->parent_list[data->nbparent--] = NULL;
         }
+        data->parent_list[data->nbparent--] = NULL;
         if (data->brk)
             data->brk--;
         free(instruction);
