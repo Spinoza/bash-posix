@@ -304,7 +304,8 @@ void add_parent(struct node *n, struct stored_data *data)
     data->nbparent++;
     data->parent_list = realloc(data->parent_list,
             sizeof(struct node *) * (data->nbparent + 1));
-    data->parent_list[data->nbparent - 1] = n;
+    if (data->nbparent >= 0)
+        data->parent_list[data->nbparent - 1] = n;
 }
 
 int for_execution(struct node *n, int *res, struct stored_data *data)
@@ -328,6 +329,8 @@ int for_execution(struct node *n, int *res, struct stored_data *data)
             add_assignment_split(cpy_instr, instruction[i],
                     data->var_tab);
             *res = traversal_ast(do_node, res, data);
+            if (data->nbparent >= 0)
+                data->parent_list[data->nbparent--] = NULL;
         }
         data->parent_list[data->nbparent--] = NULL;
         if (data->brk)
@@ -405,7 +408,8 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
                 *res = traversal_ast(n->children->next, res, data);
             if (data->brk)
                 data->brk--;
-            data->parent_list[data->nbparent--] = NULL;
+            if (data->nbparent >= 0)
+                data->parent_list[data->nbparent--] = NULL;
         }
         if (n->type == A_UNTIL)
         {
@@ -415,13 +419,15 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
                 *res = traversal_ast(n->children->next, res, data);
             if (data->brk)
                 data->brk--;
-            data->parent_list[data->nbparent--] = NULL;
+            if (data->nbparent >= 0)
+                data->parent_list[data->nbparent--] = NULL;
         }
         if (n->type == A_FOR)
         {
             add_parent(n, data);
             for_execution(n, res, data);
-            data->parent_list[data->nbparent--] = NULL;
+            if (data->nbparent >= 0)
+                data->parent_list[data->nbparent--] = NULL;
         }
         return traversal_ast(n->next,res, data);
     }
