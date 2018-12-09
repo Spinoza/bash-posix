@@ -241,12 +241,7 @@ static double compute(struct bt_node *left, struct bt_node *oper,
             return left->nb * right->nb;
         case DIVIDE:
             if (!right->nb)
-            {
-                global.res = 127;
-                fprintf(stderr,"42sh: division by 0.\n");
-                global.data->builtins[0].builtin(NULL, global.res);
                 return 0;
-            }
             return left->nb / right->nb;
         case POWER:
             return power(left->nb, right->nb, 1);
@@ -271,14 +266,24 @@ static struct stack *eval_nodes(struct stack *stack,
     struct bt_node *left = NULL;
     if (stack->head)
         left = pop(stack);
-    long int res = compute(left, oper, right);
+    if (!left)
+    {
+        global.res = 2;
+        fprintf(stderr,"42sh: arithmetic expansion, operators"
+                " take two operands.\n");
+        global.data->builtins[0].builtin(NULL, global.res);
+    }
     if (oper->op == DIVIDE && right->nb == 0)
     {
+        global.res = 127;
+        fprintf(stderr,"42sh: division by 0.\n");
+        global.data->builtins[0].builtin(NULL, global.res);
         free(right);
         free(oper);
         free(left);
         return NULL;
     }
+    long int res = compute(left, oper, right);
     free(right);
     free(oper);
     free(left);
@@ -314,11 +319,11 @@ static int get_precedence(struct bt_node *node)
         case CLOSE_PAR_OPER:
             return 4;
         case BIT_XOR:
-            return 3;
+            return 2;
         case BIT_AND:
-            return 3;
+            return 2;
         case BIT_OR:
-            return 3;
+            return 2;
         default:
             return 1;
     }
