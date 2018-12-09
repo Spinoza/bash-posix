@@ -79,6 +79,7 @@ static int already_exists(char *name, char *value,
             if (name != a->name)
             {
                 free(a->name);
+                a->name = NULL;
             }
             if (a->value)
             {
@@ -93,8 +94,11 @@ static int already_exists(char *name, char *value,
                         a->value = NULL;
                     }
                 }
-                //else
+                else
+                {
                     free(a->value);
+                    a->value = NULL;
+                }
             }
             a->name = name;
             a->value = value;
