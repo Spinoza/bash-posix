@@ -195,9 +195,9 @@ int special_character(char *string, int index, int quoting, enum type context)
         case '\t': // tab character
             return !quoting;
         case '(':
-            return 1;
+            return !quoting;
         case ')':
-            return 1;
+            return !quoting;
         case '{':
             return 1;
         case '}':
@@ -352,22 +352,22 @@ static struct token *read_characters(struct token *new, char *string,
     {
         if (*(string + *index) == '\'' || *(string + *index) == '\"')
         {
-            quoting -= quoting;
+            quoting = !quoting;
+            continue;
+        }
+        if ((string[*index] == ')' && string[*index + 1] == ')')
+                || (string[*index] == '(' && string[*index + 1] == '('))
+        {
+            quoting = !quoting;
+            res[cur_index++] = string[*index];
+            *index = *index + 1;
+            res[cur_index++] = string[*index];
             continue;
         }
         if (special_character(string, *index, quoting, context))
         {
             if (string[*index] == '#')
                 remove_comment(string, index);
-            if ((string[*index] == ')' && string[*index + 1] == ')')
-                    || (string[*index] == '(' && string[*index + 1] == '('))
-            {
-                quoting = !quoting;
-                res[cur_index++] = string[*index];
-                *index = *index + 1;
-                res[cur_index++] = string[*index];
-                continue;
-            }
             if (string[*index] != '=')
                 break;
             current_type = ASSIGNMENT_W;
