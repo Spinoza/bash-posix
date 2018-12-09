@@ -294,15 +294,6 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
     return instruction;
 }
 
-void add_parent(struct node *n, struct stored_data *data)
-{
-    data->nbparent++;
-    data->parent_list = realloc(data->parent_list,
-            sizeof(struct node *) * (data->nbparent + 1));
-    if (data->nbparent >= 0)
-        data->parent_list[data->nbparent - 1] = n;
-}
-
 int for_execution(struct node *n, int *res, struct stored_data *data)
 {
     struct node *elem = n->children->children;
@@ -318,7 +309,7 @@ int for_execution(struct node *n, int *res, struct stored_data *data)
         if (!instruction[0])
             free(cpy_instr);
         data->brk++;
-        add_parent(n, data);
+        data->nbparent++;
         for (size_t i = 0; instruction[i] && data->brk > 0; i++)
         {
             int l = strlen(instruction[i]);
@@ -327,11 +318,9 @@ int for_execution(struct node *n, int *res, struct stored_data *data)
             add_assignment_split(cpy_instr, value,
                     data->var_tab);
             *res = traversal_ast(do_node, res, data);
-            if (data->nbparent >= 0)
-                data->parent_list[data->nbparent--] = NULL;
         }
-        if (data->nbparent > 0)
-            data->parent_list[data->nbparent--] = NULL;
+        if (data->nbparent >= 0)
+            data->nbparent--;
         else
             data->parent_list[0] = NULL;
         if (data->brk)
@@ -385,47 +374,47 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
         if (n->type == A_FUNCTION)
         {
             function_stored(n, data);
-            int r = traversal_ast(next_node(n), res, data);
-            return r;
-        }
-        if (n->type == A_INSTRUCT)
-        {
-            if (!strcmp(n->instr, ";"))
-                return traversal_ast(n->next, res, data);
-            if (n->tokentype == ASSIGNMENT_W)
-                add_assignment(n->instr, data->var_tab);
-            else
-                return traversal_ast(instr_execution(n, res, data), res, data);
-        }
-        if (n->type == A_IF || n->type == A_ELIF)
-            traversal_ast(if_execution(n, res, data), res, data);
-        if (n->type == A_CASE)
-            *res = traversal_ast(case_execution(n, data), res, data);
-        if (n->type == A_WHILE)
-        {
-            add_parent(n, data);
-            data->brk++;
-            while (if_cond(n, data) == 0 && data->brk > 0)
-                *res = traversal_ast(n->children->next, res, data);
-            data->brk--;
-            if (data->nbparent >= 0)
-                data->parent_list[data->nbparent--] = NULL;
-        }
-        if (n->type == A_UNTIL)
-        {
-            add_parent(n, data);
-            data->brk++;
-            while (if_cond(n, data) && data->brk > 0)
-                *res = traversal_ast(n->children->next, res, data);
-            data->brk--;
-            if (data->nbparent >= 0)
-                data->parent_list[data->nbparent--] = NULL;
-        }
-        if (n->type == A_FOR)
-        {
-            for_execution(n, res, data);
-        }
-        return traversal_ast(n->next,res, data);
+	    int r = traversal_ast(next_node(n), res, data);
+	    return r;
+	}
+	if (n->type == A_INSTRUCT)
+	{
+	    if (!strcmp(n->instr, ";"))
+		return traversal_ast(n->next, res, data);
+	    if (n->tokentype == ASSIGNMENT_W)
+		add_assignment(n->instr, data->var_tab);
+	    else
+		return traversal_ast(instr_execution(n, res, data), res, data);
+	}
+	if (n->type == A_IF || n->type == A_ELIF)
+	    traversal_ast(if_execution(n, res, data), res, data);
+	if (n->type == A_CASE)
+	    *res = traversal_ast(case_execution(n, data), res, data);
+	if (n->type == A_WHILE)
+	{
+	    data->nbparent ++;
+	    data->brk++;
+	    while (if_cond(n, data) == 0 && data->brk > 0)
+		*res = traversal_ast(n->children->next, res, data);
+	    data->brk--;
+	    if (data->nbparent >= 0)
+		data->nbparent--;
+	}
+	if (n->type == A_UNTIL)
+	{
+	    data->nbparent++;
+	    data->brk++;
+	    while (if_cond(n, data) && data->brk > 0)
+		*res = traversal_ast(n->children->next, res, data);
+	    data->brk--;
+	    if (data->nbparent >= 0)
+		data->nbparent--;
+	}
+	if (n->type == A_FOR)
+	{
+	    for_execution(n, res, data);
+	}
+	return traversal_ast(n->next,res, data);
     }
     return traversal_ast(n->children, res, data);
 }
