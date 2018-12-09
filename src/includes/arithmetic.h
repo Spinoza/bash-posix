@@ -38,8 +38,8 @@ enum oper
   */
 struct bt_node
 {
-    double nb;
-    enum oper op;
+    double nb; /**< The integer part of the node */
+    enum oper op;/**< The operator part of the node */
 };
 
 /**
@@ -50,9 +50,9 @@ struct bt_node
   */
 struct arith_list
 {
-    int nb_nodes;
-    int capacity;
-    struct bt_node **list;
+    int nb_nodes;/**< The number of nodes */
+    int capacity;/**< The maximum capacity of the arith_list */
+    struct bt_node **list; /**< The list of nodes */
 };
 
 /**

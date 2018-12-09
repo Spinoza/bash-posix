@@ -20,7 +20,7 @@ struct assignment
 {
     char *name; /**< The name of the variable*/
     char *value;/**< The value of the variable*/
-    struct assignment *next;/**< The next assignement*/
+    struct assignment *next;/**< The next assignment*/
 };
 /**
   *\fn void free_assignments(struct assignment **tab);

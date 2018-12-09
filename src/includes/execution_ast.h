@@ -71,16 +71,16 @@ struct f_tab
   */
 struct stored_data
 {
-    char **param;
-    int nbparam;
-    int nbparent;
-    int brk;
-    struct node **parent_list;
-    struct f_tab *f_tab;
-    struct assignment **var_tab;
-    struct assignment **export_tab;
-    struct assignment **alias_tab;
-    struct builtins *builtins;
+    char **param;/**< The list of parameters in the current function*/
+    int nbparam;/**< The number of parameters in the current function*/
+    int nbparent;/**< The number of nested loop we are in*/
+    int brk;/**< Number used to know if we have to break*/
+    struct node **parent_list;/**< List of parents, above the current node*/
+    struct f_tab *f_tab;/**< List of functions*/
+    struct assignment **var_tab;/**< List of variable assignment*/
+    struct assignment **export_tab;/**< List of exported assignment*/
+    struct assignment **alias_tab;/**< List of aliases in a tab*/
+    struct builtins *builtins;/**< List of builtins*/
 };
 
 /**
