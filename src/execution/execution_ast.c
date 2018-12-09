@@ -40,13 +40,27 @@ struct node *next_node(struct node *n)
     return NULL;
 }
 
+void changing_fd(struct node *oper_node)
+{
+    int fd;
+    if (oper_node && oper_node->tokentype == REDIRECTION)
+    {
+        if (!strcmp(oper_node->instr,"<")
+                ||!strcmp(oper_node->instr, ">"))
+        {
+            fd = open(oper_node->next->instr, O_RDWR ||O_CREAT);
+            if (!strcmp(oper_node->instr,">"))
+                dup2(fd, 1);
+            else
+                dup2(fd, 0);
+        }
+    }
+}
 
-
-int redirection_aux(char **command, struct node *n, int fd[2],
+int redirection_aux(char **command, struct node *n,
         struct stored_data *data)
 {
     struct node *oper_node = get_oper_node(n);
-    int fd_next[2];
     pid_t pid = fork();
     int status = 0;
     if (pid == -1)//error
@@ -56,34 +70,18 @@ int redirection_aux(char **command, struct node *n, int fd[2],
     }
     if (pid == 0)
     {
-        dup2(fd[0], STDIN_FILENO);
-        close(fd[1]);
-        if (oper_node && oper_node->tokentype == REDIRECTION)
-        {
-            close(fd_next[0]);
-            dup2(fd_next[1], STDOUT_FILENO);
-            close(fd_next[1]);
-        }
-        int r_builtin = is_builtin(command);
-        if (r_builtin != -1)
-        {
-            exit(r_builtin);
-        }
+        changing_fd(n);
         int r = execvp(command[0], command);
         exit(r);
     }
     else
     {
-        close(fd_next[1]);
-        close(fd_next[0]);
-        close(fd[0]);
-        close(fd[1]);
         if (oper_node && oper_node->tokentype == REDIRECTION)
         {
             struct node *next_oper_node = get_oper_node(oper_node->next);
             char **command_next = to_execute(oper_node->next,
                     next_oper_node, data);
-            status = redirection_aux(command_next, oper_node->next, fd_next, data);
+            status = redirection_aux(command_next, oper_node->next, data);
         }
         waitpid(pid,&status,0);
         if (status == 127)
@@ -97,10 +95,7 @@ int redirection_aux(char **command, struct node *n, int fd[2],
 int redirection_handling(char **command1, struct node *n, struct stored_data *data)
 {
     struct node *oper_node = get_oper_node(n);
-    int fd[2];
-    fd[0] = 0;
-    fd[1] = 1;
-    return redirection_aux(command1, oper_node, fd, data);
+    return redirection_aux(command1, oper_node, data);
 }
 
 int pipe_aux(char **command, struct node *n, int fd[2],
@@ -220,7 +215,7 @@ struct node *instr_execution(struct node *n, int *res,
     }
     else if (oper_node && oper_node->tokentype == REDIRECTION)
     {
-        // *res = redirection_handling(command_call, n, data);
+        *res = redirection_handling(command_call, n, data);
         close_fds();
         while (oper_node && oper_node->tokentype == REDIRECTION)
             oper_node = get_oper_node(oper_node->next);

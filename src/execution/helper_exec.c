@@ -153,9 +153,6 @@ char *set_string(char *instr, struct stored_data *data)
                 assigned_value = get_assign(name, data);
             }
             k = copy_string(assigned_value, &string, k, capacity);
-            if (!strcmp(name, "UID") || !strcmp(name,"?")
-                    || !strcmp(name, "$") || !strcmp(name, "#"))
-                free(assigned_value);
             free(name);
         }
         else
@@ -230,9 +227,9 @@ int is_builtin(char **string)
         {
             int r = 0;
             if (!strcmp(string[0], "exit"))
-                r = global.data->builtins[i].builtin(string, global.res);
+                r = global.data->builtins[i].builtin(2, string, global.res);
             else
-                r = global.data->builtins[i].builtin(string);
+                r = global.data->builtins[i].builtin(2, string);
             return r;
         }
     }
