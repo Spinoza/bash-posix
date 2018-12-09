@@ -183,7 +183,7 @@ multiplyop:
 
 multiplyop:
         type: "bash diff"
-        command: "echo $((1 + (-3 + 7 * 2));"
+        command: "echo $((1 + (-3 + 7 * 2)));"
         expected:
                 stdout:
                 stderr:
