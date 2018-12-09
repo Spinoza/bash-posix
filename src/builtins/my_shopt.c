@@ -8,21 +8,21 @@
 
 static int print_everything(struct option *opt)
 {
-    fprintf(stdout, "ast-print        \t%s\n",
+    fprintf(stdout, "ast-print      \t%s\n",
     opt->ast_print == TRUE ? "on" : "off");
-    fprintf(stdout, "dotglob       \t%s\n",
+    fprintf(stdout, "dotglob        \t%s\n",
     opt->dotglob == TRUE ? "on" : "off");
-    fprintf(stdout, "expand_aliases    \t%s\n",
+    fprintf(stdout, "expand_aliases \t%s\n",
     opt->expand_aliases == TRUE ? "on" : "off");
-    fprintf(stdout, "extglob           \t%s\n",
+    fprintf(stdout, "extglob        \t%s\n",
     opt->extglob == TRUE ? "on" : "off");
-    fprintf(stdout, "nocaseglob        \t%s\n",
+    fprintf(stdout, "nocaseglob     \t%s\n",
     opt->nocaseglob == TRUE ? "on" : "off");
-    fprintf(stdout, "nullglob          \t%s\n",
+    fprintf(stdout, "nullglob       \t%s\n",
     opt->nullglob == TRUE ? "on" : "off");
-    fprintf(stdout, "sourcepath        \t%s\n",
+    fprintf(stdout, "sourcepath     \t%s\n",
     opt->sourcepath == TRUE ? "on" : "off");
-    fprintf(stdout, "xpg_echo          \t%s\n",
+    fprintf(stdout, "xpg_echo       \t%s\n",
     opt->xpg_echo == TRUE ? "on" : "off");
     return 0;
 }
@@ -79,12 +79,13 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "ast-print    \t%s\n",
+            fprintf(stdout, "ast-print      \t%s\n",
             ops->ast_print == TRUE ? "on" : "off");
+            return (!(ops->ast_print == TRUE));
         }
         else
         {
-            return ops->ast_print == TRUE ? 1 : 0;
+            return ops->ast_print == TRUE ? 0 : 1;
         }
     }
 
@@ -100,13 +101,15 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "dotglob    \t%s\n",
+            fprintf(stdout, "dotglob        \t%s\n",
             ops->dotglob == TRUE ? "on" : "off");
+            return (!(ops->dotglob == TRUE));
+
         }
 
         else
         {
-            return ops->dotglob == TRUE ? 1 : 0;
+            return ops->dotglob == TRUE ? 0 : 1;
         }
     }
 
@@ -122,13 +125,15 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "expand_aliases   \t%s\n",
+            fprintf(stdout, "expand_aliases \t%s\n",
             ops->expand_aliases == TRUE ? "on" : "off");
+            return (!(ops->expand_aliases == TRUE));
+
         }
 
         else
         {
-            return ops->expand_aliases == TRUE ? 1 : 0;
+            return ops->expand_aliases == TRUE ? 0 : 1;
         }
     }
 
@@ -144,12 +149,14 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "extglob    \t%s\n",
+            fprintf(stdout, "extglob        \t%s\n",
             ops->extglob == TRUE ? "on" : "off");
+            return (!(ops->extglob == TRUE));
+
         }
         else
         {
-            return ops->extglob == TRUE ? 1 : 0;
+            return ops->extglob == TRUE ? 0 : 1;
         }
     }
 
@@ -165,12 +172,14 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "nocaseglob   \t%s\n",
+            fprintf(stdout, "nocaseglob     \t%s\n",
             ops->nocaseglob == TRUE ? "on" : "off");
+            return (!(ops->nocaseglob == TRUE));
+
         }
         else
         {
-            return ops->nocaseglob == TRUE ? 1 : 0;
+            return ops->nocaseglob == TRUE ? 0 : 1;
         }
     }
 
@@ -186,12 +195,14 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "nullglob    %s\n",
+            fprintf(stdout, "nullglob       \t%s\n",
             ops->nullglob == TRUE ? "on" : "off");
+            return (!(ops->nullglob == TRUE));
+
         }
         else
         {
-            return ops->nullglob == TRUE ? 1 : 0;
+            return ops->nullglob == TRUE ? 0 : 1;
         }
     }
 
@@ -207,12 +218,14 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "sourcepath    \t%s\n",
+            fprintf(stdout, "sourcepath     \t%s\n",
             ops->sourcepath == TRUE ? "on" : "off");
+            return (!(ops->sourcepath == TRUE));
+
         }
         else
         {
-            return ops->sourcepath == TRUE ? 1 : 0;
+            return ops->sourcepath == TRUE ? 0 : 1;
         }
     }
 
@@ -228,12 +241,14 @@ static int option_switch(struct option *ops, char *opt, int opcode)
         }
         else if (opcode == 4)
         {
-            fprintf(stdout, "xpg_echo    %s\n",
+            fprintf(stdout, "xpg_echo       \t%s\n",
             ops->xpg_echo == TRUE ? "on" : "off");
+            return (!(ops->xpg_echo == TRUE));
+
         }
         else
         {
-            return ops->xpg_echo == TRUE ? 1 : 0;
+            return ops->xpg_echo == TRUE ? 0 : 1;
         }
     }
     return 0;
@@ -246,7 +261,7 @@ static int handle_options(struct option *ops, char *opt, int q, int s,  int u)
 
     if (!q && !s && !u)
     {
-        option_switch (ops, opt, 4);
+        retu = option_switch (ops, opt, 4);
     }
 
     if (s)
@@ -259,7 +274,7 @@ static int handle_options(struct option *ops, char *opt, int q, int s,  int u)
         option_switch(ops, opt, 2);
     }
 
-    if (q)
+    if (q && !(s) && (!u))
     {
         retu = option_switch(ops, opt, 3);
     }
@@ -352,15 +367,15 @@ int my_shopt(char *args[], ...)
             }
             else
             {
-                int temp = handle_options(opt, args[i],q,s,u);
+                retcode = handle_options(opt, args[i],q,s,u);
                 if ( qres == 0 )
-                    qres = !temp;
+                    qres = retcode;
             }
         }
         i++;
     }
 
-    if (q)
+    if (q && (!s && !u))
         retcode = qres;
 
     va_end(ap);
