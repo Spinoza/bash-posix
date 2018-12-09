@@ -312,8 +312,6 @@ static int get_precedence(struct bt_node *node)
             return 2;
         case DIVIDE:
             return 2;
-        case TILDE:
-            return 3;
         case POWER:
             return 3;
         case CLOSE_PAR_OPER:

@@ -123,7 +123,7 @@ char *set_string(char *instr, struct stored_data *data)
     int k = 0; //index to copy characters
     for (int i = 0; *(instr + i); i++)
     {
-        if (instr[i] == '$')
+        if (instr[i] == '$' && !after_dollar)
         {
             after_dollar = 1;
             continue;
@@ -146,9 +146,13 @@ char *set_string(char *instr, struct stored_data *data)
             else
             {
                 name = calloc(len, sizeof(char));
-                for (int j = 0; *(instr + i) && *(instr + i) != '$';
+                name[0] = *(instr + i);
+                i++;
+                for (int j = 1; *(instr + i) && *(instr + i) != '$';
                         i++, j++)
+                {
                     name[j] = instr[i];
+                }
                 i--;
                 assigned_value = get_assign(name, data);
             }
