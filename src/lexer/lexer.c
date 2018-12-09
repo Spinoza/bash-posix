@@ -179,11 +179,14 @@ static char **init_list(void)
     return list;
 }
 
-int special_character(char c, int quoting, enum type context)
+int special_character(char *string, int index, int quoting, enum type context)
 {
+    char c = string[index];
     switch (c)
     {
         case '#':
+            if (index - 1 > 0 && string[index - 1] == '$')
+                return 0;
             return 1;
         case '\n':
             return !quoting;
@@ -334,7 +337,7 @@ void remove_comment(char *string, int *index)
 static struct token *read_characters(struct token *new, char *string,
         int *index, char **list, enum type context)
 {
-    if (special_character(string[*index], 0, context))
+    if (special_character(string, *index , 0, context))
     {
         if (string[*index] != ' ')
             return set_specials(new, string, index, list);
@@ -352,7 +355,7 @@ static struct token *read_characters(struct token *new, char *string,
             quoting -= quoting;
             continue;
         }
-        if (special_character(*(string + *index), quoting, context))
+        if (special_character(string, *index, quoting, context))
         {
             if (string[*index] == '#')
                 remove_comment(string, index);
