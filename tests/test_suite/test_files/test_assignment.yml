@@ -88,14 +88,6 @@ uid:
                 stderr:
                 rvalue:
 
-oldpwd_unset:
-        type: "bash diff"
-        command: "echo $OLDPWD;"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
 cd_oldpwd:
         type: "bash diff"
         command: "cd ..; echo $OLDPWD;"
