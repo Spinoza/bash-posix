@@ -250,7 +250,7 @@ static double compute(struct bt_node *left, struct bt_node *oper,
         case OR_OPER:
             return left->nb || right->nb;
         default:
-            global.res = 2;
+            global.res = 127;
             fprintf(stderr,"42sh: arithmetic expansion, bad operator.\n");
             global.data->builtins[0].builtin(NULL, global.res);
             return -1;
@@ -268,7 +268,7 @@ static struct stack *eval_nodes(struct stack *stack,
         left = pop(stack);
     if (!left)
     {
-        global.res = 2;
+        global.res = 127;
         fprintf(stderr,"42sh: arithmetic expansion, operators"
                 " take two operands.\n");
         global.data->builtins[0].builtin(NULL, global.res);
@@ -317,11 +317,11 @@ static int get_precedence(struct bt_node *node)
         case CLOSE_PAR_OPER:
             return 4;
         case BIT_XOR:
-            return 2;
+            return 1;
         case BIT_AND:
-            return 2;
+            return 1;
         case BIT_OR:
-            return 2;
+            return 1;
         default:
             return 1;
     }
@@ -333,6 +333,33 @@ struct bt_node *copy_bt_node(struct bt_node *to_copy)
     new->nb = to_copy->nb;
     new->op = to_copy->op;
     return new;
+}
+
+struct stack *pop_stack(struct stack *stack, struct stack *operators_stack,
+        int to_parenthesis, int next_precedence)
+{
+    struct bt_node *top = peek(operators_stack);
+    if (to_parenthesis)
+    {
+        while (stack && top && top->op != OPEN_PAR_OPER)
+        {
+            stack = eval_nodes(stack, operators_stack);
+            top = peek(operators_stack);
+        }
+        if (top->op == OPEN_PAR_OPER)
+            free(pop(operators_stack));
+    }
+    else
+    {
+        int precedence = get_precedence(top);
+        while (stack && top && precedence >= next_precedence)
+        {
+            stack = eval_nodes(stack, operators_stack);
+            top = peek(operators_stack);
+            precedence = get_precedence(top);
+        }
+    }
+    return stack;
 }
 /*
  * function to know if the next operator is a parenthesis
@@ -346,13 +373,7 @@ long int eval_list(struct stack *stack, struct stack *operators_stack,
         struct bt_node *current = list->list[*index];
         if (current->op == CLOSE_PAR_OPER)
         {
-            struct bt_node *top = peek(operators_stack);
-            while (stack && top->op != OPEN_PAR_OPER)
-            {
-                stack = eval_nodes(stack, operators_stack);
-                top = peek(operators_stack);
-            }
-            free(pop(operators_stack));
+            stack = pop_stack(stack, operators_stack, 1, 0);
             precedence = get_precedence(peek(operators_stack));
             *index = *index + 1;
             continue;
@@ -361,7 +382,7 @@ long int eval_list(struct stack *stack, struct stack *operators_stack,
         {
             int next_precedence = get_precedence(current);
             if (next_precedence <= precedence)
-                stack = eval_nodes(stack, operators_stack);
+                stack = pop_stack(stack, operators_stack, 0, next_precedence);
             precedence = next_precedence;
             operators_stack = push(operators_stack, copy_bt_node(current));
         }

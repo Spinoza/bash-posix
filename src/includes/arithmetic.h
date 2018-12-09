@@ -8,9 +8,9 @@ enum oper
     MINUS, // precedence 1
     MULTIPLY, // precedence 2
     DIVIDE, // precedence 2
-    BIT_XOR, // precedence 2
-    BIT_AND, // precedence 2
-    BIT_OR, // precedence 2
+    BIT_XOR, // precedence 1
+    BIT_AND, // precedence 1
+    BIT_OR, // precedence 1
     OPEN_PAR_OPER, // precedence 0
     CLOSE_PAR_OPER, //precedence 4
     POWER, // precedence 3
