@@ -266,7 +266,7 @@ static struct stack *eval_nodes(struct stack *stack,
         struct stack *operators_stack)
 {
     struct bt_node *right = pop(stack);
-    struct bt_node *oper = (operators_stack ? pop(operators_stack) : NULL);
+    struct bt_node *oper = (operators_stack->head ? pop(operators_stack) : NULL);
     struct bt_node *left = (stack->head ? pop(stack) : NULL);
     if (!left)
     {
@@ -399,6 +399,10 @@ long int eval_list(struct stack *stack, struct stack *operators_stack,
     }
     if (!stack)
         return 0;
+    while (stack->size != 1 && operators_stack->head)
+    {
+        stack = eval_nodes(stack, operators_stack);
+    }
     long int r = stack->head->elem->nb;
     return r;
 }
@@ -416,7 +420,11 @@ char *arith_expansion(char *string)
     struct stack *stack = init_stack();
     struct stack *operators_stack = init_stack();
     long int r = eval_list(stack, operators_stack, list, &index);
-    free(stack->head->elem);
+    for (; stack->size;)
+    {
+        struct bt_node *to_free= pop(stack);
+        free(to_free);
+    }
     free_arith_list(list);
     free_stack(stack);
     free_stack(operators_stack);
