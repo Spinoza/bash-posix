@@ -288,6 +288,8 @@ bad_option_name:
         type: "bash diff"
         command: "shopt wqassa"
         expected:
+                stdout:
+                stderr:
                 rvalue:
 
 shopt_su:
@@ -302,6 +304,8 @@ shopt_invalid_option:
         type: "bash diff"
         command: "shopt -v"
         expected:
+                stdout:
+                stderr:
                 rvalue:
 
 

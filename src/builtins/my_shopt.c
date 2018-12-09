@@ -30,9 +30,9 @@ static int print_everything(struct option *opt)
 static int set_opt(char *opt, int *q, int *s, int *u)
 {
     if (opt[0] != '-')
-        return 2;
+        return 1;
 
-    int retcode = 2;
+    int retcode = 1;
 
     for (size_t i = 1; i < strlen(opt); i ++)
     {
@@ -58,7 +58,7 @@ static int set_opt(char *opt, int *q, int *s, int *u)
         {
             fprintf(stderr, "shopt: -%c: invalid option\n", opt[i]);
             fprintf(stderr, "shopt: usage: [-qsu] [optname...]\n");
-            return 1;
+            return 2;
         }
     }
 
@@ -352,10 +352,10 @@ int my_shopt(char *args[], ...)
             continue;
         }
 
-        else if (vuO == 1)
+        else if (vuO == 2)
         {
             va_end(ap);
-            return 1;
+            return 2;
         }
         else
         {
@@ -363,7 +363,7 @@ int my_shopt(char *args[], ...)
             if (!is_opt(args[i]))
             {
                 fprintf(stderr, "shopt:  %s: invalid option name\n", args[i]);
-                retcode = 1;
+                return 1;
             }
             else
             {
