@@ -69,41 +69,9 @@ cd_too_many:
                 stderr:
                 rvalue:
 
-
-simple_export:
-        type: "bash diff"
-        command: "export"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-export_p:
-        type: "bash diff"
-        command: "export -p"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
-export_n_no_arg:
-        type: "bash diff"
-        command: "export -n"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
-export_p_n_no_arg:
-        type: "bash diff"
-        command: "export -p -n; export -n -p"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
 export_p_arg:
         type: "bash diff"
-        command: "export -p toto=1; export"
+        command: "export -p toto=1;"
         expected:
                 stdout:
                 stderr:
@@ -112,15 +80,7 @@ export_p_arg:
 
 export_n_arg:
         type: "bash diff"
-        command: "export -n toto; export"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
-export_p_n_arg:
-        type: "bash diff"
-        command: "export -p -n toto; export"
+        command: "export -n toto;"
         expected:
                 stdout:
                 stderr:
@@ -128,15 +88,7 @@ export_p_n_arg:
 
 export_p_arg_then_n_arg:
         type: "bash diff"
-        command: "export -p toto=1; export -n toto; export"
-        expected:
-                stdout:
-                stderr:
-                rvalue:
-
-export_var_already-assigned:
-        type: "bash diff"
-        command: "toto=1; export; export toto; export"
+        command: "export -p toto=1; export -n toto;"
         expected:
                 stdout:
                 stderr:
