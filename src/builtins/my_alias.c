@@ -63,10 +63,49 @@ static void print_alphabet(struct assignment **alias_tb)
     for (ssize_t i = 0; i < getter->size; i++)
     {
         struct assignment *assign = getter->arr[i];
-        fprintf(stdout, "alias %s='%s'\n", assign->name, assign->value);
+        fprintf(stdout, "%s='%s'\n", assign->name, assign->value);
     }
     vector_destroy(getter);
     return;
+}
+
+static int search_vector(char *arg)
+{
+
+    for (ssize_t i = 0; i < global.aliastab->size; i++)
+    {
+        char *actual = global.aliastab->arr[i];
+        if (actual)
+        {
+            for (size_t j = 0; (j <= strlen(arg)) && (j < strlen(actual)); j++)
+            {
+                if (actual[j] == '=')
+                {
+                    char *cpy = calloc(strlen(actual) + 1, sizeof(char));
+                    if (!cpy)
+                        return 0;
+                    strcpy(cpy, actual);
+                    strtok(cpy, "=");
+                    char *tp = strtok(NULL, "=");
+                    if (!tp)
+                    {
+                        free(cpy);
+                        return 0;
+                    }
+                    fprintf(stdout, "%s='%s'\n", arg, tp);
+                    free(cpy);
+                    return 1;
+                }
+
+                if (j == strlen(arg) || actual[j] != arg[j])
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    return 0;
 }
 
 static int print_alias(char *arg)
@@ -77,15 +116,23 @@ static int print_alias(char *arg)
     {
         if (a->name == NULL)
         {
+            if (search_vector(arg))
+            {
+                return 0;
+            }
             fprintf(stderr, "42sh: alias: %s not found.\n", arg);
             return 1;
         }
 
         if (!strcmp(a->name, arg))
         {
-            fprintf(stdout, "alias %s='%s'\n", arg, a->value ? a->value : "\0");
+            fprintf(stdout, "%s='%s'\n", arg, a->value ? a->value : "\0");
             return 0;
         }
+    }
+    if (search_vector(arg))
+    {
+        return 0;
     }
     fprintf(stderr, "42sh: alias: %s not found.\n", arg);
     return 1;
