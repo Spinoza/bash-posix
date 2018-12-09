@@ -178,8 +178,13 @@ char **to_execute(struct node *child, struct node *oper_node
         if (strcmp(iter->instr,"$@") && strcmp(iter->instr,"$*"))
         {
             instr = set_string(iter->instr, data);
-            result = realloc(result, (i + 1) * sizeof(char *));
-            result[i] = instr;
+            if (strcmp (instr, ""))
+            {
+                result = realloc(result, (i + 1) * sizeof(char *));
+                result[i] = instr;
+            }
+            else
+                i--;
         }
         else
         {
@@ -227,9 +232,9 @@ int is_builtin(char **string)
         {
             int r = 0;
             if (!strcmp(string[0], "exit"))
-                r = global.data->builtins[i].builtin(2, string, global.res);
+                r = global.data->builtins[i].builtin(string, global.res);
             else
-                r = global.data->builtins[i].builtin(2, string);
+                r = global.data->builtins[i].builtin(string);
             return r;
         }
     }

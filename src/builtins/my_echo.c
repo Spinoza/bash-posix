@@ -49,55 +49,55 @@ static int handle_hardbs(char *arg, wchar_t *printfin, int index, int *cursor)
             return back_U(arg, printfin, index, cursor);
             break;
         default:
-        {
-            printfin[index] = arg[*(cursor)-1];
-            index++;
-            int j = strlen(arg);
-            for (; *cursor < j && !isforbidden(arg[*cursor]); (*cursor)++)
             {
-                printfin[index] = arg[*cursor];
+                printfin[index] = arg[*(cursor)-1];
                 index++;
+                int j = strlen(arg);
+                for (; *cursor < j && !isforbidden(arg[*cursor]); (*cursor)++)
+                {
+                    printfin[index] = arg[*cursor];
+                    index++;
+                }
+                return index;
             }
-            return index;
-        }
     }
 }
 
 static int match_bs(char *arg, wchar_t *printfin, int index, int *cursor)
 {
 
-     if (arg[*cursor] == 'a')
-     {
-         printfin[index] = 7;
-         *cursor += 1;
-         index++;
-     }
+    if (arg[*cursor] == 'a')
+    {
+        printfin[index] = 7;
+        *cursor += 1;
+        index++;
+    }
 
-     else if (arg[*cursor] == 'b')
-     {
-         printfin[index] = 8;
-         *cursor += 1;
-         index++;
-     }
+    else if (arg[*cursor] == 'b')
+    {
+        printfin[index] = 8;
+        *cursor += 1;
+        index++;
+    }
 
-     else if (arg[*cursor] == 'c')
-     {
+    else if (arg[*cursor] == 'c')
+    {
         return -10;
-     }
+    }
 
-     else if (arg[*cursor] == 'f')
-     {
+    else if (arg[*cursor] == 'f')
+    {
         printfin[index] = 12;
         index++;
         *cursor += 1;
-     }
+    }
 
-     else if (arg[*cursor] == 'n')
-     {
+    else if (arg[*cursor] == 'n')
+    {
         printfin[index] = 10;
         index++;
         *cursor += 1;
-     }
+    }
 
     else if (arg[*cursor] == 'r')
     {
@@ -178,13 +178,11 @@ int my_echo(char *args[], ...)
 
     while (args[i])
     {
-
         if (is_echo_opt(args[i], &e, &E, &n) && !found)
         {
             i++;
             continue;
         }
-
         else
         {
             found = 1;
@@ -226,7 +224,6 @@ int my_echo(char *args[], ...)
             }
         }
     }
-
     if (n)
     {
         if (printfin)
@@ -234,7 +231,6 @@ int my_echo(char *args[], ...)
         else
             printf("%s", "");
     }
-
     else
     {
         if (printfin)

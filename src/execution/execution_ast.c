@@ -70,7 +70,9 @@ int redirection_aux(char **command, struct node *n,
     }
     if (pid == 0)
     {
-        changing_fd(n);
+        int fd = open(oper_node->next->instr, O_RDWR ||O_CREAT);
+        printf("%d\n", fd);
+        dup2(fd, 1);
         int r = execvp(command[0], command);
         exit(r);
     }
@@ -178,7 +180,6 @@ struct node *get_next_node(struct node *oper_node, int *res)
 struct node *instr_execution(struct node *n, int *res,
         struct stored_data *data)
 {
-    /*check redirection*/
     struct node *oper_node = get_oper_node(n);
     char **command_call = to_execute(n, oper_node, data);
     struct function *f = is_a_function(command_call[0], data->f_tab);
