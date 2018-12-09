@@ -71,7 +71,7 @@ struct stored_data *stored_data_init(void)
     char *PS2 = calloc(3, sizeof(char));
     PS1 = memcpy(PS1, "42sh$ ", 6);
     PS2 = memcpy(PS2, "> ", 2);
-    ifs = memcpy(ifs, " ", 1);
+    //ifs = memcpy(ifs, " ", 1);
     char *PS1_name = calloc(4,sizeof(char));
     PS1_name = memcpy(PS1_name, "PS1", 3);
     add_assignment_split(PS1_name, PS1, new->var_tab);
