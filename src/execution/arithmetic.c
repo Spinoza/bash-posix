@@ -127,10 +127,12 @@ int set_number(struct bt_node *new, char *string, int *index,
         else
         {
             fprintf(stderr,
-                    "42sh: error in arithmetic expression,\
-                    unexpected operator %c.\n", string[*index-1]);
+                    "42sh: error in arithmetic expression"
+                    " unexpected operator %c.\n", string[*index-1]);
             free_arith_list(arith_list);
             free(number);
+            global.res = 1;
+            global.data->builtins[0].builtin(NULL, global.res);
             return 0;
         }
         *index = next_token(string, *index);
@@ -182,7 +184,8 @@ static struct arith_list *build_list(char *string)
                 fprintf(stderr,
                         "42sh: error in arithmetic expression bad syntax.\n");
                 free_arith_list(arith_list);
-                return NULL;
+                global.res = 1;
+                global.data->builtins[0].builtin(NULL, global.res);
             }
             index = next_token(string, index);
         }
@@ -199,7 +202,8 @@ static struct arith_list *build_list(char *string)
     {
         fprintf(stderr, "42sh: arithmetic expansion missing a parenthesis\n");
         free_arith_list(arith_list);
-        return NULL;
+        global.res = 1;
+        global.data->builtins[0].builtin(NULL, global.res);
     }
     return arith_list;
 }
@@ -262,10 +266,8 @@ static struct stack *eval_nodes(struct stack *stack,
         struct stack *operators_stack)
 {
     struct bt_node *right = pop(stack);
-    struct bt_node *oper = pop(operators_stack);
-    struct bt_node *left = NULL;
-    if (stack->head)
-        left = pop(stack);
+    struct bt_node *oper = (operators_stack ? pop(operators_stack) : NULL);
+    struct bt_node *left = (stack->head ? pop(stack) : NULL);
     if (!left)
     {
         global.res = 127;
@@ -397,10 +399,6 @@ long int eval_list(struct stack *stack, struct stack *operators_stack,
     }
     if (!stack)
         return 0;
-    while (stack->size != 1)
-    {
-        stack = eval_nodes(stack, operators_stack);
-    }
     long int r = stack->head->elem->nb;
     return r;
 }
