@@ -59,7 +59,7 @@ static enum oper get_op(char *string, int *index)
     if (!string)
         return 0;
     //z is here to match with the enum
-    char *list_op = "z+-*/~^zz() ";
+    char *list_op = "z+-*/^zz() ";
     for (int i = 0; *(list_op + i); i++)
     {
         if (string[*index] == list_op[i])
