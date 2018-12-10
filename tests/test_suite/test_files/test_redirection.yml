@@ -1,0 +1,62 @@
+redirection_type1:
+        type: "bash diff"
+        command: "ls > abc;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+redirection_type1:
+        type: "bash diff"
+        command: " ls < bed"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+redirection_type2:
+        type: "bash diff"
+        command: "echo wow >> abc"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+redirection_type2:
+        type: "bash diff"
+        command: "ls << abc"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+redirection_multiple:
+        type: "bash diff"
+        command: "ls > abc; echo wow > abc;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+redirection_multiple:
+        type: "bash diff"
+        command: "ls >> abc; ls - la >> abc;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+redirection_multiple:
+        type: "bash diff"
+        command: "ls << abc; echo wow << abc;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
+
+redirection_pipe:
+        type: "bash diff"
+        command: "ls < abc; echo wow < abc;"
+        expected:
+                stdout:
+                stderr:
+                rvalue:
