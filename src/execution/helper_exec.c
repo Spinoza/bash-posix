@@ -53,11 +53,15 @@ static void add_environ(struct stored_data *new)
 struct stored_data *stored_data_init(void)
 {
     struct stored_data *new = malloc(sizeof(struct stored_data));
+    if (!new)
+        out_of_memory();
     new->param = NULL;
     new->nbparam = 0;
     new->brk = 0;
     new->f_tab = NULL;
     new->parent_list = calloc(1, sizeof(struct node *));
+    if (!new->parent_list)
+        out_of_memory();
     new->nbparent = 0;
     new->var_tab = init_assignment();
     //FIXME: ne pas remove ces deux lignes !
@@ -94,14 +98,9 @@ static int copy_string(char *source, char **dest, int start_index,
     if (start_index + len >= *capacity)
     {
         *capacity += 2 * len;
-        void *tmp = realloc(*dest, sizeof(char) * *capacity);
-        if (tmp)
-            *dest = tmp;
-        else
-        {
-            free(dest);
-            return 0;
-        }
+        *dest = realloc(*dest, sizeof(char) * *capacity);
+        if (!dest)
+            out_of_memory();
     }
     memcpy(*dest + start_index, source, len);
     return start_index + len;
@@ -119,6 +118,8 @@ char *set_string(char *instr, struct stored_data *data)
     int *capacity = malloc(sizeof(int));;
     *capacity = len;
     char *string = calloc(*capacity, sizeof(char));
+    if (!string)
+        out_of_memory();
     int after_dollar = 0;
     int k = 0; //index to copy characters
     for (int i = 0; *(instr + i); i++)

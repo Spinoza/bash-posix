@@ -295,11 +295,15 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
             {
                 capacity = (i + data->nbparam) * 2;
                 instruction = realloc(instruction, capacity * sizeof(char *));
+                if (!instruction)
+                    out_of_memory();
             }
             for (int j = 0 ; j < data->nbparam; j++, i++)
             {
                 int len = strlen(data->param[j]);
                 instruction[i] = calloc(len + 1, sizeof(char));
+                if (!instruction[i])
+                    out_of_memory();
                 instruction[i] = memcpy(instruction[i], data->param[j], len);
             }
             i--;
@@ -311,6 +315,8 @@ char **get_instruction_for (struct node *cond, struct stored_data *data)
                 capacity *= 2;
                 instruction = realloc(instruction, capacity
                         * sizeof(char *));
+                if (!instruction)
+                    out_of_memory();
             }
             instruction[i] = set_string(cond->instr, data);
         }

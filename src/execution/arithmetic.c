@@ -25,6 +25,8 @@ static char *itoa(int nb)
     }
     int s = nbdigits(nb) + negative;
     char *number = malloc(sizeof(char) * (s + 1));
+    if (!number)
+        out_of_memory();
     if (nb == 0)
     {
         number[0] = '0';
@@ -49,6 +51,9 @@ static void add_to_list(struct arith_list *arith_list, struct bt_node *new)
         arith_list->capacity *= 2;
         arith_list->list = realloc(arith_list->list,
                 sizeof(struct bt_node) * arith_list->capacity);
+        if (!arith_list->list)
+            out_of_memory();
+
     }
     arith_list->list[arith_list->nb_nodes] = new;
     arith_list->nb_nodes++;
@@ -114,6 +119,8 @@ int set_number(struct bt_node *new, char *string, int *index,
         struct arith_list *arith_list)
 {
     char *number = calloc(15, sizeof(char));
+    if (!number)
+        out_of_memory();
     int sign = 1;
     enum oper op = get_op(string, index);
     int nbdigits = 0;
@@ -152,7 +159,11 @@ int set_number(struct bt_node *new, char *string, int *index,
 static struct arith_list *build_list(char *string)
 {
     struct arith_list *arith_list = calloc(1, sizeof(struct arith_list));
+    if (!arith_list)
+        out_of_memory();
     arith_list->list = calloc(10, sizeof(struct bt_node*));
+    if (!arith_list->list)
+        out_of_memory();
     arith_list->capacity = 10;
     arith_list->nb_nodes = 0;
     struct bt_node *new;
@@ -339,6 +350,8 @@ static int get_precedence(struct bt_node *node)
 struct bt_node *copy_bt_node(struct bt_node *to_copy)
 {
     struct bt_node *new = calloc(1, sizeof(struct bt_node));
+    if (!arith_list->list)
+        out_of_memory();
     new->nb = to_copy->nb;
     new->op = to_copy->op;
     return new;
