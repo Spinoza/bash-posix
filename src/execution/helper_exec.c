@@ -169,6 +169,8 @@ char *set_string(char *instr, struct stored_data *data)
         }
         after_dollar = 0;
     }
+    if (after_dollar)
+        string[k] = '$';
     string[k + 1] = '\0';
     free(capacity);
     return string;
