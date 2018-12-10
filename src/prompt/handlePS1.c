@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include "lexer.h"
+#include "execution_ast.h"
+#include "globals.h"
 #include <unistd.h>
 #include <readline/history.h>
 #include <readline/readline.h>
@@ -13,7 +15,7 @@ struct nL *handletty(void)
     while (isatty(STDIN_FILENO))
     {
         char *line;
-        char *PS2 = get_assignment("PS2");
+        char *PS2 = get_assign("PS2", global.data);
         if (!PS2)
             line = readline("> ");
         else
