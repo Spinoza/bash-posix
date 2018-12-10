@@ -2,8 +2,15 @@
 #include <string.h>
 #include "vector.h"
 #include "globals.h"
+#include "builtins.h"
 #include "helper_exec.h"
 
+void out_of_memory(void)
+{
+    global.res = 127;
+    fprintf(stderr,"42sh: ran out of memory.\n");
+    global.data->builtins[0].builtin(NULL,127);
+}
 
 void init_globv(void)
 {

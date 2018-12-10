@@ -15,6 +15,7 @@ struct globv
     char *PWD;
 };
 
+void out_of_memory(void);
 void change_pwd(char *newPID);
 void init_globv(void);
 void free_glob(void);
