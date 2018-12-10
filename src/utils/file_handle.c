@@ -102,7 +102,7 @@ struct linked_list *read_fil(char *path)
     return toret;
 }
 
-static int is_empty(char *line)
+/*static int is_empty(char *line)
 {
     if (!line)
         return 1;
@@ -115,12 +115,39 @@ static int is_empty(char *line)
     }
 
     return 1;
-}
+}*/
 
 struct linked_list *reading(FILE *file)
 {
     struct linked_list *tokens;
-    char *line = NULL;
+    char *input = calloc(300, sizeof(char));
+    size_t red = fread(input, sizeof(char), 300, file);
+    size_t cumul = red;
+    size_t toreac = 300;
+    while (red > 0)
+    {
+        if (cumul >= toreac)
+        {
+            input = realloc(input, 300 * sizeof(char));
+            if (!input)
+            {
+                errx(1, "error while reallocating.\n");
+            }
+            toreac += 300;
+            for (size_t i = cumul; i < toreac; i++)
+            {
+                input[i] = '\0';
+            }
+        }
+
+        red = fread(input + cumul, sizeof(char), 300, file);
+        cumul += red;
+    }
+
+    printf("%s\n", input);
+    tokens = lexer_c(input);
+
+/*    char *line = NULL;
     size_t i = 0;
     int res = 0;
     res = getline(&line, &i, file);
@@ -161,6 +188,7 @@ struct linked_list *reading(FILE *file)
         line = NULL;
     }
     free(line);
-
+*/
+    free(input);
     return tokens;
 }
