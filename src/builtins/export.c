@@ -9,7 +9,7 @@ static int has_equal(char *word)
     int i = 0;
     while (word[i])
     {
-        if(word[i] == '=')
+        if (word[i] == '=')
             return 1;
         i++;
     }
@@ -30,18 +30,18 @@ int my_export(char *args[], ...)
     int file = 0;
     while (args[i])
     {
-        if(!strcmp(args[i], "-p") && file == 0)
+        if (!strcmp(args[i], "-p") && file == 0)
         {
             i++;
             continue;
         }
-        else if(!strcmp(args[i], "-n") && file == 0)
+        else if (!strcmp(args[i], "-n") && file == 0)
         {
             n = 1;
         }
         else
         {
-            if(args[i][0] == '-')
+            if (args[i][0] == '-')
             {
                 if (file)
                 {
@@ -51,14 +51,14 @@ int my_export(char *args[], ...)
                 fprintf(stderr, "export: not a valid option\n");
                 return 1;
             }
-            if(file == 0)
+            if (file == 0)
             {
                 file = 1;
             }
-            if(n == 1)
+            if (n == 1)
             {
                 char *split = args[i];
-                if(has_equal(args[i]) == 1)
+                if (has_equal(args[i]) == 1)
                 {
                     add_assignment(args[i], global.data->var_tab);
                     split = strtok(split, "=");
@@ -68,9 +68,9 @@ int my_export(char *args[], ...)
                 struct assignment *prev = NULL;
                 while (assign != NULL && assign->name != NULL)
                 {
-                    if(!strcmp(args[i], assign->name))
+                    if (!strcmp(args[i], assign->name))
                     {
-                        if(prev == NULL)
+                        if (prev == NULL)
                         {
                             global.data->export_tab[ind] = assign->next;
                             free_assign(assign);
@@ -89,7 +89,7 @@ int my_export(char *args[], ...)
             }
             else
             {
-                if(has_equal(args[i]) == 1)
+                if (has_equal(args[i]) == 1)
                 {
                     add_assignment(args[i], global.data->var_tab);
                     add_assignment(args[i], global.data->export_tab);
@@ -102,19 +102,19 @@ int my_export(char *args[], ...)
                     char *value = get_assign(name, global.data);
                     add_assignment_split(name, value,
                             global.data->export_tab);
-               }
+                }
             }
         }
         i++;
     }
-    if(file == 0)
+    if (file == 0)
     {
         struct vector *print = get_assigns_sorted(global.data->export_tab);
         for (ssize_t i = 0; i < print->size; i++)
         {
             struct assignment *assign = print->arr[i];
             fprintf(stdout, "export %s", assign->name);
-            if(assign->value)
+            if (assign->value)
             {
                 fprintf(stdout, "=\"%s\"\n", assign->value);
             }

@@ -30,6 +30,5 @@ struct nL *handletty(void)
         free(line);
         return ret;
     }
-
     return NULL;
 }

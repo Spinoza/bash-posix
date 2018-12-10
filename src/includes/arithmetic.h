@@ -1,15 +1,15 @@
 #ifndef ARITHMETIC_H
 #define ARITHMETIC_H
 /**
-  *\file arithmetic.h
-  *\brief
-  *\All information about the arithmetic expansions.
-  */
+ *\file arithmetic.h
+ *\brief
+ *\All information about the arithmetic expansions.
+ */
 
 /**
-  *\enum type
-  *\brief an enum for all kinds of operators.
-  */
+ *\enum type
+ *\brief an enum for all kinds of operators.
+ */
 
 enum oper
 {
@@ -30,12 +30,12 @@ enum oper
 };
 
 /**
-  *\struct bt_node
-  *\brief Struct of the nodes used in arithmetic expansions
-  *
-  *This struct keeps information about the current token, either a number or an
-  *operator.
-  */
+ *\struct bt_node
+ *\brief Struct of the nodes used in arithmetic expansions
+ *
+ *This struct keeps information about the current token, either a number or an
+ *operator.
+ */
 struct bt_node
 {
     double nb; /**< The integer part of the node */
@@ -43,11 +43,11 @@ struct bt_node
 };
 
 /**
-  *\struct arith_list
-  *\brief Struct used to list struct of the nodes used in arithmetic expansions
-  *
-  *All elements in the list are ordered by how they were inputted.
-  */
+ *\struct arith_list
+ *\brief Struct used to list struct of the nodes used in arithmetic expansions
+ *
+ *All elements in the list are ordered by how they were inputted.
+ */
 struct arith_list
 {
     int nb_nodes;/**< The number of nodes */
@@ -56,10 +56,10 @@ struct arith_list
 };
 
 /**
-  *\fn char *arith_expansion(char *string);
-  *\brief Expands the arithmetic expansion given as parameter.
-  *\param char *string, input to expand.
-  *\return char *, string of the result of the expansion.
-  */
+ *\fn char *arith_expansion(char *string);
+ *\brief Expands the arithmetic expansion given as parameter.
+ *\param char *string, input to expand.
+ *\return char *, string of the result of the expansion.
+ */
 char *arith_expansion(char *string);
 #endif /* ! ARITHMETIC_H */

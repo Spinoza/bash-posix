@@ -204,14 +204,12 @@ int back_U(char *arg,  wchar_t *printfin, int index, int *i)
         cpy[filled] = arg[*i];
         filled++;
     }
-
     while (filled < 8)
     {
         cpy[filled] = '0';
         filled++;
         hasfilled = 1;
     }
-
     wchar_t c = convert_hexa(atoi(cpy));
     printfin[index] = c;
     index++;
@@ -228,5 +226,4 @@ int back_U(char *arg,  wchar_t *printfin, int index, int *i)
         }
         return index;
     }
-
 }

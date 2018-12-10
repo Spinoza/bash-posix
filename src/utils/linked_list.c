@@ -84,6 +84,4 @@ struct token *token_copy(struct token *tok)
     strcpy(copy->name, tok->name);
 
     return copy;
-
-
 }

@@ -123,7 +123,7 @@ static struct node *new_node(struct nL *tok)
 {
     int t = 0;
     if (tok->elem->type == WORD && tok->next->elem->type == OPEN_PAR &&
-      tok->next->next->elem->type == CLOSE_PAR)
+            tok->next->next->elem->type == CLOSE_PAR)
     {
         t = 1;
     }
@@ -157,7 +157,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         return tok;
     }
     if (r->type == A_INSTRUCT || r->type == A_PIPE || r->type == A_IN
-    || r->type == A_REDIR)
+            || r->type == A_REDIR)
     {
         return tok;
     }
@@ -210,7 +210,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
     if (r->type == A_CONDITION)
     {
         while ((tok->elem->type != THEN)&&(tok->elem->type != DO)&&
-               (tok->elem->type != CLOSE_PAR))
+                (tok->elem->type != CLOSE_PAR))
         {
             if (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
             {
@@ -226,10 +226,10 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
     if (r->type == A_BODY)
     {
         while ((tok->elem->type != ELIF)&&(tok->elem->type != ELSE)&&
-              (tok->elem->type != DONE)&&(tok->elem->type != FI)&&
-              (tok->elem->type != TWO_SEMIC)&&(tok->elem->type != CLOSE_PAR)&&
-              (tok->elem->type != CLOSE_BRA) && (tok->elem->type != ESAC) &&
-              strcmp(tok->elem->name, "ENDOF"))
+                (tok->elem->type != DONE)&&(tok->elem->type != FI)&&
+                (tok->elem->type != TWO_SEMIC)&&(tok->elem->type != CLOSE_PAR)&&
+                (tok->elem->type != CLOSE_BRA) && (tok->elem->type != ESAC) &&
+                strcmp(tok->elem->name, "ENDOF"))
         {
             if (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
             {
@@ -241,16 +241,16 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
             tok = build_aux(new, tok->next);
         }
         if ((tok->elem->type == ELIF)||(tok->elem->type == ELSE) ||
-        (!strcmp(tok->elem->name, "ENDOF")))
+                (!strcmp(tok->elem->name, "ENDOF")))
             return tok;
         return tok->next;
     }
     if (r->type == A_EBODY)
     {
         while ((tok->elem->type != ELIF)&&(tok->elem->type != ELSE)&&
-              (tok->elem->type != DONE)&&(tok->elem->type != FI)&&
-              (tok->elem->type != TWO_SEMIC)&&(tok->elem->type != CLOSE_PAR)&&
-              (tok->elem->type != CLOSE_BRA))
+                (tok->elem->type != DONE)&&(tok->elem->type != FI)&&
+                (tok->elem->type != TWO_SEMIC)&&(tok->elem->type != CLOSE_PAR)&&
+                (tok->elem->type != CLOSE_BRA))
         {
             if (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
             {
@@ -292,7 +292,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         add_node(r, new);
         tok = build_aux(new, tok->next);
         while (tok->elem->type == ENDOF || tok->elem->type == IN ||
-             (tok->elem->type == OPEN_PAR))
+                (tok->elem->type == OPEN_PAR))
         {
             tok = tok->next;
         }
@@ -325,7 +325,7 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         new = init_node("body", 10);
         add_node(r, new);
         while (tok->elem->type == OPEN_PAR || tok->elem->type == CLOSE_PAR ||
-        tok->elem->type == OPEN_BRA)
+                tok->elem->type == OPEN_BRA)
         {
             tok = tok->next;
         }

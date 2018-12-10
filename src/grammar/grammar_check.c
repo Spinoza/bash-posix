@@ -41,7 +41,8 @@ struct nL *g_pipeline(struct nL *tok)
                     struct nL *tok1 = handletty();
                     if (!tok1)
                     {
-                        fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                        fprintf(stderr,
+                                "42sh:syntax error:unexpected end of file.\n");
                         return NULL;
                     }
                     stock->prev->next = tok1;
@@ -90,7 +91,8 @@ struct nL *g_andor(struct nL *tok)
                     struct nL *tok1 = handletty();
                     if (!tok1)
                     {
-                        fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                        fprintf(stderr,
+                                "42sh:syntax error:unexpected end of file.\n");
                         return NULL;
                     }
                     stock->prev->next = tok1;
@@ -134,7 +136,7 @@ struct nL  *g_list(struct nL *tok)
             return tok;
         }
         else if ((tok->elem->type == SEMICOLON)||
-           (tok->elem->type == AND))
+                (tok->elem->type == AND))
         {
             tok = tok->next;
             if (!tok)
@@ -170,7 +172,7 @@ int grammar_check (struct linked_list *tokens)
     if (tok->elem->type == ENDOF)
         return 1;
 
-     tok = g_list(tok);
+    tok = g_list(tok);
 
     if (!tok)
         return 0;
@@ -179,5 +181,3 @@ int grammar_check (struct linked_list *tokens)
 
     return 0;
 }
-
-

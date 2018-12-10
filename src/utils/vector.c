@@ -16,7 +16,7 @@ void vector_destroy(struct vector *v)
     if (!v)
         return;
 
-    //FIXME : implémenter un free des structs token.
+    //FIXME : need to implement a free fct for the tokens
     free(v->arr);
     free(v);
 }

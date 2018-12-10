@@ -6,19 +6,19 @@
 #include "token.h"
 
 /**
-  *\file ast.h
-  *\brief
-  *All information about the structur of a node of the
-  *ast and about the enum that gathers all the types of node.
-  */
+ *\file ast.h
+ *\brief
+ *All information about the structur of a node of the
+ *ast and about the enum that gathers all the types of node.
+ */
 
 /**
-  *\enum ntype
-  *\brief An ast tree node type enum
-  *
-  *For each node in an ast, a type is associated to it.
-  *This is done in order to be able to execute properly later.
-  */
+ *\enum ntype
+ *\brief An ast tree node type enum
+ *
+ *For each node in an ast, a type is associated to it.
+ *This is done in order to be able to execute properly later.
+ */
 enum ntype
 {
     A_IF, /**< Informs that what follows are if conditions and body*/
@@ -39,12 +39,12 @@ enum ntype
 };
 
 /**
-  *\struct node
-  *\brief Struct of the ast tree nodes
-  *
-  *This struct gathers information about the nodes created while building
-  *the ast tree.
-  */
+ *\struct node
+ *\brief Struct of the ast tree nodes
+ *
+ *This struct gathers information about the nodes created while building
+ *the ast tree.
+ */
 struct node
 {
     size_t nbchild; /**< The number of children of a node*/
@@ -57,35 +57,35 @@ struct node
 };
 
 /**
-  *\fn struct node *build_ast(struct linked_list *tokens)
-  *\brief Builds the ast tree
-  *\param tokens is a linked list a tokens conform to the grammar
-  *\return a struct node if everything works properly, NULL otherwise
-  */
+ *\fn struct node *build_ast(struct linked_list *tokens)
+ *\brief Builds the ast tree
+ *\param tokens is a linked list a tokens conform to the grammar
+ *\return a struct node if everything works properly, NULL otherwise
+ */
 struct node* build_ast(struct linked_list *tokens);
 
 /**
-  *\fn void print_ast(struct node *ast)
-  *\brief Prints the ast tree
-  *\param ast is the root of the tree to print
-  *\return void
-  */
+ *\fn void print_ast(struct node *ast)
+ *\brief Prints the ast tree
+ *\param ast is the root of the tree to print
+ *\return void
+ */
 void print_ast(struct node *ast);
 
 /**
-  *\fn void free_node(struct node *n)
-  *\brief Free the ast tree
-  *\param n the root of the tree to free
-  *\return void
-  */
+ *\fn void free_node(struct node *n)
+ *\brief Free the ast tree
+ *\param n the root of the tree to free
+ *\return void
+ */
 void free_node(struct node *n);
 
 /**
-  *\fn struct node *copy_node(struct node *n)
-  *\brief copies a tree
-  *\param struct node *n the root of the tree to copy
-  *\return struct node if tree has been copied properly, NULL otherwise
-  */
+ *\fn struct node *copy_node(struct node *n)
+ *\brief copies a tree
+ *\param struct node *n the root of the tree to copy
+ *\return struct node if tree has been copied properly, NULL otherwise
+ */
 struct node *copy_node(struct node *n);
 
 void free_node_copy(struct node *n);

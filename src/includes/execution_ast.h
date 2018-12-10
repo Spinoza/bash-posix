@@ -5,19 +5,19 @@
 #include "ast_assignement.h"
 
 /**
-  *\file execution_ast.h
-  *\brief
-  *All information needed in order to execute the AST created by ast.h,
-  *including the particular structures and enumerations.
-  */
+ *\file execution_ast.h
+ *\brief
+ *All information needed in order to execute the AST created by ast.h,
+ *including the particular structures and enumerations.
+ */
 
 /**
-  *\enum operators
-  *\brief An enumeration storing different type of operators.
-  *
-  *For each possible operator, a field in this enumeration is given, allowing
-  *to keep track of which condition we are computing.
-  */
+ *\enum operators
+ *\brief An enumeration storing different type of operators.
+ *
+ *For each possible operator, a field in this enumeration is given, allowing
+ *to keep track of which condition we are computing.
+ */
 enum operators
 {
     FALSE = 0, /**< The FALSE statement, saying a condition isn't matched.*/
@@ -32,12 +32,12 @@ enum operators
 };
 
 /**
-  *\struct tab_a
-  *\brief structure aiming to store every assignment word encountered.
-  *
-  *This struct is basically a matrix containing each assignment word encountered,
-  *stored as an assignment structure.
-  */
+ *\struct tab_a
+ *\brief structure aiming to store every assignment word encountered.
+ *
+ *This struct is basically a matrix containing each assignment word encountered,
+ *stored as an assignment structure.
+ */
 
 struct function
 {
@@ -46,12 +46,12 @@ struct function
 };
 
 /**
-  *\struct f_tab
-  *\brief structure aiming to keep track of every function encountered.
-  *
-  *This structure is basically a matrix containing every function structure created in
-  *execution.
-  */
+ *\struct f_tab
+ *\brief structure aiming to keep track of every function encountered.
+ *
+ *This structure is basically a matrix containing every function structure created in
+ *execution.
+ */
 
 struct f_tab
 {
@@ -61,14 +61,14 @@ struct f_tab
 };
 
 /**
-  *\struct stored_data
-  *\brief structure aiming to keep track of every type of data that need to be
-  *stored.
-  *
-  *This structure contains all the assignments, the aliases and the exports,
-  *the builtins as well as the functions and the current parameters if the
-  *context is a function. brk is a variable used for the break builtin.
-  */
+ *\struct stored_data
+ *\brief structure aiming to keep track of every type of data that need to be
+ *stored.
+ *
+ *This structure contains all the assignments, the aliases and the exports,
+ *the builtins as well as the functions and the current parameters if the
+ *context is a function. brk is a variable used for the break builtin.
+ */
 struct stored_data
 {
     char **param;/**< The list of parameters in the current function*/
@@ -84,12 +84,12 @@ struct stored_data
 };
 
 /**
-  *\fn int execution_ast(struct node *n, struct f_tab **f_tab)
-  *\brief starts the execution of the tree, from node *n.
-  *\param n is the root of the tree to execute,
-  *f_tab is the matrix of functions encountered.
-  *\return an int representing the return value of the exeuction.
-  */
+ *\fn int execution_ast(struct node *n, struct f_tab **f_tab)
+ *\brief starts the execution of the tree, from node *n.
+ *\param n is the root of the tree to execute,
+ *f_tab is the matrix of functions encountered.
+ *\return an int representing the return value of the exeuction.
+ */
 char *get_assign_var(char *name, struct assignment **alias_tab);
 char *get_assign(char *name, struct stored_data *data);
 int execution_ast(struct node *n, struct stored_data *data);
@@ -97,12 +97,12 @@ struct node *continue_execution(struct stored_data *data);
 void break_execution(struct stored_data *data, int break_nb);
 
 /**
-  *\fn int traversal_ast(struct node *n, int *res, struct f_tab **f_tab)
-  *\brief does a traversal of the tree starting at node n, keeping track
-  *of the executions's return value.
-  *\param n is the root of the tree to go through,
-  *res is the return value, f_tab is the matrix of functions encountered.
-  *\return an int representing the return value of the exeuction.
-  */
+ *\fn int traversal_ast(struct node *n, int *res, struct f_tab **f_tab)
+ *\brief does a traversal of the tree starting at node n, keeping track
+ *of the executions's return value.
+ *\param n is the root of the tree to go through,
+ *res is the return value, f_tab is the matrix of functions encountered.
+ *\return an int representing the return value of the exeuction.
+ */
 int traversal_ast(struct node *n, int *res, struct stored_data *data);
 #endif /* ! EXECUTION_AST_H */

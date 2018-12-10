@@ -97,7 +97,8 @@ struct nL *g_caseclause(struct nL *tok)
                 struct nL *tok1 = handletty();
                 if (!tok1)
                 {
-                    fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                    fprintf(stderr,
+                            "42sh: syntax error: unexpected end of file.\n");
                     return NULL;
                 }
                 stock->prev->next = tok1;
@@ -139,7 +140,8 @@ struct nL *g_caseclause(struct nL *tok)
             struct nL *tok1 = handletty();
             if (!tok1)
             {
-                fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                fprintf(stderr,
+                        "42sh: syntax error: unexpected end of file.\n");
                 return NULL;
             }
             save->prev->next = tok1;
@@ -159,7 +161,7 @@ struct nL *g_caseclause(struct nL *tok)
 static int is_conform(struct nL *tok)
 {
     char *args[13] = { ">", "<", ">>", ">&", "<&", ">|", "<>"
-                , "!", "{", "}", ";;", "(", ")"};
+        , "!", "{", "}", ";;", "(", ")"};
 
     for (int i = 0; i < 7; i++)
     {
@@ -201,7 +203,8 @@ struct nL *g_caseitem(struct nL *tok)
             return tok;
 
         int conf = is_conform(tok);
-        if (tok->elem->type != WORD || tok->elem->type == EXPAND_W || conf != 0)
+        if (tok->elem->type != WORD
+                || tok->elem->type == EXPAND_W || conf != 0)
         {
             tok = save;
             break;
@@ -222,14 +225,14 @@ struct nL *g_caseitem(struct nL *tok)
     save = tok;
     tok = tok->next;
     while (!tok ||(tok->elem->type == ENDOF &&
-                  !strcmp(tok->elem->name, "\n")))
+                !strcmp(tok->elem->name, "\n")))
     {
         if (!tok)
         {
             struct nL *tok1 = handletty();
             if (!tok1)
             {
-                fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                fprintf(stderr,"42sh:syntax error: unexpected end of file.\n");
                 return NULL;
             }
             save->prev->next = tok1;

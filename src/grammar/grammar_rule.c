@@ -71,7 +71,8 @@ struct nL *g_rulecase(struct nL *tok)
         return NULL;
 
     int conf = is_conform(tok);
-    if (tok->elem->type != WORD || tok->elem->type == EXPAND_W || conf == 1 || conf == 2)
+    if (tok->elem->type != WORD
+            || tok->elem->type == EXPAND_W || conf == 1 || conf == 2)
 
         return NULL;
     struct nL *save = tok;
@@ -83,7 +84,7 @@ struct nL *g_rulecase(struct nL *tok)
             struct nL *tok1 = handletty();
             if (!tok1)
             {
-                fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                fprintf(stderr,"42sh: syntax error:unexpected end of file.\n");
                 return NULL;
             }
             save->prev->next = tok1;
@@ -109,7 +110,7 @@ struct nL *g_rulecase(struct nL *tok)
             struct nL *tok1 = handletty();
             if (!tok1)
             {
-                fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                fprintf(stderr,"42sh: syntax error:unexpected end of file.\n");
                 return NULL;
             }
             save->prev->next = tok1;
@@ -205,7 +206,8 @@ struct nL *g_rulefor (struct nL *tok)
                 struct nL *tok1 = handletty();
                 if (!tok1)
                 {
-                    fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                    fprintf(stderr,
+                            "42sh:syntax error: unexpected end of file.\n");
                     return NULL;
                 }
                 save->prev->next = tok1;
@@ -254,7 +256,7 @@ struct nL *g_rulefor (struct nL *tok)
             struct nL *tok1 = handletty();
             if (!tok1)
             {
-                fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                fprintf(stderr,"42sh:syntax error:unexpected end of file.\n");
                 return NULL;
             }
             stock->prev->next = tok1;
@@ -269,5 +271,3 @@ struct nL *g_rulefor (struct nL *tok)
     }
     return g_dogroup(tok);
 }
-
-
