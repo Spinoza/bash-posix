@@ -28,20 +28,6 @@
 
 struct globv global;
 
-//FIXME: find a better place for this.
-char *get_assignment(char *name)
-{
-    int pos = hash_function(name);
-    struct assignment *a = global.data->var_tab[pos];
-    while (a && a->name)
-    {
-        if (!strcmp(a->name, name))
-            return a->value;
-        a = a->next;
-    }
-    return NULL;
-}
-
 static int norc_opt(void)
 {
     char *arg1[] = {"/etc/42shrc", NULL};
@@ -151,7 +137,7 @@ static int interactive_mode(struct globv global)
     {
         handle_signals();
         char *line;
-        char *PS1 = get_assignment("PS1");
+        char *PS1 = get_assign("PS1", global.data);
         if (!PS1)
             line = readline("42sh$ ");
         else
