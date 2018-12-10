@@ -341,6 +341,12 @@ struct stack *pop_stack(struct stack *stack, struct stack *operators_stack,
         int to_parenthesis, int next_precedence)
 {
     struct bt_node *top = peek(operators_stack);
+    if (!stack || stack->size == 0)
+    {
+        global.res = 127;
+        fprintf(stderr,"42sh: arithmetic expansion, bad expression.\n");
+        global.data->builtins[0].builtin(NULL, global.res);
+    }
     if (to_parenthesis)
     {
         while (stack && top && top->op != OPEN_PAR_OPER)
@@ -412,10 +418,6 @@ char *arith_expansion(char *string)
     struct arith_list *list = build_list(string);
     if (!list)
         return NULL;
-    if (list->nb_nodes == 1)
-    {
-        return itoa(list->list[0]->nb);
-    }
     int index = 0;
     struct stack *stack = init_stack();
     struct stack *operators_stack = init_stack();
