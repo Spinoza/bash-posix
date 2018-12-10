@@ -165,7 +165,8 @@ static struct arith_list *build_list(char *string)
         if (string[index] == ' ')
             index = next_token(string, index);
         enum oper op = get_op(string, &index);
-        if (prev_op != 0 && (op == PLUS || op == MINUS))
+        if (!(prev_op == NOT_AN_OP || prev_op == CLOSE_PAR_OPER)
+                && (op == PLUS || op == MINUS))
         {
             op = 0; //Operator was actually a sign for the next number
             index--;
@@ -267,6 +268,12 @@ static struct stack *eval_nodes(struct stack *stack,
 {
     struct bt_node *right = pop(stack);
     struct bt_node *oper = (operators_stack->head ? pop(operators_stack) : NULL);
+    if (oper->op == OPEN_PAR_OPER)
+    {
+        free(oper);
+        push(stack, right);
+        return stack;
+    }
     struct bt_node *left = (stack->head ? pop(stack) : NULL);
     if (!left)
     {
@@ -349,6 +356,11 @@ struct stack *pop_stack(struct stack *stack, struct stack *operators_stack,
     }
     if (to_parenthesis)
     {
+        if (top->op == OPEN_PAR_OPER)
+        {
+            stack = eval_nodes(stack, operators_stack);
+            return stack;
+        }
         while (stack && top && top->op != OPEN_PAR_OPER)
         {
             stack = eval_nodes(stack, operators_stack);
