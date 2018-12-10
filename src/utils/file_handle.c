@@ -144,7 +144,6 @@ struct linked_list *reading(FILE *file)
         cumul += red;
     }
 
-    printf("%s\n", input);
     tokens = lexer_c(input);
 
 /*    char *line = NULL;

@@ -228,19 +228,19 @@ int main(int argc, char *argv[])
     {
         tokens = reading(stdin);
     }
-    else if (argc == 2)
+    else if (global.options->c == TRUE)
     {
-        FILE *toread = fopen(argv[1], "r");
+        tokens = lexer_c(global.options->arg_c);
+    }
+    else if (argc == index + 1)
+    {
+        FILE *toread = fopen(argv[index], "r");
         if (!toread)
         {
             errx(126, "%s: permission denied.", argv[1]);
         }
         tokens = reading(toread);
         fclose(toread);
-    }
-    else if (global.options->c == TRUE)
-    {
-        tokens = lexer_c(global.options->arg_c);
     }
     int isgramm = grammar_check(tokens);
     if (!isgramm)
