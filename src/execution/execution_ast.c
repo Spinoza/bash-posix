@@ -409,7 +409,7 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
     {
         if (n->type == A_FUNCTION)
         {
-            function_stored(n, data);
+            function_store(n, data);
             int r = traversal_ast(next_node(n), res, data);
             return r;
         }

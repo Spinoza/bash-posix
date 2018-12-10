@@ -350,7 +350,7 @@ static int get_precedence(struct bt_node *node)
 struct bt_node *copy_bt_node(struct bt_node *to_copy)
 {
     struct bt_node *new = calloc(1, sizeof(struct bt_node));
-    if (!arith_list->list)
+    if (!new)
         out_of_memory();
     new->nb = to_copy->nb;
     new->op = to_copy->op;
