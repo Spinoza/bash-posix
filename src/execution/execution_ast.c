@@ -401,6 +401,8 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
                     return traversal_ast(get_oper_node(n->next), res, data);
                 return traversal_ast(n->next, res, data);
             }
+            if (!strcmp(n->instr, ";"))
+                return traversal_ast(n->next, res, data);
             if (n->tokentype == ASSIGNMENT_W)
                 add_assignment(n->instr, data->var_tab);
             else
