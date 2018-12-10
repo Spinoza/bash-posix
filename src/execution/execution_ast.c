@@ -170,9 +170,18 @@ struct node *get_next_node(struct node *oper_node, int *res)
     if (!oper_node)
         return NULL;
     char *oper = oper_node->instr;
-    if ((!strcmp(oper,"&&") && !(*res))
-            || (!strcmp(oper,"||") && (*res)))
+    if (!strcmp(oper,"&&"))
+    {
+        if (*res)
+            return get_oper_node(oper_node->next);
         return oper_node->next;
+    }
+    if (!strcmp(oper,"||"))
+    {
+        if (!*res)
+            return get_oper_node(oper_node->next);
+        return oper_node->next;
+    }
     if ((!strcmp(oper, ";") || !strcmp(oper, "&")) && oper_node->next)
         return oper_node->next;
     return NULL;
@@ -380,8 +389,18 @@ int traversal_ast(struct node *n, int *res, struct stored_data *data)
         }
         if (n->type == A_INSTRUCT)
         {
-            if (!strcmp(n->instr, ";"))
+            if (!strcmp(n->instr,"&&"))
+            {
+                if (*res)
+                    return traversal_ast(get_oper_node(n->next), res, data);
                 return traversal_ast(n->next, res, data);
+            }
+            if (!strcmp(n->instr,"||"))
+            {
+                if (!*res)
+                    return traversal_ast(get_oper_node(n->next), res, data);
+                return traversal_ast(n->next, res, data);
+            }
             if (n->tokentype == ASSIGNMENT_W)
                 add_assignment(n->instr, data->var_tab);
             else
