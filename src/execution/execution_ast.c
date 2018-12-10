@@ -16,6 +16,12 @@
 #include <unistd.h>
 
 
+void close_fds(void)
+{
+    for (int i = 3; close(i) != -1; i++)
+        continue;
+}
+
 struct node *get_oper_node(struct node *start)
 {
     struct node *iter = start;
@@ -40,7 +46,7 @@ struct node *next_node(struct node *n)
     return NULL;
 }
 
-void changing_fd(struct node *oper_node)
+int changing_fd(struct node *oper_node)
 {
     int fd;
     if (oper_node && oper_node->tokentype == REDIRECTION)
@@ -48,63 +54,22 @@ void changing_fd(struct node *oper_node)
         if (!strcmp(oper_node->instr,"<")
                 ||!strcmp(oper_node->instr, ">"))
         {
-            fd = open(oper_node->next->instr, O_RDWR | O_CREAT | O_TRUNC);
+            fd = open(oper_node->next->instr, O_RDWR | O_CREAT | O_TRUNC,
+                    S_IRUSR | S_IWUSR);
             if (!strcmp(oper_node->instr,">"))
                 dup2(fd, 1);
-            else
-                dup2(fd, 0);
         }
         if (!strcmp(oper_node->instr,"<<")
                 ||!strcmp(oper_node->instr, ">>"))
         {
-            fd = open(oper_node->next->instr, O_RDWR | O_CREAT | O_APPEND);
+            fd = open(oper_node->next->instr, O_RDWR | O_CREAT | O_APPEND,
+                    S_IWUSR | S_IRUSR);
             if (!strcmp(oper_node->instr,">>"))
                 dup2(fd, 1);
-            else
-                dup2(fd, 0);
         }
+        return 1;
     }
-}
-
-int redirection_aux(char **command, struct node *n,
-        struct stored_data *data)
-{
-    struct node *oper_node = get_oper_node(n);
-    pid_t pid = fork();
-    int status = 0;
-    if (pid == -1)//error
-    {
-        fprintf(stderr,"42sh : fork : An error occured.\n");
-        exit(1);
-    }
-    if (pid == 0)
-    {
-        changing_fd(oper_node);
-        int r = execvp(command[0], command);
-        exit(r);
-    }
-    else
-    {
-        if (oper_node && oper_node->tokentype == REDIRECTION)
-        {
-            struct node *next_oper_node = get_oper_node(oper_node->next);
-            char **command_next = to_execute(oper_node->next,
-                    next_oper_node, data);
-            status = redirection_aux(command_next, oper_node->next, data);
-        }
-        waitpid(pid,&status,0);
-        if (status == 127)
-            fprintf(stderr,"42sh : %s : \
-                    command not found.\n", command[0]);
-    }
-    free_command(command);
-    return status;
-}
-
-int redirection_handling(char **command1, struct node *n, struct stored_data *data)
-{
-    struct node *oper_node = get_oper_node(n);
-    return redirection_aux(command1, oper_node, data);
+    return 0;
 }
 
 int pipe_aux(char **command, struct node *n, int fd[2],
@@ -166,11 +131,6 @@ int pipe_handling(char **command1, struct node *n, struct stored_data *data)
     return pipe_aux(command1, oper_node, fd, data);
 }
 
-void close_fds(void)
-{
-    for (int i = 3; close(i) != -1; i++)
-        continue;
-}
 
 struct node *get_next_node(struct node *oper_node, int *res)
 {
@@ -188,6 +148,10 @@ struct node *get_next_node(struct node *oper_node, int *res)
         if (!*res)
             return get_oper_node(oper_node->next);
         return oper_node->next;
+    }
+    if (oper_node->tokentype == REDIRECTION)
+    {
+        return oper_node->next->next;
     }
     if ((!strcmp(oper, ";") || !strcmp(oper, "&")) && oper_node->next)
         return oper_node->next;
@@ -230,15 +194,13 @@ struct node *instr_execution(struct node *n, int *res,
         while (oper_node && oper_node->tokentype == PIPE)
             oper_node = get_oper_node(oper_node->next);
     }
-    else if (oper_node && oper_node->tokentype == REDIRECTION)
-    {
-        *res = redirection_handling(command_call, n, data);
-        close_fds();
-        while (oper_node && oper_node->tokentype == REDIRECTION)
-            oper_node = get_oper_node(oper_node->next);
-    }
     else
+    {
+        int close_fd = changing_fd(oper_node);
         *res = exec_command(command_call);
+        if (close_fd)
+            close_fds();
+    }
     return get_next_node(oper_node, res);
 }
 
