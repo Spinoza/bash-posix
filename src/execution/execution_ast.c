@@ -48,8 +48,17 @@ void changing_fd(struct node *oper_node)
         if (!strcmp(oper_node->instr,"<")
                 ||!strcmp(oper_node->instr, ">"))
         {
-            fd = open(oper_node->next->instr, O_RDWR ||O_CREAT);
+            fd = open(oper_node->next->instr, O_RDWR | O_CREAT | O_TRUNC);
             if (!strcmp(oper_node->instr,">"))
+                dup2(fd, 1);
+            else
+                dup2(fd, 0);
+        }
+        if (!strcmp(oper_node->instr,"<<")
+                ||!strcmp(oper_node->instr, ">>"))
+        {
+            fd = open(oper_node->next->instr, O_RDWR | O_CREAT | O_APPEND);
+            if (!strcmp(oper_node->instr,">>"))
                 dup2(fd, 1);
             else
                 dup2(fd, 0);
@@ -70,9 +79,7 @@ int redirection_aux(char **command, struct node *n,
     }
     if (pid == 0)
     {
-        int fd = open(oper_node->next->instr, O_RDWR ||O_CREAT);
-        printf("%d\n", fd);
-        dup2(fd, 1);
+        changing_fd(oper_node);
         int r = execvp(command[0], command);
         exit(r);
     }
