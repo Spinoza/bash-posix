@@ -145,7 +145,6 @@ struct linked_list *reading(FILE *file)
     }
 
     tokens = lexer_c(input);
-
 /*    char *line = NULL;
     size_t i = 0;
     int res = 0;

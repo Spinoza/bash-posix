@@ -242,6 +242,7 @@ int main(int argc, char *argv[])
         tokens = reading(toread);
         fclose(toread);
     }
+
     int isgramm = grammar_check(tokens);
     if (!isgramm)
     {

@@ -141,7 +141,7 @@ static struct node *new_node(struct nL *tok)
 
 static struct nL *build_aux(struct node *r, struct nL *tok)
 {
-    if (tok->elem->type == ENDOF)
+    if (tok->elem->type == ENDOF && strcmp(tok->elem->name, "\n"))
         return tok;
     if (r->type == A_ROOT)
     {
@@ -212,8 +212,11 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
         while ((tok->elem->type != THEN)&&(tok->elem->type != DO)&&
                (tok->elem->type != CLOSE_PAR))
         {
-            while (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
+            if (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
+            {
                 tok = tok->next;
+                continue;
+            }
             struct node *new = new_node(tok);
             add_node(r, new);
             tok = build_aux(new, tok->next);
@@ -228,8 +231,11 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
               (tok->elem->type != CLOSE_BRA) && (tok->elem->type != ESAC) &&
               strcmp(tok->elem->name, "ENDOF"))
         {
-            while (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
+            if (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
+            {
                 tok = tok->next;
+                continue;
+            }
             struct node *new = new_node(tok);
             add_node(r, new);
             tok = build_aux(new, tok->next);
@@ -246,8 +252,11 @@ static struct nL *build_aux(struct node *r, struct nL *tok)
               (tok->elem->type != TWO_SEMIC)&&(tok->elem->type != CLOSE_PAR)&&
               (tok->elem->type != CLOSE_BRA))
         {
-            while (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
+            if (tok->elem->type == ENDOF && !(strcmp("\n", tok->elem->name)))
+            {
                 tok = tok->next;
+                continue;
+            }
             struct node *new = new_node(tok);
             add_node(r, new);
             tok = build_aux(new, tok->next);
