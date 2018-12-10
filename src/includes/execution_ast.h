@@ -60,6 +60,15 @@ struct f_tab
     struct function **f;/**< The matrix containing every function structure.*/
 };
 
+/**
+  *\struct stored_data
+  *\brief structure aiming to keep track of every type of data that need to be
+  *stored.
+  *
+  *This structure contains all the assignments, the aliases and the exports,
+  *the builtins as well as the functions and the current parameters if the
+  *context is a function. brk is a variable used for the break builtin.
+  */
 struct stored_data
 {
     char **param;
