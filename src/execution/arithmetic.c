@@ -53,7 +53,6 @@ static void add_to_list(struct arith_list *arith_list, struct bt_node *new)
                 sizeof(struct bt_node) * arith_list->capacity);
         if (!arith_list->list)
             out_of_memory();
-
     }
     arith_list->list[arith_list->nb_nodes] = new;
     arith_list->nb_nodes++;
@@ -278,7 +277,8 @@ static struct stack *eval_nodes(struct stack *stack,
         struct stack *operators_stack)
 {
     struct bt_node *right = pop(stack);
-    struct bt_node *oper = (operators_stack->head ? pop(operators_stack) : NULL);
+    struct bt_node *oper =
+        (operators_stack->head ? pop(operators_stack) : NULL);
     if (oper->op == OPEN_PAR_OPER)
     {
         free(oper);

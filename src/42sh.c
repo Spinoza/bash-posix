@@ -43,7 +43,6 @@ static int norc_opt(void)
     {
         errx(1, "error in forking\n");
     }
-
     if (pid == 0)
     {
         pid_t pid2 = fork();
@@ -51,13 +50,11 @@ static int norc_opt(void)
         {
             errx(1, "error in forking\n");
         }
-
         if (pid2 == 0)
         {
             int a = execvp(arg1[0], arg1);
             exit (a);
         }
-
         else
         {
             int r = 0;
@@ -98,12 +95,11 @@ static char * from_tok_toS(struct linked_list *tokens)
     {
         start = start->next;
         if (((start->elem->type == ENDOF && start->prev->elem->type != SEMICOLON)
-            && !(strcmp(start->elem->name, "\n"))) || ((start->elem->type == SEMICOLON)))
+                    && !(strcmp(start->elem->name, "\n"))) || ((start->elem->type == SEMICOLON)))
         {
             final[cursor] = ';';
             cursor++;
         }
-
         else if (start->elem->type != SEMICOLON && start->elem->type != ENDOF)
         {
             final[cursor] = ' ';
@@ -145,7 +141,11 @@ static int interactive_mode(struct globv global)
         if (!line)
         {
             printf("exit\n");
-            char *ex[] = { "exit", NULL};
+            char *ex[] =
+            {
+                "exit", NULL
+            }
+            ;
             my_exit(ex, 0);
         }
         struct linked_list *tokens = lexer_c(line);

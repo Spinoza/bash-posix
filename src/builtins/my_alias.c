@@ -175,7 +175,6 @@ int my_alias(char *args[], ...)
         print_alphabet(global.data->alias_tab);
         return 0;
     }
-
     int retcode = 0;
     int found = 0;
     int i = 1;
@@ -199,14 +198,12 @@ int my_alias(char *args[], ...)
             else
                 print_alias(args[i]);
         }
-
         else
         {
             char *cpy = calloc(strlen(args[i]) + 1, sizeof(char));
             strcpy(cpy, args[i]);
             vector_append(global.aliastab, cpy);
         }
-
         i++;
     }
     return retcode;

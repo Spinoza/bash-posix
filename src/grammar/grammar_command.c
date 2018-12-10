@@ -6,8 +6,12 @@
 
 static int is_conform(struct nL *tok)
 {
-    char *args[9] = { ">", "<", ">>", ">&", "<&", ">|", "<>", "!",
-                     "function"};
+    char *args[9] =
+    {
+        ">", "<", ">>", ">&", "<&", ">|", "<>", "!",
+        "function"
+    }
+    ;
 
     for (int i = 0; i < 7; i++)
     {
@@ -28,7 +32,6 @@ static struct nL *g_redirection(struct nL *tok)
 {
     if (tok->elem->type == IONUMBER)
         tok = tok->next ? tok->next : NULL;
-
     if (tok && is_conform(tok) == 1)
     {
         tok = tok->next;
@@ -38,7 +41,6 @@ static struct nL *g_redirection(struct nL *tok)
             return tok;
         return NULL;
     }
-
     if (tok && !strcmp(tok->elem->name, "<<-"))
     {
         tok = tok->next;
@@ -48,7 +50,6 @@ static struct nL *g_redirection(struct nL *tok)
             return tok;
         return NULL;
     }
-
     if (tok && !strcmp(tok->elem->name, "<<"))
     {
         tok = tok->next;
@@ -118,7 +119,8 @@ struct nL *g_funcdec(struct nL *tok)
             struct nL *tok1 = handletty();
             if (!tok1)
             {
-                fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                fprintf(stderr,
+                        "42sh: syntax error: unexpected end of file.\n");
                 return NULL;
             }
             save->prev->next = tok1;
@@ -139,15 +141,11 @@ struct nL *g_funcdec(struct nL *tok)
 struct nL *g_simplecommand(struct nL *tok)
 {
     struct nL *save = g_prefix(tok);
-
     if (!save)
     {
         save = g_element(tok);
         if (!save)
-        {
             return NULL;
-        }
-
         while (save)
         {
             tok = save;
@@ -158,7 +156,6 @@ struct nL *g_simplecommand(struct nL *tok)
         }
         return tok;
     }
-
     else
     {
         while (save)
@@ -169,7 +166,6 @@ struct nL *g_simplecommand(struct nL *tok)
                 return NULL;
             save = g_prefix(save);
         }
-
         save = tok->next;
         if (!save)
             return NULL;
@@ -178,7 +174,6 @@ struct nL *g_simplecommand(struct nL *tok)
         {
             return tok;
         }
-
         while (save)
         {
             tok = save;
@@ -189,7 +184,6 @@ struct nL *g_simplecommand(struct nL *tok)
         }
         return tok;
     }
-
 }
 struct nL *g_compoundlist(struct nL *tok)
 {
@@ -201,7 +195,8 @@ struct nL *g_compoundlist(struct nL *tok)
             struct nL *tok1 = handletty();
             if (!tok1)
             {
-                fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                fprintf(stderr,
+                        "42sh: syntax error: unexpected end of file.\n");
                 return NULL;
             }
             save->prev->next = tok1;
@@ -214,16 +209,13 @@ struct nL *g_compoundlist(struct nL *tok)
         save = tok;
         tok = tok->next;
     }
-
     tok = g_andor(tok);
     if (!tok)
         return NULL;
-
     save = tok;
     tok = tok->next;
     if (!tok->next)
         return NULL;
-
     enum type t = tok->elem->type;
     while (t == SEMICOLON || t == AND || t == ENDOF)
     {
@@ -236,7 +228,8 @@ struct nL *g_compoundlist(struct nL *tok)
                 struct nL *tok1 = handletty();
                 if (!tok1)
                 {
-                    fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                    fprintf(stderr,
+                            "42sh: syntax error: unexpected end of file.\n");
                     return NULL;
                 }
                 stock->prev->next = tok1;
@@ -249,7 +242,6 @@ struct nL *g_compoundlist(struct nL *tok)
             stock = tok;
             tok = tok->next;
         }
-
         tok = g_andor(tok);
         if (!tok)
         {
@@ -266,7 +258,6 @@ struct nL *g_compoundlist(struct nL *tok)
     tok = tok->next;
     if (!tok)
         return NULL;
-
     t = tok->elem->type;
     if (t == SEMICOLON || t == AND || t == ENDOF)
     {
@@ -279,7 +270,8 @@ struct nL *g_compoundlist(struct nL *tok)
                 struct nL *tok1 = handletty();
                 if (!tok1)
                 {
-                    fprintf(stderr, "42sh: syntax error: unexpected end of file.\n");
+                    fprintf(stderr,
+                            "42sh: syntax error: unexpected end of file.\n");
                     return NULL;
                 }
                 save->prev->next = tok1;
@@ -293,7 +285,6 @@ struct nL *g_compoundlist(struct nL *tok)
             tok = tok->next;
         }
     }
-
     return save;
 }
 
@@ -315,7 +306,6 @@ struct nL *g_shellcommand(struct nL *tok)
                 return new;
         }
     }
-
     new = tok;
     if (tok->elem->type == OPEN_PAR)
     {
@@ -332,23 +322,18 @@ struct nL *g_shellcommand(struct nL *tok)
                 return new;
         }
     }
-
     new = g_rulefor (tok);
     if (new)
         return new;
-
     new = g_rulewhile (tok);
     if (new)
         return new;
-
     new = g_ruleuntil(tok);
     if (new)
         return new;
-
     new = g_rulecase(tok);
     if (new)
         return new;
-
     return g_ruleif (tok);
 
 }
@@ -382,4 +367,3 @@ struct nL *g_command(struct nL *tok)
     }
     return NULL;
 }
-
