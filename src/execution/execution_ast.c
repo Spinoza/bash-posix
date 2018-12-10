@@ -240,7 +240,27 @@ int if_cond(struct node *cond, struct stored_data *data)
     struct node *condition = cond->children->children;
     int res = 0;
     while (condition)
+    {
         condition = instr_execution(condition, &res, data);
+        if (!condition)
+            break;
+        if (!strcmp(condition->instr,"&&"))
+        {
+            if (res)
+                condition = get_oper_node(condition->next);
+            else
+                condition = condition->next;
+        }
+        if (!strcmp(condition->instr,"||"))
+        {
+            if (!res)
+                condition = get_oper_node(condition->next);
+            else
+                condition = condition->next;
+        }
+        if (!strcmp(condition->instr, ";"))
+            condition = condition->next;
+    }
     return res;
 }
 
