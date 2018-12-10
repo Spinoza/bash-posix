@@ -58,7 +58,7 @@ struct linked_list *add(struct linked_list *l, struct token *elem);
 
 /**
   *\fn void free_list(struct linked_list *l)
-  *\brief Free the list l
+  *\brief Free the list l.
   *\param l the list to free
   *\return void
   */
@@ -66,7 +66,7 @@ void free_list(struct linked_list *l);
 
 /**
   *\fn struct token *token_copy(struct token *tok)
-  *\brief returns a copy of the token tok
+  *\brief returns a copy of the token tok.
   *\param tok the token to copy
   *\return struct token *, a copy of tok
   */
